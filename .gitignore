@@ -115,6 +115,16 @@ Assets/TypeScriptEditorMetadata.aseditorinfo
 *.controller
 *.fbx
 
+**/TextMesh Pro
+*.exr
+*.unity
+**/.vscode
+*.prettierrc
+*.lighting
+*.player_version
+*.rsp
+*.vsconfig
+
 # Ignore all non-local packages
 
 Assets/AirshipPackages/@Easy/CoreMaterials/*

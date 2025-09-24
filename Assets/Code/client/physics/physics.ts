@@ -1,5 +1,5 @@
-import Client from "../client";
-import * as VUtil from "Code/shared/common/utility/vutil";
+import Client from "../Client";
+import * as VUtil from "Code/Shared/Common/Utility/VUtil";
 
 export enum IntertiaState {
     FULL_INERTIA,

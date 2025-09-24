@@ -1,5 +1,5 @@
-import Client from "Code/client/client"
-import { SrcState } from "./state"
+import Client from "Code/Client/Client"
+import { SrcState } from "./State"
 
 /**
  * State which does not apply any collision or physics objects

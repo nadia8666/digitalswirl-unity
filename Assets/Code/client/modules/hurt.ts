@@ -1,7 +1,7 @@
-import Client from "Code/client/client"
-import { SrcState } from "./state"
-import { CheckRail } from "./rail"
-import { PhysicsHandler } from "Code/client/physics/physics"
+import Client from "Code/Client/Client"
+import { SrcState } from "./State"
+import { CheckRail } from "./Rail"
+import { PhysicsHandler } from "Code/Client/Physics/Physics"
 
 /**
  * @class

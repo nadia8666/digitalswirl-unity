@@ -1,7 +1,7 @@
 import { Signal } from "@Easy/Core/Shared/Util/Signal"
-import Client from "../client"
+import Client from "../Client"
 import { Mouse } from "@Easy/Core/Shared/UserInput"
-import { CFrame } from "Code/shared/types"
+import { CFrame } from "Code/Shared/Types"
 
 const MouseSensitivity = new Vector2(1, 0.77).mul(math.rad(0.5))
 const PitchMax = 85

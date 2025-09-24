@@ -1,7 +1,7 @@
 import { Keyboard } from "@Easy/Core/Shared/UserInput";
-import Client from "../client";
-import { ButtonState } from "./buttonstate";
-import * as VUtil from "Code/shared/common/utility/vutil";
+import Client from "../Client";
+import { ButtonState } from "./ButtonState";
+import * as VUtil from "Code/Shared/Common/Utility/VUtil";
 
 type ButtonUnion = ExtractKeys<Input["Button"], ButtonState>
 

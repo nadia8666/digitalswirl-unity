@@ -1,5 +1,5 @@
-import Client from "Code/client/client"
-import { RunCollision } from "Code/client/physics/collision"
+import Client from "Code/Client/Client"
+import { RunCollision } from "Code/Client/Physics/Collision"
 
 /**
  * State base type

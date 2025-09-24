@@ -1,8 +1,8 @@
-import Client from "./client"
-import { StateList } from "./states"
-import { FrameworkState } from "Code/shared/common/frameworkstate"
-import { SrcState } from "./modules/state"
-import { CFrame } from "Code/shared/types"
+import Client from "./Client"
+import { StateList } from "./States"
+import { FrameworkState } from "Code/Shared/Common/FrameworkState"
+import { SrcState } from "./Modules/State"
+import { CFrame } from "Code/Shared/Types"
 
 /**
  * State machine

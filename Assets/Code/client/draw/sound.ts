@@ -1,4 +1,4 @@
-import { StateList } from "Code/client/states";
+import { StateList } from "Code/Client/States";
 
 type PlayConfig = {
     /**
@@ -39,7 +39,7 @@ export class SoundController {
     }
 
     public Destroy() {
-        
+
     }
 
     public PathToSound(Path: string): undefined {
@@ -47,6 +47,6 @@ export class SoundController {
     }
 
     public Update(Current: string) {
-        
+
     }
 }

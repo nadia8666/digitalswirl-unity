@@ -1,7 +1,7 @@
-import Client from "Code/client/client"
-import { CheckJump } from "./jump"
-import { SrcState } from "./state"
-import { Constants } from "Code/shared/common/constants"
+import Client from "Code/Client/Client"
+import { CheckJump } from "./Jump"
+import { SrcState } from "./State"
+import { Constants } from "Code/Shared/Common/Constants"
 import { Signal } from "@Easy/Core/Shared/Util/Signal"
 
 /**
@@ -39,18 +39,18 @@ export function GetRailPosition(Client: Client) {
 }
 
 export function GetRailAngle(Client: Client) {
-   /*
-    if (Client.Rail.Current) {
-        let Angle
-        if (Client.Rail.RailDirection >= 0) {
-            Angle = 0
-        } else {
-            Angle = math.pi
-        }
-        return Client.Rail.Current.CFrame.Rotation.mul(CFrame.Angles(0, Angle, 0))
-    }
-    return Client.Angle
-    */
+    /*
+     if (Client.Rail.Current) {
+         let Angle
+         if (Client.Rail.RailDirection >= 0) {
+             Angle = 0
+         } else {
+             Angle = math.pi
+         }
+         return Client.Rail.Current.CFrame.Rotation.mul(CFrame.Angles(0, Angle, 0))
+     }
+     return Client.Angle
+     */
 }
 
 export function SetRail(Client: Client, Part?: GameObject) {

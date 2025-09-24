@@ -1,8 +1,8 @@
-import Client from "Code/client/client"
-import { PhysicsHandler } from "Code/client/physics/physics"
-import { SrcState } from "./state"
-import { CheckJump } from "./jump"
-import { CheckRail } from "./rail"
+import Client from "Code/Client/Client"
+import { PhysicsHandler } from "Code/Client/Physics/Physics"
+import { SrcState } from "./State"
+import { CheckJump } from "./Jump"
+import { CheckRail } from "./Rail"
 
 /**
  * Function ran in `State.CheckInput`

@@ -1,10 +1,10 @@
-import Client from "Code/client/client"
-import { PhysicsHandler } from "Code/client/physics/physics"
-import { CheckJump } from "./jump"
-import { CheckSkid } from "./skid"
-import { CheckSpindash } from "./spindash"
-import { SrcState } from "./state"
-import { CheckRail } from "./rail"
+import Client from "Code/Client/Client"
+import { PhysicsHandler } from "Code/Client/Physics/Physics"
+import { CheckJump } from "./Jump"
+import { CheckSkid } from "./Skid"
+import { CheckSpindash } from "./Spindash"
+import { SrcState } from "./State"
+import { CheckRail } from "./Rail"
 
 /**
  * @class

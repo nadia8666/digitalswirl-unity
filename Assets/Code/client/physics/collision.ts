@@ -1,7 +1,7 @@
-import Client from "../client";
-import * as VUtil from "Code/shared/common/utility/vutil"
-import { Constants } from "Code/shared/common/constants";
-import { CFrame } from "Code/shared/types";
+import Client from "../Client";
+import * as VUtil from "Code/Shared/Common/Utility/VUtil"
+import { Constants } from "Code/Shared/Common/Constants";
+import { CFrame } from "Code/Shared/Types";
 
 function GetAligned(Client: Client, Normal: Vector3) {
     if (Client.Angle.mul(Vector3.up).Dot(Normal) < -0.999) {
@@ -155,7 +155,7 @@ export function RunCollision(Client: Client) {
             Client.Physics.Height * 1.25 * Client.Physics.Scale * HeightScale,
             Client.Physics.Height * 1.95 * Client.Physics.Scale * HeightScale,
         ]
-       
+
         //Wall collision and horizontal movement
         {
             let XMove = true

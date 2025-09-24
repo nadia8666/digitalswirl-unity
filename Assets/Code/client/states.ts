@@ -1,12 +1,12 @@
-import { StateSkid } from "./modules/skid"
-import { StateSpindash, StateRoll } from "./modules/spindash"
-import { StateAirborne } from "./modules/airborne"
-import { StateGrounded } from "./modules/grounded"
-import { StateNone } from "./modules/none"
-import { StateRail } from "./modules/rail"
-import { AirKick } from "./modules/airkick"
-import { StateHurt } from "./modules/hurt"
-import { SrcState } from "./modules/state"
+import { StateSkid } from "./Modules/Skid"
+import { StateSpindash, StateRoll } from "./Modules/Spindash"
+import { StateAirborne } from "./Modules/Airborne"
+import { StateGrounded } from "./Modules/Grounded"
+import { StateNone } from "./Modules/None"
+import { StateRail } from "./Modules/Rail"
+import { AirKick } from "./Modules/Airkick"
+import { StateHurt } from "./Modules/Hurt"
+import { SrcState } from "./Modules/State"
 
 /**
  * List of all states for `StateMachine`

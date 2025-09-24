@@ -1,4 +1,4 @@
-import Client from "Code/client/client"
+import Client from "Code/Client/Client"
 
 /**
  * Function ran in `State.CheckInput`

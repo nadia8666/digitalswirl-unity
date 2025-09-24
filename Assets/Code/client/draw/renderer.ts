@@ -1,5 +1,5 @@
-import { CFrame } from "Code/shared/types";
-import Client from "../client";
+import { CFrame } from "Code/Shared/Types";
+import Client from "../Client";
 
 const pi = math.pi
 const tau = pi * 2

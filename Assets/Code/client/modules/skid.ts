@@ -1,6 +1,6 @@
-import Client from "Code/client/client"
-import { PhysicsHandler } from "Code/client/physics/physics"
-import { SrcState } from "./state"
+import Client from "Code/Client/Client"
+import { PhysicsHandler } from "Code/Client/Physics/Physics"
+import { SrcState } from "./State"
 
 /**
  * Function ran in `State.CheckInput`

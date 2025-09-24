@@ -1,7 +1,7 @@
-import Client from "Code/client/client"
-import { IntertiaState, PhysicsHandler } from "Code/client/physics/physics"
-import { SrcState } from "./state"
-import { RunCollision } from "Code/client/physics/collision"
+import Client from "Code/Client/Client"
+import { IntertiaState, PhysicsHandler } from "Code/Client/Physics/Physics"
+import { SrcState } from "./State"
+import { RunCollision } from "Code/Client/Physics/Collision"
 
 /**
  * Function ran in `State.CheckInput`

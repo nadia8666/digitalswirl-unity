@@ -1,10 +1,10 @@
-import Client from "Code/client/client"
-import { PhysicsHandler } from "Code/client/physics/physics"
-import { CheckBounce } from "./bounce"
-import { CheckHomingAttack } from "./homing"
-import { SrcState } from "./state"
-import { CheckRail } from "./rail"
-import { CheckAirKick } from "./airkick"
+import Client from "Code/Client/Client"
+import { PhysicsHandler } from "Code/Client/Physics/Physics"
+import { CheckBounce } from "./Bounce"
+import { CheckHomingAttack } from "./Homing"
+import { SrcState } from "./State"
+import { CheckRail } from "./Rail"
+import { CheckAirKick } from "./Airkick"
 
 /**
  * @class

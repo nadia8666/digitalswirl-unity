@@ -124,6 +124,9 @@ Assets/TypeScriptEditorMetadata.aseditorinfo
 *.player_version
 *.rsp
 *.vsconfig
+**/Resources
+**/eslint.config.ts
+**/ProjectSettings
 
 # Ignore all non-local packages
 

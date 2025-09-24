@@ -20,14 +20,20 @@
     "AirshipPackages/@Easy": true
   },
   "[typescript]": {
-    "editor.defaultFormatter": "esbenp.prettier-vscode",
     "editor.formatOnSave": true
   },
   "files.eol": "\n",
-  "eslint.validate": ["typescript", "json"],
+  "eslint.validate": [
+    "typescript",
+    "json"
+  ],
   "eslint.nodePath": "./Typescript~/node_modules",
-  "eslint.workingDirectories": ["."],
+  "eslint.workingDirectories": [
+    "."
+  ],
   "eslint.options": {
     "overrideConfigFile": "./Typescript~/eslint.config.ts"
-  }
+  },
+  "editor.formatOnSave": true,
+  "typescript.tsserver.experimental.enableProjectDiagnostics": true
 }

@@ -176,571 +176,6 @@ PrefabInstance:
     m_AddedGameObjects: []
     m_AddedComponents: []
   m_SourcePrefab: {fileID: 100100000, guid: 046ef4adaa9ffc945b2951dcc17f8d58, type: 3}
---- !u!1 &764383742
-GameObject:
-  m_ObjectHideFlags: 0
-  m_CorrespondingSourceObject: {fileID: 0}
-  m_PrefabInstance: {fileID: 0}
-  m_PrefabAsset: {fileID: 0}
-  serializedVersion: 6
-  m_Component:
-  - component: {fileID: 764383744}
-  - component: {fileID: 764383743}
-  m_Layer: 0
-  m_Name: CharacterConfig
-  m_TagString: Untagged
-  m_Icon: {fileID: 0}
-  m_NavMeshLayer: 0
-  m_StaticEditorFlags: 0
-  m_IsActive: 1
---- !u!114 &764383743
-MonoBehaviour:
-  m_ObjectHideFlags: 0
-  m_CorrespondingSourceObject: {fileID: 0}
-  m_PrefabInstance: {fileID: 0}
-  m_PrefabAsset: {fileID: 0}
-  m_GameObject: {fileID: 764383742}
-  m_Enabled: 1
-  m_EditorHideFlags: 0
-  m_Script: {fileID: 11500000, guid: fa4feffba88dce746a2607f0ec6233b4, type: 3}
-  m_Name: 
-  m_EditorClassIdentifier: 
-  guid: 6fb72e1f-9f19-4f6f-8921-228df448a029
-  script: {fileID: 796400153169862170, guid: c4fa48bfb1281a04baca6e795001cd63, type: 3}
-  scriptPath: Assets/AirshipPackages/@Easy/Core/Shared/Character/CharacterConfigSetup.lua
-  forceContext: 0
-  metadata:
-    name: CharacterConfigSetup
-    singleton: 0
-    decorators: []
-    properties:
-    - name: customCharacterPrefab
-      type: object
-      objectType: GameObject
-      items:
-        type: 
-        objectType: 
-        serializedItems: []
-        objectRefs: []
-      refPath: 
-      fileRef: 
-      jsDocs:
-        text: []
-        tags: []
-      decorators:
-      - name: Header
-        parameters:
-        - type: string
-          serializedValue: '"Character"'
-      - name: Tooltip
-        parameters:
-        - type: string
-          serializedValue: '"Must include a Character component. Make sure this prefab
-            is also assigned in the Resources/NetworkPrefabCollection.asset"'
-      nullable: 0
-      serializedValue: 
-      serializedObject: {fileID: 2116186187299375306, guid: 912d9eca69aeef24fb912298e044243b, type: 3}
-      modified: 1
-    - name: enableJumping
-      type: boolean
-      objectType: 
-      items:
-        type: 
-        objectType: 
-        serializedItems: []
-        objectRefs: []
-      refPath: 
-      fileRef: 
-      jsDocs:
-        text: []
-        tags: []
-      decorators: []
-      nullable: 0
-      serializedValue: 1
-      serializedObject: {fileID: 0}
-      modified: 0
-    - name: enableSprinting
-      type: boolean
-      objectType: 
-      items:
-        type: 
-        objectType: 
-        serializedItems: []
-        objectRefs: []
-      refPath: 
-      fileRef: 
-      jsDocs:
-        text: []
-        tags: []
-      decorators: []
-      nullable: 0
-      serializedValue: 1
-      serializedObject: {fileID: 0}
-      modified: 0
-    - name: enableCrouching
-      type: boolean
-      objectType: 
-      items:
-        type: 
-        objectType: 
-        serializedItems: []
-        objectRefs: []
-      refPath: 
-      fileRef: 
-      jsDocs:
-        text: []
-        tags: []
-      decorators: []
-      nullable: 0
-      serializedValue: 1
-      serializedObject: {fileID: 0}
-      modified: 0
-    - name: useAirshipCameraSystem
-      type: boolean
-      objectType: 
-      items:
-        type: 
-        objectType: 
-        serializedItems: []
-        objectRefs: []
-      refPath: 
-      fileRef: 
-      jsDocs:
-        text: []
-        tags: []
-      decorators:
-      - name: Header
-        parameters:
-        - type: string
-          serializedValue: '"Camera System"'
-      nullable: 0
-      serializedValue: 1
-      serializedObject: {fileID: 0}
-      modified: 0
-    - name: startInFirstPerson
-      type: boolean
-      objectType: 
-      items:
-        type: 
-        objectType: 
-        serializedItems: []
-        objectRefs: []
-      refPath: 
-      fileRef: 
-      jsDocs:
-        text: []
-        tags: []
-      decorators: []
-      nullable: 0
-      serializedValue: 0
-      serializedObject: {fileID: 0}
-      modified: 0
-    - name: allowFirstPersonToggle
-      type: boolean
-      objectType: 
-      items:
-        type: 
-        objectType: 
-        serializedItems: []
-        objectRefs: []
-      refPath: 
-      fileRef: 
-      jsDocs:
-        text: []
-        tags: []
-      decorators: []
-      nullable: 0
-      serializedValue: 1
-      serializedObject: {fileID: 0}
-      modified: 0
-    - name: showChat
-      type: boolean
-      objectType: 
-      items:
-        type: 
-        objectType: 
-        serializedItems: []
-        objectRefs: []
-      refPath: 
-      fileRef: 
-      jsDocs:
-        text: []
-        tags: []
-      decorators:
-      - name: Header
-        parameters:
-        - type: string
-          serializedValue: '"UI"'
-      nullable: 0
-      serializedValue: 1
-      serializedObject: {fileID: 0}
-      modified: 0
-    - name: useDefaultMovement
-      type: boolean
-      objectType: 
-      items:
-        type: 
-        objectType: 
-        serializedItems: []
-        objectRefs: []
-      refPath: 
-      fileRef: 
-      jsDocs:
-        text: []
-        tags: []
-      decorators:
-      - name: Spacing
-        parameters:
-        - type: number
-          serializedValue: 5
-      nullable: 0
-      serializedValue: 1
-      serializedObject: {fileID: 0}
-      modified: 0
-    - name: footstepSounds
-      type: boolean
-      objectType: 
-      items:
-        type: 
-        objectType: 
-        serializedItems: []
-        objectRefs: []
-      refPath: 
-      fileRef: 
-      jsDocs:
-        text: []
-        tags: []
-      decorators: []
-      nullable: 0
-      serializedValue: 1
-      serializedObject: {fileID: 0}
-      modified: 0
-    - name: instantiateViewmodel
-      type: boolean
-      objectType: 
-      items:
-        type: 
-        objectType: 
-        serializedItems: []
-        objectRefs: []
-      refPath: 
-      fileRef: 
-      jsDocs:
-        text: []
-        tags: []
-      decorators:
-      - name: Header
-        parameters:
-        - type: string
-          serializedValue: '"Viewmodel"'
-      - name: Tooltip
-        parameters:
-        - type: string
-          serializedValue: '"If true, a character viewmodel will be instantiated
-            under the ViewmodelCamera"'
-      nullable: 0
-      serializedValue: 1
-      serializedObject: {fileID: 0}
-      modified: 0
-    - name: customViewmodelPrefab
-      type: object
-      objectType: GameObject
-      items:
-        type: 
-        objectType: 
-        serializedItems: []
-        objectRefs: []
-      refPath: 
-      fileRef: 
-      jsDocs:
-        text: []
-        tags: []
-      decorators: []
-      nullable: 0
-      serializedValue: 
-      serializedObject: {fileID: 0}
-      modified: 0
-    - name: inventoryVisibility
-      type: IntEnum
-      objectType: 
-      items:
-        type: 
-        objectType: 
-        serializedItems: []
-        objectRefs: []
-      refPath: AirshipPackages/@Easy/Core/Shared/Inventory/InventoryUIVisibility@InventoryUIVisibility
-      fileRef: 
-      jsDocs:
-        text: []
-        tags: []
-      decorators: []
-      nullable: 0
-      serializedValue: 1
-      serializedObject: {fileID: 0}
-      modified: 0
-    - name: inventoryUIPrefab
-      type: object
-      objectType: GameObject
-      items:
-        type: 
-        objectType: 
-        serializedItems: []
-        objectRefs: []
-      refPath: 
-      fileRef: 
-      jsDocs:
-        text: []
-        tags: []
-      decorators: []
-      nullable: 0
-      serializedValue: 
-      serializedObject: {fileID: 0}
-      modified: 0
-    - name: useSprintFOV
-      type: boolean
-      objectType: 
-      items:
-        type: 
-        objectType: 
-        serializedItems: []
-        objectRefs: []
-      refPath: 
-      fileRef: 
-      jsDocs:
-        text: []
-        tags: []
-      decorators: []
-      nullable: 0
-      serializedValue: 1
-      serializedObject: {fileID: 0}
-      modified: 0
-    - name: sprintFOVMultiplier
-      type: number
-      objectType: 
-      items:
-        type: 
-        objectType: 
-        serializedItems: []
-        objectRefs: []
-      refPath: 
-      fileRef: 
-      jsDocs:
-        text: []
-        tags: []
-      decorators: []
-      nullable: 0
-      serializedValue: 1.08
-      serializedObject: {fileID: 0}
-      modified: 0
-    - name: characterCameraMode
-      type: IntEnum
-      objectType: 
-      items:
-        type: 
-        objectType: 
-        serializedItems: []
-        objectRefs: []
-      refPath: AirshipPackages/@Easy/Core/Shared/Character/LocalCharacter/CharacterCameraMode@CharacterCameraMode
-      fileRef: 
-      jsDocs:
-        text: []
-        tags: []
-      decorators: []
-      nullable: 0
-      serializedValue: 0
-      serializedObject: {fileID: 0}
-      modified: 0
-    - name: fixedXOffset
-      type: number
-      objectType: 
-      items:
-        type: 
-        objectType: 
-        serializedItems: []
-        objectRefs: []
-      refPath: 
-      fileRef: 
-      jsDocs:
-        text: []
-        tags: []
-      decorators:
-      - name: Header
-        parameters:
-        - type: string
-          serializedValue: '"Character Camera Configuration"'
-      - name: Header
-        parameters:
-        - type: string
-          serializedValue: '"Fixed Camera"'
-      nullable: 0
-      serializedValue: 0.75
-      serializedObject: {fileID: 0}
-      modified: 0
-    - name: fixedYOffset
-      type: number
-      objectType: 
-      items:
-        type: 
-        objectType: 
-        serializedItems: []
-        objectRefs: []
-      refPath: 
-      fileRef: 
-      jsDocs:
-        text: []
-        tags: []
-      decorators: []
-      nullable: 0
-      serializedValue: 1.7
-      serializedObject: {fileID: 0}
-      modified: 0
-    - name: fixedZOffset
-      type: number
-      objectType: 
-      items:
-        type: 
-        objectType: 
-        serializedItems: []
-        objectRefs: []
-      refPath: 
-      fileRef: 
-      jsDocs:
-        text: []
-        tags: []
-      decorators: []
-      nullable: 0
-      serializedValue: 2.5
-      serializedObject: {fileID: 0}
-      modified: 0
-    - name: fixedMinRotX
-      type: number
-      objectType: 
-      items:
-        type: 
-        objectType: 
-        serializedItems: []
-        objectRefs: []
-      refPath: 
-      fileRef: 
-      jsDocs:
-        text: []
-        tags: []
-      decorators: []
-      nullable: 0
-      serializedValue: 1
-      serializedObject: {fileID: 0}
-      modified: 0
-    - name: fixedMaxRotX
-      type: number
-      objectType: 
-      items:
-        type: 
-        objectType: 
-        serializedItems: []
-        objectRefs: []
-      refPath: 
-      fileRef: 
-      jsDocs:
-        text: []
-        tags: []
-      decorators: []
-      nullable: 0
-      serializedValue: 179
-      serializedObject: {fileID: 0}
-      modified: 0
-    - name: orbitRadius
-      type: number
-      objectType: 
-      items:
-        type: 
-        objectType: 
-        serializedItems: []
-        objectRefs: []
-      refPath: 
-      fileRef: 
-      jsDocs:
-        text: []
-        tags: []
-      decorators:
-      - name: Header
-        parameters:
-        - type: string
-          serializedValue: '"Orbit Camera"'
-      nullable: 0
-      serializedValue: 4
-      serializedObject: {fileID: 0}
-      modified: 0
-    - name: orbitYOffset
-      type: number
-      objectType: 
-      items:
-        type: 
-        objectType: 
-        serializedItems: []
-        objectRefs: []
-      refPath: 
-      fileRef: 
-      jsDocs:
-        text: []
-        tags: []
-      decorators: []
-      nullable: 0
-      serializedValue: 1.85
-      serializedObject: {fileID: 0}
-      modified: 0
-    - name: orbitMinRotX
-      type: number
-      objectType: 
-      items:
-        type: 
-        objectType: 
-        serializedItems: []
-        objectRefs: []
-      refPath: 
-      fileRef: 
-      jsDocs:
-        text: []
-        tags: []
-      decorators: []
-      nullable: 0
-      serializedValue: 1
-      serializedObject: {fileID: 0}
-      modified: 0
-    - name: orbitMaxRotX
-      type: number
-      objectType: 
-      items:
-        type: 
-        objectType: 
-        serializedItems: []
-        objectRefs: []
-      refPath: 
-      fileRef: 
-      jsDocs:
-        text: []
-        tags: []
-      decorators: []
-      nullable: 0
-      serializedValue: 179
-      serializedObject: {fileID: 0}
-      modified: 0
-    displayIcon: {fileID: 0}
-    displayName: 
---- !u!4 &764383744
-Transform:
-  m_ObjectHideFlags: 0
-  m_CorrespondingSourceObject: {fileID: 0}
-  m_PrefabInstance: {fileID: 0}
-  m_PrefabAsset: {fileID: 0}
-  m_GameObject: {fileID: 764383742}
-  serializedVersion: 2
-  m_LocalRotation: {x: 0, y: 0, z: 0, w: 1}
-  m_LocalPosition: {x: 0, y: 3, z: 0}
-  m_LocalScale: {x: 1, y: 1, z: 1}
-  m_ConstrainProportionsScale: 0
-  m_Children: []
-  m_Father: {fileID: 0}
-  m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
 --- !u!1001 &870239198
 PrefabInstance:
   m_ObjectHideFlags: 0
@@ -834,6 +269,61 @@ PrefabInstance:
     m_AddedGameObjects: []
     m_AddedComponents: []
   m_SourcePrefab: {fileID: 100100000, guid: 241cf930257357542a77bc6d7fb552e4, type: 3}
+--- !u!1 &1294885937
+GameObject:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  serializedVersion: 6
+  m_Component:
+  - component: {fileID: 1294885939}
+  - component: {fileID: 1294885938}
+  m_Layer: 0
+  m_Name: Spawner
+  m_TagString: Untagged
+  m_Icon: {fileID: 0}
+  m_NavMeshLayer: 0
+  m_StaticEditorFlags: 0
+  m_IsActive: 1
+--- !u!114 &1294885938
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 1294885937}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: fa4feffba88dce746a2607f0ec6233b4, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  guid: 8598656d-2f4e-4327-8707-5dc5f3f42dd3
+  script: {fileID: 399504091145166126, guid: 1c3caaabc1450c742892b69d5ef213d0, type: 3}
+  scriptPath: Assets/Code/server/Spawner.lua
+  forceContext: 0
+  metadata:
+    name: Spawner
+    singleton: 0
+    decorators: []
+    properties: []
+    displayIcon: {fileID: 0}
+    displayName: 
+--- !u!4 &1294885939
+Transform:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 1294885937}
+  serializedVersion: 2
+  m_LocalRotation: {x: 0, y: 0, z: 0, w: 1}
+  m_LocalPosition: {x: 31.805025, y: -17.461002, z: 1.3216937}
+  m_LocalScale: {x: 1, y: 1, z: 1}
+  m_ConstrainProportionsScale: 0
+  m_Children: []
+  m_Father: {fileID: 0}
+  m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
 --- !u!1 &1309094768
 GameObject:
   m_ObjectHideFlags: 0
@@ -967,7 +457,7 @@ GameObject:
   - component: {fileID: 1857464635}
   - component: {fileID: 1857464634}
   - component: {fileID: 1857464633}
-  m_Layer: 0
+  m_Layer: 17
   m_Name: Floor
   m_TagString: Untagged
   m_Icon: {fileID: 0}
@@ -1063,68 +553,12 @@ MeshFilter:
   m_PrefabAsset: {fileID: 0}
   m_GameObject: {fileID: 1857464631}
   m_Mesh: {fileID: 10202, guid: 0000000000000000e000000000000000, type: 0}
---- !u!1 &2019946517
-GameObject:
-  m_ObjectHideFlags: 0
-  m_CorrespondingSourceObject: {fileID: 0}
-  m_PrefabInstance: {fileID: 0}
-  m_PrefabAsset: {fileID: 0}
-  serializedVersion: 6
-  m_Component:
-  - component: {fileID: 2019946519}
-  - component: {fileID: 2019946518}
-  m_Layer: 0
-  m_Name: CharacterSpawner
-  m_TagString: Untagged
-  m_Icon: {fileID: 3936346786652291628, guid: 0000000000000000d000000000000000, type: 0}
-  m_NavMeshLayer: 0
-  m_StaticEditorFlags: 0
-  m_IsActive: 1
---- !u!114 &2019946518
-MonoBehaviour:
-  m_ObjectHideFlags: 0
-  m_CorrespondingSourceObject: {fileID: 0}
-  m_PrefabInstance: {fileID: 0}
-  m_PrefabAsset: {fileID: 0}
-  m_GameObject: {fileID: 2019946517}
-  m_Enabled: 1
-  m_EditorHideFlags: 0
-  m_Script: {fileID: 11500000, guid: fa4feffba88dce746a2607f0ec6233b4, type: 3}
-  m_Name: 
-  m_EditorClassIdentifier: 
-  guid: c49edcdc-3a7f-48d6-be3f-82e6a9f023e4
-  script: {fileID: 7783096336541887851, guid: 1d19f418d8ad62340ba2a826511554f6, type: 3}
-  scriptPath: Assets/Code/CharacterSpawner.lua
-  forceContext: 0
-  metadata:
-    name: CharacterSpawner
-    singleton: 0
-    decorators: []
-    properties: []
-    displayIcon: {fileID: 0}
-    displayName: 
---- !u!4 &2019946519
-Transform:
-  m_ObjectHideFlags: 0
-  m_CorrespondingSourceObject: {fileID: 0}
-  m_PrefabInstance: {fileID: 0}
-  m_PrefabAsset: {fileID: 0}
-  m_GameObject: {fileID: 2019946517}
-  serializedVersion: 2
-  m_LocalRotation: {x: 0, y: 0, z: 0, w: 1}
-  m_LocalPosition: {x: 0, y: 1, z: 0}
-  m_LocalScale: {x: 1, y: 1, z: 1}
-  m_ConstrainProportionsScale: 0
-  m_Children: []
-  m_Father: {fileID: 0}
-  m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
 --- !u!1660057539 &9223372036854775807
 SceneRoots:
   m_ObjectHideFlags: 0
   m_Roots:
   - {fileID: 870239198}
-  - {fileID: 764383744}
-  - {fileID: 2019946519}
   - {fileID: 1857464632}
   - {fileID: 1309094771}
   - {fileID: 117776273}
+  - {fileID: 1294885939}

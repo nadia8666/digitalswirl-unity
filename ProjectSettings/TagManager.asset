@@ -5,6 +5,7 @@ TagManager:
   serializedVersion: 3
   tags:
   - Character
+  - NoFloor
   layers:
   - Default
   - TransparentFX
@@ -20,7 +21,7 @@ TagManager:
   - LocalStencilMask
   - StencilMask
   - 
-  - 
+  - CollisionLayer
   - 
   - 
   - GameLayer0

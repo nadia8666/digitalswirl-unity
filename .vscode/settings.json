@@ -59,5 +59,6 @@
     "dotnet.defaultSolution": "digitalswirl-unity.sln",
     "editor.codeActionsOnSave": {
     },
-    "editor.formatOnSave": true
+    "editor.formatOnSave": true,
+    "typescript.tsserver.experimental.enableProjectDiagnostics": true
 }

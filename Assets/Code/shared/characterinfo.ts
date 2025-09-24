@@ -1,30 +1,3 @@
-export type ValidAnimation = keyof typeof CharacterInfo["Animations"]
-export interface InferredAnimation {
-	[Index: number]: {
-		AnimationID: string,
-		Asset: AnimationTrack,
-		Position?: number,
-		Looped: boolean,
-		Speed?: {
-			Base: number,
-			Increment: number,
-			Absolute: boolean
-		}
-	}
-}
-
-export interface AnimationData {
-	EndAnimation?: keyof typeof CharacterInfo["Animations"],
-	Transitions?: {
-		[Index: string]: {
-			From?: number,
-			To?: number
-		}
-	}
-}
-
-export type SetAnimation = InferredAnimation & AnimationData
-
 export const CharacterInfo = {
 	Physics: {
 		// Collision
@@ -61,123 +34,11 @@ export const CharacterInfo = {
 		AirResist: new Vector3(-.008, -.01, -.4),
 
 		CameraOffset: new Vector3(0, 2, 0),
+		HipHeight: 2,
 
 		// Moves
 		HomingForce: { AirDash: 5, HomingAttack: 5 }
-	},
-
-	Animations: {
-		Land: {
-			[0]: { AnimationID: "84985275274473", Looped: true },
-		},
-		Idle: {
-			[0]: { AnimationID: "120676159453993", Looped: true },
-		},
-		Roll: {
-			[0]: { AnimationID: "89521650226043", Looped: true, Speed: { Base: .25, Increment: 1/8, Absolute: true } },
-		},
-		Spindash: {
-			[0]: { AnimationID: "89521650226043", Looped: true },
-		},
-		Fall: {
-			[0]: { AnimationID: "106824283599126", Looped: true }
-		},
-		Skid: {
-			[0]: { AnimationID: "99388608469800", Looped: true },
-			EndAnimation: "Idle",
-		},
-		SpringStart: {
-			[0]: { AnimationID: "105125944783334", Looped: false },
-			EndAnimation: "Spring",
-			Transitions: {
-				All: {
-					To: 0
-				}
-			}
-		},
-		Spring: {
-			[0]: { AnimationID: "139915985594263", Looped: true },
-		},
-		SpringEnd: {
-			[0]: { AnimationID: "138856667761535", Looped: false },
-			EndAnimation: "Fall"
-		},
-		Run: {
-			[0]: {
-				AnimationID: "87236465713680",
-				Position: 0,
-				Speed: {
-					Base: .2,
-					Increment: .3,
-					Absolute: false
-				},
-				Looped: true
-			},
-			[1]: {
-				AnimationID: "117668028319772",
-				Position: 4,
-				Speed: {
-					Base: .2,
-					Increment: .3,
-					Absolute: false
-				},
-				Looped: true
-			},
-			[2]: {
-				AnimationID: "86037390555153",
-				Position: 6,
-				Speed: {
-					Base: .3,
-					Increment: .4,
-					Absolute: false
-				},
-				Looped: true
-			},
-		},
-		Rail: {
-			[0]: { AnimationID: "103281797241307", Looped: true }
-		},
-		RailCrouch: {
-			[0]: { AnimationID: "0", Looped: true }
-		},
-		RailLand: {
-			[0]: { AnimationID: "0", Looped: false }
-		},
-		RailBalance: {
-			[0]: { AnimationID: "0", Looped: true }
-		},
-		RailSwitchLeft: {
-			[0]: { AnimationID: "0", Looped: false }
-		},
-		RailSwitchRight: {
-			[0]: { AnimationID: "0", Looped: false }
-		},
-		AirKick: {
-			[0]: { AnimationID: "0", Looped: true }
-		},
-		AirKickUp: {
-			[0]: { AnimationID: "0", Looped: true }
-		}
-	} as const satisfies { [Index:string]: {
-		[Index: number]: {
-		AnimationID: string,
-		Position?: number,
-		Looped: boolean,
-		Speed?: {
-			Base: number,
-			Increment: number,
-			Absolute: boolean
-		}
 	}
-	} & {
-		EndAnimation?: string,
-		Transitions?: {
-			[Index: string]: {
-				From?: number,
-				To?: number
-			}
-		}
-	}}
 }
 
 

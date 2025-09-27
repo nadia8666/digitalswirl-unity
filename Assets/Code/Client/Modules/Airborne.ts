@@ -45,6 +45,12 @@ export class StateAirborne extends SrcState {
             } else {
                 Client.Sound.Play("Character/Land")
 
+                if (math.abs(Client.Speed.x) > 2.215) {
+                    Client.Animation.Current = "LandMoving"
+                } else {
+                    Client.Animation.Current = "Land"
+                }
+
                 Client.State.Current = Client.State.States.Grounded
                 Client.Land()
             }

@@ -93,14 +93,8 @@ export class Input {
         }
 
         // Stick
-        let PCStickX = 0
-        let PCStickY = 0
-
-        PCStickX += Keyboard.IsKeyDown(Key.A) && -1 || 0
-        PCStickX += Keyboard.IsKeyDown(Key.D) && 1 || 0
-        PCStickY -= Keyboard.IsKeyDown(Key.W) && 1 || 0
-        PCStickY -= Keyboard.IsKeyDown(Key.S) && -1 || 0
-
+        let PCStickX = (Keyboard.IsKeyDown(Key.D) && 1 || 0) - (Keyboard.IsKeyDown(Key.A) && 1 || 0)
+        let PCStickY = (Keyboard.IsKeyDown(Key.S) && 1 || 0) - (Keyboard.IsKeyDown(Key.W) && 1 || 0)
 
         this.Stick = new Vector2(PCStickX, PCStickY)
         if (this.Stick.magnitude > 1) { this.Stick = this.Stick.normalized }
@@ -145,7 +139,6 @@ export class Input {
         }
 
         //Get move vector in world space, aligned to our target up vector
-        print(math.deg(math.atan2(-this.Client.Input.Stick.x, -this.Client.Input.Stick.y)))
         let cam_move = Quaternion.Euler(0, math.deg(math.atan2(this.Client.Input.Stick.x, -this.Client.Input.Stick.y)), 0).mul(cam_look)
 
         //Update last up

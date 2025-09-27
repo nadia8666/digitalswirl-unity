@@ -1,8 +1,33 @@
+export type ValidAnimation = keyof typeof CharacterInfo["Animations"]
+export interface InferredAnimation {
+	[Index: number]: {
+		Name: string,
+		Position?: number,
+		Speed?: {
+			Base: number,
+			Increment: number,
+			Absolute: boolean
+		}
+	}
+}
+
+export interface AnimationData {
+	EndAnimation?: keyof typeof CharacterInfo["Animations"],
+	Transitions?: {
+		[Index: string]: {
+			From?: number,
+			To?: number
+		}
+	}
+}
+
+export type SetAnimation = InferredAnimation & AnimationData
+
 export const CharacterInfo = {
 	Physics: {
 		// Collision
 		Height: 5,
-		Scale: .6,
+		Scale: .6/3,
 		Radius: 3,
 		PositionError: 2,
 
@@ -33,11 +58,142 @@ export const CharacterInfo = {
 
 		AirResist: new Vector3(-.008, -.01, -.4),
 
-		CameraOffset: new Vector3(0, 2, 0),
-		HipHeight: 2,
+		CameraOffset: new Vector3(0, 6, 0),
 
 		// Moves
 		HomingForce: { AirDash: 5, HomingAttack: 5 }
+	},
+
+	Animations: {
+		Land: {
+			[0]: { Name: "Land" },
+			EndAnimation: "Idle",
+		},
+		LandMoving: {
+			[0]: { Name: "LandMoving" },
+			EndAnimation: "Run",
+		},
+		Idle: {
+			[0]: { Name: "Idle" },
+		},
+		HomingAttack: {
+			[0]: { Name: "HomingAttack" },
+			EndAnimation: "SpecialFall",
+		},
+		Idle2: {
+			[0]: { Name: "Idle2" },
+			EndAnimation: "Idle",
+		},
+		Roll: {
+			[0]: { Name: "Roll", Speed: { Base: .25, Increment: 1 / 8, Absolute: true } },
+			Transitions: {
+				All: {
+					From: .15	
+				}
+			}
+		},
+		Spindash: {
+			[0]: { Name: "Spindash" },
+		},
+		Fall: {
+			[0]: { Name: "Fall" }
+		},
+		SpecialFall: {
+			[0]: { Name: "SpecialFall" }
+		},
+		Skid: {
+			[0]: { Name: "Skid" },
+			EndAnimation: "Idle",
+		},
+		SpringStart: {
+			[0]: { Name: "SpringStart" },
+			EndAnimation: "Spring",
+			Transitions: {
+				All: {
+					To: 0
+				}
+			}
+		},
+		Spring: {
+			[0]: { Name: "Spring" },
+		},
+		SpringEnd: {
+			[0]: { Name: "SpringEnd" },
+			EndAnimation: "Fall"
+		},
+		Run: {
+			[0]: {
+				Name: "Jog",
+				Position: 0,
+				Speed: {
+					Base: .2,
+					Increment: .3,
+					Absolute: false
+				}
+			},
+			[1]: {
+				Name: "Run",
+				Position: 4,
+				Speed: {
+					Base: .2,
+					Increment: .3,
+					Absolute: false
+				}
+			},
+			[2]: {
+				Name: "Jet",
+				Position: 6,
+				Speed: {
+					Base: .3,
+					Increment: .4,
+					Absolute: false
+				}
+			},
+		},
+		Rail: {
+			[0]: { Name: "Rail" }
+		},
+		RailCrouch: {
+			[0]: { Name: "RailCrouch" }
+		},
+		RailLand: {
+			[0]: { Name: "RailLand" }
+		},
+		RailBalance: {
+			[0]: { Name: "RailBalance" }
+		},
+		RailSwitchLeft: {
+			[0]: { Name: "RailSwitchLeft" }
+		},
+		RailSwitchRight: {
+			[0]: { Name: "RailSwitchRight" }
+		},
+		AirKick: {
+			[0]: { Name: "AirKick" }
+		},
+		AirKickUp: {
+			[0]: { Name: "AirKickUp" }
+		}
+	} as const satisfies {
+		[Index: string]: {
+			[Index: number]: {
+				Name: string,
+				Position?: number,
+				Speed?: {
+					Base: number,
+					Increment: number,
+					Absolute: boolean
+				}
+			}
+		} & {
+			EndAnimation?: string,
+			Transitions?: {
+				[Index: string]: {
+					From?: number,
+					To?: number
+				}
+			}
+		}
 	}
 }
 

@@ -13,7 +13,7 @@ import { CheckRail } from "./Rail"
 export function CheckSpindash(Client: Client) {
     if (Client.Input.Button.Spindash.Pressed) {
         Client.State.Current = Client.State.States.Spindash
-        Client.Flags.SpindashSpeed = math.max(Client.Speed.x, 2)
+        Client.Flags.SpindashSpeed = math.max(Client.Speed.x, 3)
         Client.EnterBall()
 
         Client.Sound.Play("Character/SpindashCharge")
@@ -58,6 +58,7 @@ export class StateSpindash extends SrcState {
 
         if (Client.Ground.Grounded) {
             Client.Animation.Current = "Spindash"
+            Client.Animation.Speed = Client.Flags.SpindashSpeed/10
         } else {
             Client.Animation.Current = "Roll"
             Client.State.Current = Client.State.States.Airborne

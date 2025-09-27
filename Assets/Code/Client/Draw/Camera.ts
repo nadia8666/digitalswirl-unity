@@ -1,7 +1,7 @@
-import { Signal } from "@Easy/Core/Shared/Util/Signal"
 import Client from "../Client"
 import { Mouse } from "@Easy/Core/Shared/UserInput"
 import { CFrame } from "Code/Shared/Types"
+import { Constants } from "Code/Shared/Common/Constants"
 
 const MouseSensitivity = new Vector2(1, 0.77).mul(math.rad(0.5))
 const PitchMax = 85
@@ -20,13 +20,15 @@ export class Camera {
 
     constructor(Client: Client) {
         //Render.RegisterStepped("Camera", Enum.RenderPriority.Camera.Value + 1, (Delta:number) => this.Update(Delta))
-        this.Rotation = { X: 0, Y: 0, Z: 0 }
+        const CharacterY = Client.Angle.eulerAngles.y
+
+        this.Rotation = { X: 0, Y: math.rad(CharacterY), Z: 0 }
         this.Zoom = 16
         this.Client = Client
         this.InputVector = Vector3.right
 
         this.InputChanged = Mouse.onScrolled.Connect((Delta) => {
-            this.Zoom = math.clamp(this.Zoom - (Delta.delta * 4), 0, 32)
+            this.Zoom = math.clamp(this.Zoom - (Delta.delta * 4), 0, 64)
         })
 
         this.CameraOffset = Client.Physics.CameraOffset
@@ -41,8 +43,11 @@ export class Camera {
         let JoyRight = Vector2.zero
         const MouseDelta = Mouse.GetDelta()
 
+        const Scale = this.Client.Physics.Scale
+
         const RotatingCamera =
-            (Mouse.isRightDown && MouseDelta.magnitude > 0)
+            this.Client.Mouse.Locked ? true :
+                Mouse.IsOverUI() ? false : (Mouse.isRightDown && MouseDelta.magnitude > 0)
 
         if (RotatingCamera) {
             let CamDelta = MouseDelta
@@ -58,15 +63,23 @@ export class Camera {
 
         const Rotation = Quaternion.Euler(0, math.deg(this.Rotation.Y), 0).mul(Quaternion.Euler(math.deg(this.Rotation.X), 0, 0))
 
-        // TODO: abstract & implement popper
-        const FinalCFrame =
-            new CFrame(this.Client.RenderCFrame.Position, Rotation).mul(
-                new CFrame(this.CameraOffset)
-            ).add(
-                new Vector3(0, this.Client.Physics.HipHeight, 0)
-            ).add(
-                Rotation.mul(Vector3.forward).mul(-this.Zoom)
+        // TODO: abstract
+        let FinalCFrame =
+            new CFrame(this.Client.RenderCFrame.Position, Rotation).add(
+                this.Client.RenderCFrame.Rotation.mul(this.CameraOffset.mul(Scale))
+            ).mul(
+                new CFrame(Vector3.forward.mul(-this.Zoom * Scale))
             )
+
+        const Origin = this.Client.RenderCFrame.mul(new CFrame(this.CameraOffset.mul(Scale))).Position
+        const Look = FinalCFrame.Position.sub(Origin)
+        const Velocity = Look.magnitude
+
+        const [Hit, Position] = Physics.Raycast(Origin, Look.normalized, Velocity, Constants.CollisionLayer)
+
+        if (Hit) {
+            FinalCFrame = new CFrame(Position!.add(Look.normalized.mul(-.1)), FinalCFrame.Rotation)
+        }
 
         this.Transform.rotation = Rotation
         this.Transform.position = FinalCFrame.Position

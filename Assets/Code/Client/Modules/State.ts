@@ -42,7 +42,7 @@ export class SrcState {
             Client.State.Current.AfterUpdateHook(Client)
         }
 
-        //Client.Animation.Animate(Client)
+        Client.Animation.Animate(1 / 60)
     }
 
     /**

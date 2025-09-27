@@ -20,15 +20,21 @@ export class StateGrounded extends SrcState {
     }
 
     protected AfterUpdateHook(Client: Client) {
+        if (Client.Speed.x === 0) {
+            PhysicsHandler.RotateWithGravity(Client)
+        }
+        
         PhysicsHandler.ApplyGravity(Client)
-        //PhysicsHandler.Turn(Client, Client.Input.GetTurn(), undefined)
         PhysicsHandler.AccelerateGrounded(Client)
 
         if (Client.Ground.Grounded) {
             const Slip = math.sqrt(1)
             const Acceleration = math.min(math.abs(Client.Speed.x) / Client.Physics.CrashSpeed, 1)
-
-            Client.Animation.Current = Client.Speed.x > 0 && "Run" || "Idle"
+            
+            const IdleCheck = math.abs(Client.Speed.x) <= 0 ? (!Client.Animation.Current.find("Idle")[0] && !Client.Animation.Current.find("Land")[0]) : true
+            if (Client.Animation.Current !== "LandMoving" && IdleCheck) {
+                Client.Animation.Current = math.abs(Client.Speed.x) > 0 && "Run" || "Idle"
+            }
             Client.Animation.Speed = Client.Animation.Current === "Run" && math.lerp(Client.Speed.x / Slip + (1 - Slip) * 2, Client.Speed.x, Acceleration) || 1
         } else {
             Client.Animation.Current = "Fall"

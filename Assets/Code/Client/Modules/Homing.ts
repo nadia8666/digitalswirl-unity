@@ -13,7 +13,7 @@ export function CheckHomingAttack(Client: Client) {
 
         Client.ExitBall()
         Client.Flags.TrailEnabled = true
-        Client.Animation.Current = "Fall"
+        Client.Animation.Current = "HomingAttack"
 
         Client.Sound.Play("Character/Dash")
 

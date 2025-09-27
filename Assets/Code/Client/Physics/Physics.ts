@@ -23,7 +23,6 @@ export const PhysicsHandler = {
         let [HasControl, Turn, Magnitude] = Client.Input.Get()
 
         //X air drag
-        // TODO: see if i can improve
         if (HasControl) {
             if (Client.Speed.x <= MaxXSpeed || Client.Ground.DotProduct <= 0.96) {
                 if (Client.Speed.x > MaxXSpeed) {
@@ -164,11 +163,12 @@ export const PhysicsHandler = {
     ApplyGravity: (Client: Client) => {
         if (Client.IsScripted()) { return }
 
-        const weight = Client.GetWeight()
+        const Weight = Client.GetWeight()
+        let GravityAcceleration = Client.ToLocal(Client.Flags.Gravity.mul(Weight))
 
+        /*
         //Get cross product between our moving velocity and floor normal
         const FloorCrossSpeed = Client.Flags.LastUp.Cross(Client.ToGlobal(Client.Speed)) // TODO: replace with floor normal if needed
-        let GravityAcceleration = Client.ToLocal(Client.Flags.Gravity.mul(weight))
         if (Client.Ground.DotProduct < 0.875) {
             if (Client.Ground.DotProduct >= 0.1 || math.abs(FloorCrossSpeed.y) <= 0.6 || Client.Speed.x < 1.16) {
                 if (Client.Ground.DotProduct >= -0.4 || Client.Speed.x <= 1.16) {
@@ -191,42 +191,64 @@ export const PhysicsHandler = {
 
                 }
             } else {
-                GravityAcceleration = new Vector3(0, -weight, 0)
+                GravityAcceleration = new Vector3(0, -Weight, 0)
             }
         } else {
-            GravityAcceleration = new Vector3(0, -weight, 0)
+            GravityAcceleration = new Vector3(0, -Weight, 0)
         }
+        */
+
+        print(GravityAcceleration)
 
         Client.Speed = Client.Speed.add(GravityAcceleration)
     },
 
     // Movement
-    // TOOD: port https://github.com/SonicOnset/DigitalSwirl-Client/blob/master/ControlScript/Client/Movement.lua
     AlignToGravity: (Client: Client) => {
         if (Client.IsScripted()) { return }
 
-        if (Client.Speed.magnitude < Client.Physics.DashSpeed) {
-            //Remember previous speed
-            const prev_spd = Client.ToGlobal(Client.Speed)
+        //Remember previous speed
+        const prev_spd = Client.ToGlobal(Client.Speed)
 
-            //Get next angle
-            const from = Client.Angle.mul(Vector3.up)
-            const to = Client.Flags.Gravity.normalized.mul(-1)
-            const turn = VUtil.Angle(from, to)
+        //Get next angle
+        const from = Client.Angle.mul(Vector3.up)
+        const to = Client.Flags.Gravity.normalized.mul(-1)
+        const turn = VUtil.Angle(from, to)
 
-            if (turn !== 0) {
-                const max_turn = math.rad(11.25)
-                const lim_turn = math.clamp(turn, -max_turn, max_turn)
+        if (turn !== 0) {
+            const max_turn = math.rad(11.25)
+            const lim_turn = math.clamp(turn, -max_turn, max_turn)
 
-                const next_ang = Quaternion.FromToRotation(from, to).mul(Client.Angle)
+            const next_ang = Quaternion.FromToRotation(from, to).mul(Client.Angle)
 
-                Client.Angle = Quaternion.Slerp(Client.Angle, next_ang, lim_turn / turn)
+            Client.Angle = Quaternion.Slerp(Client.Angle, next_ang, lim_turn / turn)
+        }
+
+        //Keep using previous speed
+        Client.Speed = Client.ToLocal(prev_spd)
+    },
+
+    RotateWithGravity: (Client: Client) => {
+        const GlobalSpeed = Client.ToGlobal(Client.Speed)
+        const DotProduct = GlobalSpeed.normalized.Dot(Client.Flags.Gravity.normalized)
+
+        if (GlobalSpeed.magnitude <= Client.Physics.JogSpeed || DotProduct >= -.86) {
+            let Gravity = Client.ToLocal(Client.Flags.Gravity.normalized)
+            
+            if (Gravity.y <= 0 && Gravity.y > -.87) {
+                // Get turn
+                if (Gravity.x < 0) {
+                    Gravity = Gravity.WithX(-Gravity.x)
+                }
+
+                const Turn = -math.atan2(Gravity.z / Client.Physics.Scale, Gravity.x / Client.Physics.Scale)
+                const MaxTurn = math.abs(Gravity.z / Client.Physics.Scale) * math.rad(8.4375)
+
+                PhysicsHandler.Turn(Client, math.clamp(Turn, -MaxTurn, MaxTurn))
             }
-
-            //Keep using previous speed
-            Client.Speed = Client.ToLocal(prev_spd)
         }
     },
+
     /**
      * Slowdown function to emulate skidding
      * 

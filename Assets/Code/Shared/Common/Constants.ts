@@ -1,4 +1,4 @@
 export const Constants = {
     Tickrate: 60,
-    CollisionLayer: 17,
+    CollisionLayer: LayerMask.GetMask("GameLayer0"),
 }

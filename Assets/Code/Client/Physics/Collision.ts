@@ -33,7 +33,7 @@ function LocalFlatten(Client: Client, vector: Vector3, normal: Vector3) {
 }
 
 function Raycast(From: Vector3, Direction: Vector3) {
-    const [Hit, Position, Normal, Collider] = Physics.Raycast(From, Direction.normalized, Direction.magnitude, LayerMask.GetMask("GameLayer0"))
+    const [Hit, Position, Normal, Collider] = Physics.Raycast(From, Direction.normalized, Direction.magnitude, Constants.CollisionLayer)
     Debug.DrawRay(From, Direction, Color.white, 1)
 
     if (Hit) {
@@ -53,7 +53,7 @@ function WallRay(Client: Client, Y: number, Direction: Vector3, Velocity: number
     const [Hit, Position, Normal] = Raycast(From, ForwardDirection)
 
     if (Hit) {
-        return $tuple((Position?.sub(ReverseDirection))?.sub(From), Normal, Position)
+        return $tuple((Position!.sub(ReverseDirection))!.sub(From), Normal, Position)
     }
 
     return $tuple(undefined, undefined, undefined)
@@ -133,14 +133,14 @@ export function RunCollision(Client: Client) {
     const PreviousSpeed = Client.ToGlobal(Client.Speed)
 
     //Stick to moving floors
-    if (Client.Ground.Grounded && Client.Ground.Floor && Client.Ground.FloorLast) {
-        //const PreviousWorld = Client.Ground.FloorLast
-        //const NewWorld = Client.Ground.Floor.transform
-        //const RightDiff = Quaternion.FromToRotation(PreviousWorld.Rotation.mul(Vector3.right), NewWorld.right)
+    if (Client.Ground.Grounded && Client.Ground.Floor) {
+        const PreviousWorld = Client.Ground.FloorLast!.mul(Client.Ground.FloorOffset)
+        const NewWorld = CFrame.FromTransform(Client.Ground.Floor.transform).mul(Client.Ground.FloorOffset)
+        const RightDiff = Quaternion.FromToRotation(PreviousWorld.Rotation.mul(Vector3.right), NewWorld.Rotation.mul(Vector3.right))
+        const FloorDifference = NewWorld.Position.sub(PreviousWorld.Position)
 
-        //Client.Ground.FloorSpeed = NewWorld.position.sub(PreviousWorld.Position)
-        //Client.Position = Client.Position.add(Client.Ground.FloorSpeed)
-        //Client.Angle = RightDiff.mul(Client.Angle)
+        Client.Position = Client.Position.add(FloorDifference)
+        Client.Angle = RightDiff.mul(Client.Angle)
     }
 
     for (const i of $range(1, 4)) {
@@ -220,7 +220,6 @@ export function RunCollision(Client: Client) {
             const From = Client.Position.add(Client.Angle.mul(Vector3.up).mul(FloorUp))
             const Direction = Client.Angle.mul(Vector3.up).mul(FloorDown)
             let [Hit, Position, Normal] = Raycast(From, Direction)
-            print(Hit)
 
             //Do additional collision checks
             if (Hit && Position && Normal) {
@@ -234,7 +233,7 @@ export function RunCollision(Client: Client) {
                     if (Client.Angle.mul(Vector3.up).Dot(Normal) < 0.3) {
                         DropOff = true
                     } else if (Normal.Dot(Client.Flags.Gravity.normalized.mul(-1)) < 0.4) {
-                        if (((Client.Speed.x ^ 2) + (Client.Speed.z ^ 2)) < (1.16 ^ 2)) {
+                        if (((Client.Speed.x ** 2) + (Client.Speed.z ** 2)) < (1.16 ** 2)) {
                             DropOff = true
                         }
                     }
@@ -260,22 +259,22 @@ export function RunCollision(Client: Client) {
             }
 
             //Do standard floor collision
-            if (Hit && Position && Normal) {
+            if (Hit) {
                 //Snap to ground
                 Client.Position = Position
                 Client.Ground.Floor = Hit.transform
 
                 //Align with ground
                 if (!Client.Ground.Grounded) {
-                    Client.Speed = VUtil.Flatten(Client.ToGlobal(Client.Speed), Normal)
+                    Client.Speed = VUtil.Flatten(Client.ToGlobal(Client.Speed), Normal!)
 
                     Client.Ground.Grounded = true
-                    AlignNormal(Client, Normal)
+                    AlignNormal(Client, Normal!)
 
                     Client.Speed = Client.ToLocal(Client.Speed)
                 } else {
                     Client.Ground.Grounded = true
-                    AlignNormal(Client, Normal)
+                    AlignNormal(Client, Normal!)
                 }
 
                 //Kill any lingering vertical speed
@@ -296,7 +295,6 @@ export function RunCollision(Client: Client) {
             const [Hit, Position, Normal] = Raycast(PreviousMiddle, NewEnd.sub(PreviousMiddle))
             if (Hit && Position && Normal) {
                 //Clip us out
-                print("clip")
                 Client.Position = Client.Position.add((Position.sub(NewAdd)).sub(NewMiddle))
                 Client.Speed = LocalVelCancel(Client, Client.Speed.mul(.8), Normal) // TODO: see if you can do without?
             }
@@ -313,16 +311,18 @@ export function RunCollision(Client: Client) {
     //Client.flag.underwater = PointInWater(Client.pos + Client.GetUp() * (Client.Physics.height * Client.Physics.scale)) // TODO: water
 
     //Handle floor positioning
-    if (Client.Flags.Gravity && Client.Ground.Floor) {
+    if (Client.Ground.Floor) {
         Client.Ground.FloorLast = CFrame.FromTransform(Client.Ground.Floor.transform)
-
-        const Rigid = Client.Ground.Floor.GetComponent<Rigidbody>()
-        if (!Client.Ground.FloorSpeed && Rigid) {
+        Client.Ground.FloorOffset = Client.Ground.FloorLast.Inverse().mul(Client.GetCFrame())
+        
+        const Rigid = Client.Ground.Floor.gameObject.GetComponent<Rigidbody>()
+        if (Rigid) {
             Client.Ground.FloorSpeed = Rigid.GetRelativePointVelocity(Client.Position).div(Constants.Tickrate)
         }
     } else {
         Client.Ground.Floor = undefined
         Client.Ground.FloorLast = undefined
+        Client.Ground.FloorOffset = CFrame.identity
 
         Client.Speed = Client.Speed.add(Client.ToLocal(Client.Ground.FloorSpeed).div(Client.Physics.Scale))
 

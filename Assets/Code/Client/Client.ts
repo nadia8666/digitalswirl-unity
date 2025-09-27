@@ -9,8 +9,9 @@ import { Rail, SetRail } from "./Modules/Rail"
 import { SoundController } from "./Draw/Sound"
 import { PlaneProject } from "Code/Shared/Common/Utility/VUtil"
 import { Constants } from "Code/Shared/Common/Constants"
-import Character from "@Easy/Core/Shared/Character/Character"
 import { CFrame } from "Code/Shared/Types"
+import { Mouse } from "@Easy/Core/Shared/UserInput"
+import { Bin } from "@Easy/Core/Shared/Util/Bin"
 
 /**
  * Flags list
@@ -83,6 +84,7 @@ class Ground {
     public Floor: Transform | undefined
     public FloorLast: CFrame | undefined
     public FloorSpeed: Vector3 = Vector3.zero
+    public FloorOffset: CFrame
 
     /**
      * Dot product between `Client.Angle.UpVector` and `Client.Flags.Gravity`
@@ -96,6 +98,8 @@ class Ground {
  */
 export default class Client extends AirshipBehaviour {
     // Main
+    public Controller: Animator
+
     public Position: Vector3
     public Speed: Vector3
     public Angle: Quaternion
@@ -110,6 +114,7 @@ export default class Client extends AirshipBehaviour {
 
     // Character info
     public Physics: typeof CharacterInfo.Physics
+    public Animations: typeof CharacterInfo.Animations
 
     // Modules
     public State: StateMachine
@@ -123,6 +128,11 @@ export default class Client extends AirshipBehaviour {
 
     // Components
     public Ground: Ground
+    public Mouse = {
+        Locked: true,
+        Bin: new Bin(),
+    }
+    public EventListener: AnimationEventListener
 
     override Start() {
         this.Position = this.transform.position
@@ -134,6 +144,7 @@ export default class Client extends AirshipBehaviour {
         this.RenderCFrame = this.CurrentCFrame
 
         this.Physics = CharacterInfo.Physics
+        this.Animations = CharacterInfo.Animations
 
         this.State = new StateMachine(this)
         this.Animation = new Animation(this)
@@ -150,6 +161,10 @@ export default class Client extends AirshipBehaviour {
         this.CollectState = new CollectState()
 
         this.PreviousAngle = Quaternion.identity
+    }
+
+    override OnDestroy() {
+        this.Mouse.Bin.Clean()
     }
 
     /**
@@ -196,10 +211,10 @@ export default class Client extends AirshipBehaviour {
      * @returns Local vector
      */
     public ToLocal(Vector: Vector3) {
-        const MathAngle = this.GetCFrame().mul(CFrame.FromQuaternion(Quaternion.Euler(0, 90, 0))).Rotation
+        const MathAngle = this.Angle.mul(Quaternion.Euler(0, -90, 0))
 
         // may need to swap
-        return Quaternion.Inverse(MathAngle).mul(Vector)
+        return Quaternion.Inverse(MathAngle).mul(Vector).mul(new Vector3(1, 1, -1))
     }
 
     /**
@@ -210,10 +225,10 @@ export default class Client extends AirshipBehaviour {
      * @returns Global vector
      */
     public ToGlobal(Vector: Vector3) {
-        const MathAngle = this.GetCFrame().mul(CFrame.FromQuaternion(Quaternion.Euler(0, 90, 0))).Rotation
+        const MathAngle = this.Angle.mul(Quaternion.Euler(0, -90, 0))
 
         // may need to swap
-        return MathAngle.mul(Vector)
+        return MathAngle.mul(Vector).mul(new Vector3(1, 1, 1))
     }
 
     /**

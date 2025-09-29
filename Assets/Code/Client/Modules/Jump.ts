@@ -18,7 +18,7 @@ export function CheckJump(Client: Client) {
         Client.Animation.Current = "Roll"
         Client.Animation.Speed = Client.Speed.x
 
-        Client.Sound.Play("Character/Jump")
+        Client.Sound.Play("Character/Jump.wav")
 
         return true
     }

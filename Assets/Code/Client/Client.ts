@@ -153,7 +153,7 @@ export default class Client extends AirshipBehaviour {
         this.Input = new Input(this)
         this.Object = new ObjectController(this)
         this.Rail = new Rail()
-        this.Sound = new SoundController()
+        this.Sound = new SoundController(this)
 
         this.Ground = new Ground()
 
@@ -263,10 +263,13 @@ export default class Client extends AirshipBehaviour {
      * Exits the Clients current ball, check {@link EnterBall} for `Roll`/`JumpBall` rules
      */
     public ExitBall() {
-        this.Sound.Stop("Character/SpindashCharge")
+        this.Sound.Stop("Character/SpindashCharge.wav")
 
         this.Flags.TrailEnabled = false
         this.Flags.BallEnabled = false
+
+        this.Flags.InBounce = false
+        this.Flags.Bounces = 0
     }
 
     /**

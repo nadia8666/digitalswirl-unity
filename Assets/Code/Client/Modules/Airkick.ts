@@ -66,7 +66,7 @@ export class AirKick extends SrcState {
             Client.Land()
 
             if (FallSpeed > 0) {
-                Client.Sound.Play("Character/Land")
+                Client.Sound.Play("Character/Land.wav")
             }
         } else {
             if (this.Timer <= 0 || Client.Speed.magnitude < .35) {

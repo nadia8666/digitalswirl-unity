@@ -16,7 +16,7 @@ export function CheckSkid(Client: Client) {
     const Skid = HasControl && (math.abs(Turn) > math.rad(135)) || false
 
     if (Skid) {
-        Client.Sound.Play("Character/Skid")
+        Client.Sound.Play("Character/Skid.wav")
 
         Client.Animation.Current = "Skid"
         Client.State.Current = Client.State.States.Skid

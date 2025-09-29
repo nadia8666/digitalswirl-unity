@@ -16,7 +16,7 @@ export function CheckSpindash(Client: Client) {
         Client.Flags.SpindashSpeed = math.max(Client.Speed.x, 3)
         Client.EnterBall()
 
-        Client.Sound.Play("Character/SpindashCharge")
+        Client.Sound.Play("Character/SpindashCharge.wav")
 
         return true
     }
@@ -39,8 +39,8 @@ export class StateSpindash extends SrcState {
             }
         } else {
             // Release
-            Client.Sound.Stop("Character/SpindashCharge")
-            Client.Sound.Play("Character/SpindashRelease")
+            Client.Sound.Stop("Character/SpindashCharge.wav")
+            Client.Sound.Play("Character/SpindashRelease.wav")
 
             Client.Speed = Client.Speed.mul(new Vector3(0, 1, 1)).add(new Vector3(Client.Flags.SpindashSpeed, 0, 0))
             Client.EnterBall()

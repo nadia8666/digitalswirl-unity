@@ -166,7 +166,6 @@ export const PhysicsHandler = {
         const Weight = Client.GetWeight()
         let GravityAcceleration = Client.ToLocal(Client.Flags.Gravity.mul(Weight))
 
-        /*
         //Get cross product between our moving velocity and floor normal
         const FloorCrossSpeed = Client.Flags.LastUp.Cross(Client.ToGlobal(Client.Speed)) // TODO: replace with floor normal if needed
         if (Client.Ground.DotProduct < 0.875) {
@@ -196,9 +195,6 @@ export const PhysicsHandler = {
         } else {
             GravityAcceleration = new Vector3(0, -Weight, 0)
         }
-        */
-
-        print(GravityAcceleration)
 
         Client.Speed = Client.Speed.add(GravityAcceleration)
     },
@@ -234,7 +230,7 @@ export const PhysicsHandler = {
 
         if (GlobalSpeed.magnitude <= Client.Physics.JogSpeed || DotProduct >= -.86) {
             let Gravity = Client.ToLocal(Client.Flags.Gravity.normalized)
-            
+
             if (Gravity.y <= 0 && Gravity.y > -.87) {
                 // Get turn
                 if (Gravity.x < 0) {
@@ -349,7 +345,7 @@ export const PhysicsHandler = {
         PhysicsHandler.TurnRaw(Client, math.clamp(Turn, -MaxTurn, MaxTurn))
 
         if (IState === undefined) {
-            if (Client.Ground.Grounded) {
+            if (!Client.Ground.Grounded) {
                 Client.Speed = Client.Speed.mul(.1).add(Client.ToLocal(PreviousSpeed).mul(.9))
             } else {
                 let Inertia

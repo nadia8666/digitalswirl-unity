@@ -1,3 +1,4 @@
+import { Network } from "Code/Shared/Network";
 import Client from "../Client";
 import { InferredAnimation, SetAnimation, ValidAnimation } from "Code/Shared/CharacterInfo";
 
@@ -6,7 +7,8 @@ import { InferredAnimation, SetAnimation, ValidAnimation } from "Code/Shared/Cha
  */
 export class Animation {
     public Current: ValidAnimation
-    public Speed: number = 0
+    public Speed: number = 1
+    private LastSpeed: number = 1
     private Last: ValidAnimation
     private Client: Client
     public WeightLayers = {
@@ -130,6 +132,7 @@ export class Animation {
 
         if (Previous !== Next) {
             this.Speed = 1
+            Network.Replication.AnimationChanged.client.FireServer(0, this.Current, this.Speed, 2)
 
             let [TransitionTo, TransitionFrom]: [number | undefined, number | undefined] = [undefined, undefined]
 
@@ -171,6 +174,11 @@ export class Animation {
             this.UpdateState(Next, true, TransitionTo)
 
             this.Last = this.Current
+        }
+
+        if (this.Speed !== this.LastSpeed) {
+            Network.Replication.AnimationChanged.client.FireServer(0, this.Current, this.Speed, 1)
+            this.LastSpeed = this.Speed
         }
 
         this.UpdateCurrent(Next, DeltaTime)

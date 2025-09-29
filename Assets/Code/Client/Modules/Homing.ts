@@ -15,7 +15,7 @@ export function CheckHomingAttack(Client: Client) {
         Client.Flags.TrailEnabled = true
         Client.Animation.Current = "HomingAttack"
 
-        Client.Sound.Play("Character/Dash")
+        Client.Sound.Play("Character/Dash.wav")
 
         return true
     }

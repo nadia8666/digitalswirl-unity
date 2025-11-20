@@ -297,6 +297,8 @@ export function RunCollision(Client: Client) {
                 //Clip us out
                 Client.Position = Client.Position.add((Position.sub(NewAdd)).sub(NewMiddle))
                 Client.Speed = LocalVelCancel(Client, Client.Speed.mul(.8), Normal) // TODO: see if you can do without?
+
+                Client.Object.CollideWithClient()
             }
             else {
                 Client.Object.CollideWithClient()

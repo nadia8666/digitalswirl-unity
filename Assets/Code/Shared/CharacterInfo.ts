@@ -14,9 +14,13 @@ export interface InferredAnimation {
 export interface AnimationData {
 	EndAnimation?: keyof typeof CharacterInfo["Animations"],
 	Transitions?: {
-		[Index: string]: {
-			From?: number,
-			To?: number
+		From?: {
+			[Index: string]: number | undefined
+			All?: number
+		}
+		To?: {
+			[Index: string]: number | undefined
+			All?: number
 		}
 	}
 }
@@ -27,7 +31,7 @@ export const CharacterInfo = {
 	Physics: {
 		// Collision
 		Height: 5,
-		Scale: .6/3,
+		Scale: .6 / 3,
 		Radius: 3,
 		PositionError: 2,
 
@@ -58,7 +62,7 @@ export const CharacterInfo = {
 
 		AirResist: new Vector3(-.008, -.01, -.4),
 
-		CameraOffset: new Vector3(0, 6, 0),
+		CameraOffset: new Vector3(0, 13, 0),
 
 		// Moves
 		HomingForce: { AirDash: 5, HomingAttack: 5 }
@@ -72,6 +76,11 @@ export const CharacterInfo = {
 		LandMoving: {
 			[0]: { Name: "LandMoving" },
 			EndAnimation: "Run",
+			Transitions: {
+				To: {
+					Run: .0
+				}
+			}
 		},
 		Idle: {
 			[0]: { Name: "Idle" },
@@ -87,13 +96,24 @@ export const CharacterInfo = {
 		Roll: {
 			[0]: { Name: "Roll", Speed: { Base: .25, Increment: 1 / 8, Absolute: true } },
 			Transitions: {
-				All: {
-					From: .15	
+				From: {
+					All: 0
+				},
+				To: {
+					All: 0
 				}
 			}
 		},
 		Spindash: {
 			[0]: { Name: "Spindash" },
+			Transitions: {
+				From: {
+					All: 0
+				},
+				To: {
+					All: 0
+				}
+			}
 		},
 		Fall: {
 			[0]: { Name: "Fall" }
@@ -109,8 +129,8 @@ export const CharacterInfo = {
 			[0]: { Name: "SpringStart" },
 			EndAnimation: "Spring",
 			Transitions: {
-				All: {
-					To: 0
+				To: {
+					All: 0
 				}
 			}
 		},
@@ -126,26 +146,26 @@ export const CharacterInfo = {
 				Name: "Jog",
 				Position: 0,
 				Speed: {
-					Base: .2,
-					Increment: .3,
+					Base: 0,
+					Increment: 1,
 					Absolute: false
 				}
 			},
 			[1]: {
 				Name: "Run",
-				Position: 4,
+				Position: 2.65,
 				Speed: {
-					Base: .2,
-					Increment: .3,
+					Base: 0,
+					Increment: 1,
 					Absolute: false
 				}
 			},
 			[2]: {
 				Name: "Jet",
-				Position: 6,
+				Position: 5,
 				Speed: {
-					Base: .3,
-					Increment: .4,
+					Base: 0,
+					Increment: 1,
 					Absolute: false
 				}
 			},
@@ -187,12 +207,7 @@ export const CharacterInfo = {
 			}
 		} & {
 			EndAnimation?: string,
-			Transitions?: {
-				[Index: string]: {
-					From?: number,
-					To?: number
-				}
-			}
+			Transitions?: AnimationData["Transitions"]
 		}
 	}
 }

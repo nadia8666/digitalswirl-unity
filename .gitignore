@@ -127,6 +127,8 @@ Assets/TypeScriptEditorMetadata.aseditorinfo
 **/Resources
 **/eslint.config.ts
 **/ProjectSettings
+*.bytes
+*.exr
 
 # Ignore all non-local packages
 

@@ -11,7 +11,6 @@ type ButtonUnion = ExtractKeys<Input["Button"], ButtonState>
 export class Input {
     public Button
     public PlatformContext: string
-    public ControllerContext: String
     public Stick
     private Client: Client
 
@@ -25,8 +24,7 @@ export class Input {
             AirKick: new ButtonState([Key.R]),
         }
 
-        this.PlatformContext = "PC" // assume pc by default
-        this.ControllerContext = "Xbox"
+        this.PlatformContext = "PC"
         this.Stick = Vector2.zero
     }
 
@@ -49,9 +47,6 @@ export class Input {
 
     public GetInputState() {
         const KeyboardState = new Set<Key>()
-
-        //const ControllerState = UserInputService.GetGamepadState(Enum.UserInputType.Gamepad1)
-        //const MobileState: InputObject[] = [] // TODO: automatically create mobile buttons and match them to keycodes
 
         for (const [ID, State] of pairs(this.Button)) {
             for (const [_, Button] of pairs(State.KeyCodes)) {

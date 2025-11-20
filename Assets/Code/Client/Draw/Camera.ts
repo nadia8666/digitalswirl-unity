@@ -19,10 +19,7 @@ export class Camera {
     public Transform: Transform = GameObject.FindGameObjectWithTag("MainCamera").transform
 
     constructor(Client: Client) {
-        //Render.RegisterStepped("Camera", Enum.RenderPriority.Camera.Value + 1, (Delta:number) => this.Update(Delta))
-        const CharacterY = Client.Angle.eulerAngles.y
-
-        this.Rotation = { X: 0, Y: math.rad(CharacterY), Z: 0 }
+        this.Rotation = { X: 0, Y: 0, Z: 0 }
         this.Zoom = 16
         this.Client = Client
         this.InputVector = Vector3.right
@@ -44,6 +41,9 @@ export class Camera {
         const MouseDelta = Mouse.GetDelta()
 
         const Scale = this.Client.Physics.Scale
+        const Angle = this.Client.Renderer.Angle
+        const RenderPos = this.Client.RenderCFrame.Position
+        const RenderCFrame = new CFrame(RenderPos, Angle)
 
         const RotatingCamera =
             this.Client.Mouse.Locked ? true :
@@ -63,22 +63,34 @@ export class Camera {
 
         const Rotation = Quaternion.Euler(0, math.deg(this.Rotation.Y), 0).mul(Quaternion.Euler(math.deg(this.Rotation.X), 0, 0))
 
-        // TODO: abstract
         let FinalCFrame =
-            new CFrame(this.Client.RenderCFrame.Position, Rotation).add(
-                this.Client.RenderCFrame.Rotation.mul(this.CameraOffset.mul(Scale))
+            new CFrame(RenderPos, Rotation).add(
+                Angle.mul(this.CameraOffset.mul(Scale))
             ).mul(
                 new CFrame(Vector3.forward.mul(-this.Zoom * Scale))
             )
 
-        const Origin = this.Client.RenderCFrame.mul(new CFrame(this.CameraOffset.mul(Scale))).Position
-        const Look = FinalCFrame.Position.sub(Origin)
-        const Velocity = Look.magnitude
+        let Origin = RenderCFrame.mul(new CFrame(this.CameraOffset.mul(Scale))).Position
+        // Origin cast
+        {
+            const Look = Origin.sub(RenderPos.add(Angle.mul(Vector3.up.mul(.25))))
+            const [Hit, Position] = Physics.Raycast(RenderPos.add(Angle.mul(Vector3.up.mul(.25))), Look.normalized, Look.magnitude, Constants.CollisionLayer)
 
-        const [Hit, Position] = Physics.Raycast(Origin, Look.normalized, Velocity, Constants.CollisionLayer)
+            if (Hit) {
+                Origin = Position!.sub(Look.normalized.mul(.1))
+            }
+        }
 
-        if (Hit) {
-            FinalCFrame = new CFrame(Position!.add(Look.normalized.mul(-.1)), FinalCFrame.Rotation)
+        // Camera cast
+        {
+            const Look = FinalCFrame.Position.sub(Origin)
+            const Velocity = Look.magnitude
+
+            const [Hit, Position] = Physics.Raycast(Origin, Look.normalized, Velocity, Constants.CollisionLayer)
+
+            if (Hit) {
+                FinalCFrame = new CFrame(Position!.sub(Look.normalized.mul(.1)), FinalCFrame.Rotation)
+            }
         }
 
         this.Transform.rotation = Rotation

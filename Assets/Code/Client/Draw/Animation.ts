@@ -47,7 +47,7 @@ export class Animation {
             for (const [Key, Value] of pairs(Animation)) {
                 if (typeOf(Key) !== "number") { continue }
 
-                this.Client.Controller.CrossFade(Value.Name, TransitionTime ?? .15, Key)
+                this.Client.Controller.CrossFadeInFixedTime(Value.Name, TransitionTime ?? .2, Key)
                 this.WeightLayers[Key as 0].Target = 1
             }
         }
@@ -98,21 +98,29 @@ export class Animation {
         this.Client.Controller.SetFloat("AnimSpeed", Speed)
     }
 
+    private CalculateWeightAndSpeed(Animation: InferredAnimation, Initial: boolean = false) {
+        for (const [Key, Value] of pairs(Animation)) {
+            if (typeOf(Key) !== "number") { continue }
+
+            if (Value.Position !== undefined) {
+                this.WeightLayers[Key as 0].Target = this.GetCurrentTrack(Animation) === Value.Name ? 1 : .01
+
+                if (Initial)
+                    this.WeightLayers[Key as 0].Current = this.WeightLayers[Key as 0].Target
+            }
+
+            this.UpdateSpeed(Value)
+        }
+    }
+
+
     /**
      * Do not run
      * @param Client
      * @param Animation 
      */
     private UpdateCurrent(Animation: InferredAnimation, Delta: number) {
-        for (const [Key, Value] of pairs(Animation)) {
-            if (typeOf(Key) !== "number") { continue }
-
-            if (Value.Position !== undefined) {
-                this.WeightLayers[Key as 0].Target = this.GetCurrentTrack(Animation) === Value.Name ? 1 : .01
-            }
-
-            this.UpdateSpeed(Value)
-        }
+        this.CalculateWeightAndSpeed(Animation)
 
         for (let i of $range(0, this.Client.Controller.layerCount - 1)) {
             const Layer = this.WeightLayers[i as 0]
@@ -120,6 +128,39 @@ export class Animation {
 
             this.Client.Controller.SetLayerWeight(i, Layer.Current)
         }
+    }
+
+    public GetTransitions(Previous: SetAnimation, Animation: SetAnimation) {
+        let [LastFrom, LastTo]: [number?, number?] = [undefined, undefined]
+        let [NextFrom, NextTo]: [number?, number?] = [undefined, undefined]
+
+        /* 
+            Order of priorities
+            LastFrom -> New
+            LastTo -> New
+            NewFrom -> New
+            NewTo -> New - triggers lastto -> new instead
+        */
+
+        if (Previous.Transitions) {
+            if (Previous.Transitions.From) {
+                LastFrom = Previous.Transitions.From.All
+            }
+
+            if (Previous.Transitions.To) {
+                LastTo = Previous.Transitions.To.All ?? Previous.Transitions.To[this.Current]
+            }
+        }
+
+        if (Animation.Transitions) {
+            if (Animation.Transitions.From) {
+                NextFrom = Animation.Transitions.From.All ?? Animation.Transitions.From[this.Last]
+            }
+        }
+
+        let TargetTime = NextFrom ?? LastTo ?? LastFrom
+
+        return TargetTime
     }
 
     /**
@@ -134,44 +175,11 @@ export class Animation {
             this.Speed = 1
             Network.Replication.AnimationChanged.client.FireServer(0, this.Current, this.Speed, 2)
 
-            let [TransitionTo, TransitionFrom]: [number | undefined, number | undefined] = [undefined, undefined]
+            const TargetTime = this.GetTransitions(Previous, Next)
 
-            if (Previous.Transitions) {
-                if (Previous.Transitions.All) {
-                    const Transition = Previous.Transitions.All
-
-                    TransitionTo = Transition.To
-                    TransitionFrom = Transition.From
-                }
-
-                for (const [Target, Transition] of pairs(Previous.Transitions)) {
-                    if (Target === "All") { continue }
-
-                    if (this.Current === Target && Transition.From !== undefined) {
-                        TransitionFrom = Transition.From
-                    }
-                }
-            }
-
-            if (Next.Transitions) {
-                if (Next.Transitions.All) {
-                    const Transition = Next.Transitions.All
-
-                    TransitionTo = Transition.To
-                    TransitionFrom = Transition.From
-                }
-
-                for (const [Target, Transition] of pairs(Next.Transitions)) {
-                    if (Target === "All") { continue }
-
-                    if (this.Last === Target && Transition.From !== undefined) {
-                        TransitionTo = Transition.From
-                    }
-                }
-            }
-
-            this.UpdateState(Previous, false, TransitionFrom)
-            this.UpdateState(Next, true, TransitionTo)
+            this.UpdateState(Previous, false, TargetTime)
+            this.UpdateState(Next, true, TargetTime)
+            this.CalculateWeightAndSpeed(Next, true)
 
             this.Last = this.Current
         }

@@ -12,6 +12,7 @@ import { Constants } from "Code/Shared/Common/Constants"
 import { CFrame } from "Code/Shared/Types"
 import { Mouse } from "@Easy/Core/Shared/UserInput"
 import { Bin } from "@Easy/Core/Shared/Util/Bin"
+import _OBJBase from "./Object/Objects/Base"
 
 /**
  * Flags list
@@ -93,6 +94,16 @@ class Ground {
 }
 
 /**
+ * Homing attack container
+ * @class
+ * @ClientComponent
+ */
+class HomingAttack {
+    public Target: _OBJBase|undefined
+    public Timer: number = 0
+}
+
+/**
  * Client
  * @class
  */
@@ -133,6 +144,7 @@ export default class Client extends AirshipBehaviour {
         Bin: new Bin(),
     }
     public EventListener: AnimationEventListener
+    public HomingAttack: HomingAttack
 
     override Start() {
         this.Position = this.transform.position
@@ -159,6 +171,7 @@ export default class Client extends AirshipBehaviour {
 
         this.Flags = new Flags()
         this.CollectState = new CollectState()
+        this.HomingAttack = new HomingAttack()
 
         this.PreviousAngle = Quaternion.identity
     }
@@ -189,6 +202,7 @@ export default class Client extends AirshipBehaviour {
         this.RenderCFrame = this.LastCFrame.Lerp(new CFrame(this.Position, this.Angle), this.State.TickTimer)
 
         this.Renderer.Draw(DeltaTime)
+        this.Object.DrawObjects(DeltaTime)
         this.Camera.Update(DeltaTime)
 
         this.Sound.Update(this.State.GetStateName(this.State.Current))
@@ -264,6 +278,7 @@ export default class Client extends AirshipBehaviour {
      */
     public ExitBall() {
         this.Sound.Stop("Character/SpindashCharge.wav")
+        this.Sound.Stop("Character/SpindashChargeLoop.wav")
 
         this.Flags.TrailEnabled = false
         this.Flags.BallEnabled = false

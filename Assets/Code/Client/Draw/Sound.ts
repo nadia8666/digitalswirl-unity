@@ -15,6 +15,10 @@ type PlayConfig = {
     OriginPoint?: Vector3,
     SoundRange?: number,
 
+    Loop?: boolean,
+    PlayOnComplete?: string,
+    CompleteConfig?: PlayConfig,
+
     BoundState?: keyof StateList
 }
 
@@ -41,6 +45,7 @@ export class SoundController {
 
         const Audio = SoundContainer.AddComponent<AudioSource>()
         Audio.clip = Asset.LoadAsset(`Assets/Resources/Sounds/${Path}`)
+        Audio.loop = Config.Loop ?? false
 
         const Data = SoundContainer.AddAirshipComponent<SoundDataComponent>()
         Data.State = Config.BoundState
@@ -48,7 +53,7 @@ export class SoundController {
 
         if (!Config.MultiChannel) {
             for (const [Index, Target] of pairs(this.Registry)) {
-                const Data = Target.GetAirshipComponent<SoundDataComponent>()
+                const Data = !Target.IsDestroyed() ? Target.GetAirshipComponent<SoundDataComponent>() : undefined
 
                 if (Data && Data.Class === Audio.clip.name) {
                     Destroy(Target)
@@ -60,16 +65,15 @@ export class SoundController {
         Audio.Play()
 
         if (!Audio.loop) {
-            Destroy(SoundContainer, Audio.clip.length)
-            task.delay(math.max(Audio.clip.length - .15, 0), () => {
-                this.Registry.find((Object, Index) => {
-                    if (Object === SoundContainer) {
+            task.delay(Audio.clip.length, () => {
+                if (!SoundContainer || !Data) return
 
-                        this.Registry[Index] = undefined as unknown as GameObject
-                        
-                        return true
-                    }
-                })
+
+                if (Config.PlayOnComplete) {
+                    this.Play(Config.PlayOnComplete, Config.CompleteConfig)
+                }
+
+                Destroy(SoundContainer)
             })
         }
 
@@ -92,7 +96,7 @@ export class SoundController {
             }
         } else {
             for (const [Index, Sound] of pairs(this.Registry)) {
-                const Data = Sound.GetAirshipComponent<SoundDataComponent>()
+                const Data = Sound && Sound.GetAirshipComponent<SoundDataComponent>()
 
                 if (Data && Data.Class === Clip.name) {
                     Destroy(Sound)
@@ -113,7 +117,7 @@ export class SoundController {
 
     public Update(Current: string) {
         for (const [Index, Sound] of pairs(this.Registry)) {
-            const Data = Sound.GetAirshipComponent<SoundDataComponent>()
+            const Data = !Sound.IsDestroyed() ? Sound.GetAirshipComponent<SoundDataComponent>() : undefined
 
             if (Data) {
                 if (Data.State && Data.State !== Current) {
@@ -121,9 +125,10 @@ export class SoundController {
                     this.Registry[Index - 1] = undefined as unknown as GameObject
                 }
             } else {
-                Destroy(Sound)
+                this.Registry[Index - 1] = undefined as unknown as GameObject
+                if (Sound)
+                    Destroy(Sound)
             }
-
         }
     }
 }

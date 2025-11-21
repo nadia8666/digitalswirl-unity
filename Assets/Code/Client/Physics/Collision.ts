@@ -19,7 +19,7 @@ function AlignNormal(Client: Client, Normal: Vector3) {
 function VelCancel(Velocity: Vector3, Normal: Vector3) {
     const Dot = Velocity.Dot(Normal.normalized)
     if (Dot < 0) {
-        return Velocity.sub((Normal.normalized).mul(Dot))
+        return Velocity.sub(Normal.normalized.mul(Dot))
     }
     return Velocity
 }
@@ -149,7 +149,7 @@ export function RunCollision(Client: Client) {
         const PreviousMiddle = Client.GetMiddle()
 
         //Wall collision heights
-        const HeightScale = 1
+        const HeightScale = Client.Flags.BallEnabled ? .8 : 1
         const Heights = [
             Client.Physics.Height * 0.85 * Client.Physics.Scale * HeightScale,
             Client.Physics.Height * 1.25 * Client.Physics.Scale * HeightScale,

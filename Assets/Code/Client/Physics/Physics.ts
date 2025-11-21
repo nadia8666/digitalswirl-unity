@@ -1,3 +1,4 @@
+import { Constants } from "Code/Shared/Common/Constants";
 import Client from "../Client";
 import * as VUtil from "Code/Shared/Common/Utility/VUtil";
 
@@ -397,5 +398,32 @@ export const PhysicsHandler = {
             return math.min(-Speed, -Deceleration)
         }
         return 0
+    },
+
+    GetHomingObject(Client: Client) {
+        const Look = Client.Angle.mul(Vector3.forward)
+        const Colliders = Physics.OverlapSphere(Client.Position, 25, Constants.ObjectLayer) as BoxCollider[]
+        const Objects = []
+
+        for (const [_, Collider] of pairs(Colliders)) {
+            const Object = Client.Object.GetObject(Collider)
+            if (!Object || !Object.HomingTarget) { continue }
+
+            const Center = Collider.transform.TransformPoint(Collider.center)
+            const Offset = Center.sub(Client.Position)
+            const Dot = Offset.mul(new Vector3(1, 0, 1)).normalized.Dot(Look)
+            const [Hit] = Physics.Raycast(Client.Position, Offset, Offset.magnitude, Constants.CollisionLayer)
+            const YOff = Collider.transform.InverseTransformPoint(Client.Position).y
+            const PosValid = YOff <= 15 && YOff >= -5
+
+            if (Dot >= 0.3825 && !Hit && PosValid)
+                Objects.push({ Object: Object, Distance: 1 - Offset.magnitude / 30, Dot: Dot })
+        }
+
+        Objects.sort((A, B) => {
+            return ((A.Distance) + (A.Dot * .5)) > ((B.Distance) + (B.Dot * .5))
+        })
+
+        return Objects[0]?.Object
     }
 }

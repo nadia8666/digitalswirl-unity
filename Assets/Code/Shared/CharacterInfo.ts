@@ -125,21 +125,13 @@ export const CharacterInfo = {
 			[0]: { Name: "Skid" },
 			EndAnimation: "Idle",
 		},
-		SpringStart: {
-			[0]: { Name: "SpringStart" },
-			EndAnimation: "Spring",
-			Transitions: {
-				To: {
-					All: 0
-				}
-			}
-		},
 		Spring: {
 			[0]: { Name: "Spring" },
-		},
-		SpringEnd: {
-			[0]: { Name: "SpringEnd" },
-			EndAnimation: "Fall"
+			Transitions: {
+				To: {
+					All: .4
+				}
+			}
 		},
 		Run: {
 			[0]: {

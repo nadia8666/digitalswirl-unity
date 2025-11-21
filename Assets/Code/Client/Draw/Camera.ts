@@ -20,7 +20,7 @@ export class Camera {
 
     constructor(Client: Client) {
         this.Rotation = { X: 0, Y: 0, Z: 0 }
-        this.Zoom = 16
+        this.Zoom = 32
         this.Client = Client
         this.InputVector = Vector3.right
 

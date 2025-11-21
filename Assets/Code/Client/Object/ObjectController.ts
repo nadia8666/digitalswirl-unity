@@ -15,7 +15,7 @@ export class ObjectController {
         // todo: this better. like the spatial module but doesnt error at big range
         const Center = Collider.transform.TransformPoint(Collider.center)
         if (Center.sub(this.Client.Position).magnitude <= Collider.size.magnitude * 3) {
-            const [Min, Max] = [Center.sub(Collider.size), Center.add(Collider.size)]
+            const [Min, Max] = [Center.sub(Collider.size.mul(.5)), Center.add(Collider.size.mul(.5))]
             const Pos = this.Client.Position
 
             if (Min.x <= Pos.x && Min.y <= Pos.y && Min.z <= Pos.z && Max.x >= Pos.x && Max.y >= Pos.y && Max.z >= Pos.z) {
@@ -32,7 +32,7 @@ export class ObjectController {
         const LastPosition = this.Client.LastCFrame.Position
         if (LastPosition !== this.Client.Position) {
             const Look = this.Client.Position.sub(LastPosition)
-            const [Cast, _1, _2, Collider] = Physics.SphereCast(LastPosition, this.Client.Physics.Radius, Look.normalized, Look.magnitude, Constants.ObjectLayer)
+            const [Cast, _1, _2, Collider] = Physics.SphereCast(LastPosition, this.Client.Physics.Radius * this.Client.Physics.Scale, Look.normalized, Look.magnitude, Constants.ObjectLayer)
 
             if (Cast) {
                 const Object = Objects.get(Collider as BoxCollider)
@@ -53,6 +53,16 @@ export class ObjectController {
                 return this.Client
             })
         }
+    }
+
+    public DrawObjects(DeltaTime: number) {
+        for (const [_, Object] of Objects) {
+            Object.Draw(DeltaTime)
+        }
+    }
+
+    public GetObject(Collider: BoxCollider) {
+        return Objects.get(Collider)
     }
 }
 

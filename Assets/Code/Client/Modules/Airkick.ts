@@ -34,7 +34,7 @@ export function CheckAirKick(Client: Client) {
  * @state
  * @augments SrcState
  */
-export class AirKick extends SrcState {
+export class StateAirKick extends SrcState {
     public Timer: number = 0
 
     constructor() {

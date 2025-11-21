@@ -177,7 +177,6 @@ export class Animation {
 
             const TargetTime = this.GetTransitions(Previous, Next)
 
-            this.UpdateState(Previous, false, TargetTime)
             this.UpdateState(Next, true, TargetTime)
             this.CalculateWeightAndSpeed(Next, true)
 

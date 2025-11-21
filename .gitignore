@@ -129,6 +129,8 @@ Assets/TypeScriptEditorMetadata.aseditorinfo
 **/ProjectSettings
 *.bytes
 *.exr
+**/Scenes
+**/Editor
 
 # Ignore all non-local packages
 

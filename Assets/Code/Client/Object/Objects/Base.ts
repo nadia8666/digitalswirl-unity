@@ -1,18 +1,29 @@
-import Framework from "Code/Client/Framework"
 import { RegisterObject } from "../ObjectController"
 import { Bin } from "@Easy/Core/Shared/Util/Bin"
 import Client from "Code/Client/Client"
-import { Reflect } from "@Easy/Core/Shared/Flamework"
 
 export default class _OBJBase extends AirshipBehaviour {
     public Collider: BoxCollider
+    public HomingTarget = false
     protected Connections = new Bin()
     protected Debounce = 0
+    public readonly Injects = {
+        AnimationLoader: false
+    }
 
     override Start() {
         if ($CLIENT) {
             this.InitObject()
         }
+
+        this.Inject()
+    }
+
+    /**
+     * Runs on start for object implementation injection, override per object.
+     */
+    public Inject() {
+
     }
 
     public InitObject() {
@@ -51,6 +62,10 @@ export default class _OBJBase extends AirshipBehaviour {
 
     public Draw(DeltaTime: number) {
         this.PreRender(DeltaTime)
+
+        if (this.Injects.AnimationLoader) {
+            (this as unknown as {Animate: (this: unknown) => void}).Animate()
+        }
     }
 
     public Respawn() {

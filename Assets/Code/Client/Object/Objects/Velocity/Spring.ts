@@ -1,17 +1,28 @@
 import { CFrame } from "Code/Shared/Types"
 import _OBJBase from "../Base"
 import Client from "Code/Client/Client"
+import { AnimatedObject, AnimateObject } from "../Implementables"
 
 @AirshipComponentMenu("Object/Spring")
-export default class _OBJSpring extends _OBJBase {
+export default class _OBJSpring extends _OBJBase implements AnimatedObject<"None" | "Activate"> {
+    public Animator: Animator
+    public Listener: AnimationEventListener
+    public AnimationState: "None" | "Activate" = "None"
     public Velocity = new Vector3(0, 2, 0)
     public Wide = false
     public ForceAngle = false
     public DirectVelocity = false
     public LockTime = 0
 
+    override Inject() {
+        this.HomingTarget = true
+
+        AnimateObject.Inject(this)
+    }
+
     override OnTouch(Client: Client) {
         Client.ResetObjectState()
+        Client.EnterBall()
 
         Client.Speed = this.Velocity
 
@@ -35,9 +46,17 @@ export default class _OBJSpring extends _OBJBase {
         Client.Flags.LockTimer = math.ceil(this.LockTime * 60)
         Client.Flags.AirKickEnabled = true
         Client.State.Current = Client.State.States.Airborne
-        Client.Animation.Current = "SpringStart"
+        Client.Animation.Current = "Spring"
         Client.Ground.Grounded = false
 
+        this.AnimationState = "Activate"
+
         this.Debounce = 6
+    }
+
+    public UpdateAnimationState() { }
+
+    public AnimationEnded() {
+        this.AnimationState = "None"
     }
 }

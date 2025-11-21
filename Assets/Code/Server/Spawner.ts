@@ -8,7 +8,7 @@ export default class Spawner extends AirshipSingleton {
     public Characters = new Map<Player, number>()
 
     public SpawnCharacter(Player: Player) {
-        const Character = Instantiate(Asset.LoadAsset("Assets/Resources/Models/Sonic.prefab"), this.transform.position, this.transform.rotation)
+        const Character = Instantiate(Asset.LoadAsset("Assets/Resources/Prefabs/Sonic.prefab"), this.transform.position, this.transform.rotation)
         NetworkServer.Spawn(Character, Player.networkIdentity.connectionToClient as unknown as NetworkConnection)
 
         const Identity = Character.GetComponent<NetworkIdentity>()!

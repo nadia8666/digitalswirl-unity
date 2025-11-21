@@ -78,4 +78,41 @@ export class CFrame {
     public Lerp(Other: CFrame, Alpha: number) {
         return new CFrame(this.Position.Lerp(Other.Position, Alpha), Quaternion.Slerp(this.Rotation, Other.Rotation, Alpha))
     }
+
+    public static Angles(rx: number, ry: number, rz: number) {
+        const qx = Quaternion.AngleAxis(rx * (180 / math.pi), Vector3.right);
+        const qy = Quaternion.AngleAxis(ry * (180 / math.pi), Vector3.up);
+        const qz = Quaternion.AngleAxis(rz * (180 / math.pi), Vector3.forward);
+
+        const rotation = qz.mul(qy).mul(qx);
+
+        return new CFrame(Vector3.zero, rotation);
+    }
+
+    public ToOrientation() {
+        const q = this.Rotation;
+        
+        const R10 = 2 * (q.x * q.y + q.z * q.w);
+        const R11 = 1 - 2 * (q.x * q.x + q.z * q.z);
+        const R12 = 2 * (q.y * q.z - q.x * q.w);
+
+        const R02 = 2 * (q.x * q.z + q.y * q.w);
+        const R22 = 1 - 2 * (q.x * q.x + q.y * q.y);
+
+        const rx = math.asin(math.max(-1, math.min(1, -R12)));
+
+        let ry: number, rz: number;
+
+        if (math.abs(R12) > 0.99999) {
+            rz = 0;
+            const R01 = 2 * (q.x * q.y - q.z * q.w);
+            const R00 = 1 - 2 * (q.y * q.y + q.z * q.z);
+            ry = math.atan2(-R01, R00);
+        } else {
+            ry = math.atan2(R02, R22);
+            rz = math.atan2(R10, R11);
+        }
+
+        return $tuple(rx, ry, rz);
+    }
 }

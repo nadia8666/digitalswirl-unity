@@ -16,7 +16,12 @@ export function CheckSpindash(Client: Client) {
         Client.Flags.SpindashSpeed = math.max(Client.Speed.x, 3)
         Client.EnterBall()
 
-        Client.Sound.Play("Character/SpindashCharge.wav")
+        Client.Sound.Play("Character/SpindashCharge.wav", {
+            CompleteConfig: {
+                Loop: true
+            },
+            PlayOnComplete: "Character/SpindashChargeLoop.wav"
+        })
 
         return true
     }
@@ -40,6 +45,7 @@ export class StateSpindash extends SrcState {
         } else {
             // Release
             Client.Sound.Stop("Character/SpindashCharge.wav")
+            Client.Sound.Stop("Character/SpindashChargeLoop.wav")
             Client.Sound.Play("Character/SpindashRelease.wav")
 
             Client.Speed = Client.Speed.mul(new Vector3(0, 1, 1)).add(new Vector3(Client.Flags.SpindashSpeed, 0, 0))
@@ -58,7 +64,7 @@ export class StateSpindash extends SrcState {
 
         if (Client.Ground.Grounded) {
             Client.Animation.Current = "Spindash"
-            Client.Animation.Speed = Client.Flags.SpindashSpeed/10
+            Client.Animation.Speed = Client.Flags.SpindashSpeed / 10
         } else {
             Client.Animation.Current = "Roll"
             Client.State.Current = Client.State.States.Airborne

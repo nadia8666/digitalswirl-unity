@@ -1,6 +1,6 @@
 import Client from "../Client";
 import * as VUtil from "Code/Shared/Common/Utility/VUtil"
-import { Constants } from "Code/Shared/Common/Constants";
+import { Constants } from "Code/Shared/Components/ConfigSingleton";
 import { CFrame } from "Code/Shared/Types";
 
 function GetAligned(Client: Client, Normal: Vector3) {
@@ -33,7 +33,7 @@ function LocalFlatten(Client: Client, vector: Vector3, normal: Vector3) {
 }
 
 function Raycast(From: Vector3, Direction: Vector3) {
-    const [Hit, Position, Normal, Collider] = Physics.Raycast(From, Direction.normalized, Direction.magnitude, Constants.CollisionLayer)
+    const [Hit, Position, Normal, Collider] = Physics.Raycast(From, Direction.normalized, Direction.magnitude, Constants().Masks().CollisionLayer)
     Debug.DrawRay(From, Direction, Color.white, 1)
 
     if (Hit) {
@@ -46,9 +46,9 @@ function Raycast(From: Vector3, Direction: Vector3) {
 //Wall collision
 function WallRay(Client: Client, Y: number, Direction: Vector3, Velocity: number) {
     //Raycast
-    const ReverseDirection = Direction.mul(Client.Physics.Radius * Client.Physics.Scale)
+    const ReverseDirection = Direction.mul(Client.Config.Radius * Client.Config.Scale)
     const From = Client.Position.add(Client.Angle.mul(Vector3.up.mul(Y)))
-    const ForwardDirection = Direction.mul((Client.Physics.Radius + Velocity) * Client.Physics.Scale)
+    const ForwardDirection = Direction.mul((Client.Config.Radius + Velocity) * Client.Config.Scale)
 
     const [Hit, Position, Normal] = Raycast(From, ForwardDirection)
 
@@ -67,8 +67,8 @@ function CheckWallAttach(Client: Client, Direction: Vector3, Normal: Vector3) {
 }
 
 function WallAttach(Client: Client, InputNormal: Vector3) {
-    const FUp = Client.Physics.Height * Client.Physics.Scale
-    const FDown = FUp + (Client.Physics.PositionError * Client.Physics.Scale)
+    const FUp = Client.Config.Height * Client.Config.Scale
+    const FDown = FUp + (Client.Config.PositionError * Client.Config.Scale)
     const [Hit, Position, Normal] = Raycast(Client.Position.add(Client.Angle.mul(Vector3.up).mul(FUp)), InputNormal.mul(-FDown))
 
     if (Hit && Position) {
@@ -151,9 +151,9 @@ export function RunCollision(Client: Client) {
         //Wall collision heights
         const HeightScale = Client.Flags.BallEnabled ? .8 : 1
         const Heights = [
-            Client.Physics.Height * 0.85 * Client.Physics.Scale * HeightScale,
-            Client.Physics.Height * 1.25 * Client.Physics.Scale * HeightScale,
-            Client.Physics.Height * 1.95 * Client.Physics.Scale * HeightScale,
+            Client.Config.Height * 0.85 * Client.Config.Scale * HeightScale,
+            Client.Config.Height * 1.25 * Client.Config.Scale * HeightScale,
+            Client.Config.Height * 1.95 * Client.Config.Scale * HeightScale,
         ]
 
         //Wall collision and horizontal movement
@@ -170,22 +170,22 @@ export function RunCollision(Client: Client) {
             }
 
             if (XMove) {
-                Client.Position = Client.Position.add(Client.Angle.mul(Vector3.forward).mul(Client.Speed.x * Client.Physics.Scale))
+                Client.Position = Client.Position.add(Client.Angle.mul(Vector3.forward).mul(Client.Speed.x * Client.Config.Scale))
             }
             if (ZMove) {
-                Client.Position = Client.Position.add(Client.Angle.mul(Vector3.right).mul(Client.Speed.z * Client.Physics.Scale))
+                Client.Position = Client.Position.add(Client.Angle.mul(Vector3.right).mul(Client.Speed.z * Client.Config.Scale))
             }
         }
 
         //Ceiling collision
         {
-            let CeilUp = Client.Physics.Height * Client.Physics.Scale
+            let CeilUp = Client.Config.Height * Client.Config.Scale
             let CeilDown = CeilUp
 
             if (Client.Speed.y > 0) {
-                CeilDown += Client.Speed.y * Client.Physics.Scale //Moving upwards, extend raycast upwards
+                CeilDown += Client.Speed.y * Client.Config.Scale //Moving upwards, extend raycast upwards
             } else if (Client.Speed.y < 0) {
-                CeilUp += Client.Speed.y * Client.Physics.Scale //Moving downwards, move raycast downwards
+                CeilUp += Client.Speed.y * Client.Config.Scale //Moving downwards, move raycast downwards
             }
 
             const From = Client.Position.add(Client.Angle.mul(Vector3.up).mul(CeilUp))
@@ -198,7 +198,7 @@ export function RunCollision(Client: Client) {
                     //Client.flag.ceiling_clip = nor:Dot(Client.gravity.normalized) > 0.9 // TODO: ceil clip
                 } else {
                     //Clip and cancel velocity
-                    Client.Position = Position.sub((Client.Angle.mul(Vector3.up).mul((Client.Physics.Height * 2 * Client.Physics.Scale))))
+                    Client.Position = Position.sub((Client.Angle.mul(Vector3.up).mul((Client.Config.Height * 2 * Client.Config.Scale))))
                     Client.Speed = LocalVelCancel(Client, Client.Speed, Normal)
                     //Client.flag.ceiling_clip = false
                 }
@@ -207,14 +207,14 @@ export function RunCollision(Client: Client) {
 
         //Floor collision
         {
-            let PositionError = Client.Ground.Grounded && (Client.Physics.PositionError * Client.Physics.Scale) || 0
-            let FloorUp = Client.Physics.Height * Client.Physics.Scale
+            let PositionError = Client.Ground.Grounded && (Client.Config.PositionError * Client.Config.Scale) || 0
+            let FloorUp = Client.Config.Height * Client.Config.Scale
             let FloorDown = -(FloorUp + PositionError)
 
             if (Client.Speed.y < 0) {
-                FloorDown += Client.Speed.y * Client.Physics.Scale //Moving downwards, extend raycast downwards
+                FloorDown += Client.Speed.y * Client.Config.Scale //Moving downwards, extend raycast downwards
             } else if (Client.Speed.y > 0) {
-                FloorUp += Client.Speed.y * Client.Physics.Scale //Moving upwards, move raycast upwards
+                FloorUp += Client.Speed.y * Client.Config.Scale //Moving upwards, move raycast upwards
             }
 
             const From = Client.Position.add(Client.Angle.mul(Vector3.up).mul(FloorUp))
@@ -281,7 +281,7 @@ export function RunCollision(Client: Client) {
                 Client.Speed = Client.Speed.WithY(0)
             } else {
                 //Move vertically and unground
-                Client.Position = Client.Position.add(Client.Angle.mul(Vector3.up).mul(Client.Speed.y * Client.Physics.Scale))
+                Client.Position = Client.Position.add(Client.Angle.mul(Vector3.up).mul(Client.Speed.y * Client.Config.Scale))
                 Client.Ground.Grounded = false
                 Client.Ground.Floor = undefined
             }
@@ -290,9 +290,13 @@ export function RunCollision(Client: Client) {
         //Check if we clipped through something from our previous position to our new position
         const NewMiddle = Client.GetMiddle()
         if (NewMiddle !== PreviousMiddle) {
-            const NewAdd = NewMiddle.sub(PreviousMiddle).normalized.mul((Client.Physics.Radius * Client.Physics.Scale))
+            const NewAdd = NewMiddle.sub(PreviousMiddle).normalized.mul((Client.Config.Radius * Client.Config.Scale))
             const NewEnd = NewMiddle// + new_add
             const [Hit, Position, Normal] = Raycast(PreviousMiddle, NewEnd.sub(PreviousMiddle))
+
+            if (Hit)
+                Debug.DrawRay(PreviousMiddle, NewEnd.sub(PreviousMiddle), Color.red, 15)
+
             if (Hit && Position && Normal) {
                 //Clip us out
                 Client.Position = Client.Position.add((Position.sub(NewAdd)).sub(NewMiddle))
@@ -316,17 +320,17 @@ export function RunCollision(Client: Client) {
     if (Client.Ground.Floor) {
         Client.Ground.FloorLast = CFrame.FromTransform(Client.Ground.Floor.transform)
         Client.Ground.FloorOffset = Client.Ground.FloorLast.Inverse().mul(Client.GetCFrame())
-        
+
         const Rigid = Client.Ground.Floor.gameObject.GetComponent<Rigidbody>()
         if (Rigid) {
-            Client.Ground.FloorSpeed = Rigid.GetRelativePointVelocity(Client.Position).div(Constants.Tickrate)
+            Client.Ground.FloorSpeed = Rigid.GetRelativePointVelocity(Client.Position).div(Constants().Tickrate)
         }
     } else {
         Client.Ground.Floor = undefined
         Client.Ground.FloorLast = undefined
         Client.Ground.FloorOffset = CFrame.identity
 
-        Client.Speed = Client.Speed.add(Client.ToLocal(Client.Ground.FloorSpeed).div(Client.Physics.Scale))
+        Client.Speed = Client.Speed.add(Client.ToLocal(Client.Ground.FloorSpeed).div(Client.Config.Scale))
 
         Client.Ground.FloorSpeed = Vector3.zero
     }

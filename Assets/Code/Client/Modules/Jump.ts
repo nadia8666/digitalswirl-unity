@@ -1,5 +1,4 @@
 import Client from "Code/Client/Client"
-import { PhysicsHandler } from "../Physics/Physics"
 
 /**
  * Function ran in `State.CheckInput`
@@ -11,10 +10,11 @@ export function CheckJump(Client: Client) {
     if (Client.Input.Button.Jump.Pressed) {
         Client.State.Current = Client.State.States.Airborne
 
-        Client.Speed = Client.Speed.WithY(Client.Physics.JumpInitalForce).add(Client.Ground.FloorSpeed)
+        Client.Speed = Client.Speed.WithY(Client.Config.JumpInitialForce).add(Client.Ground.FloorSpeed)
 
         Client.Ground.Grounded = false
-        Client.Flags.JumpTimer = Client.Physics.JumpTicks
+        Client.Flags.JumpTimer = Client.Config.JumpTicks
+        Client.StretchJumpBall()
 
         Client.EnterBall()
         Client.Animation.Current = "Roll"

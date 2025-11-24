@@ -130,7 +130,7 @@ Assets/TypeScriptEditorMetadata.aseditorinfo
 *.bytes
 *.exr
 **/Scenes
-**/Editor
+**/Editor/*.config
 
 # Ignore all non-local packages
 

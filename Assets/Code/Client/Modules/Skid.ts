@@ -9,7 +9,7 @@ import { SrcState } from "./State"
  * @returns Move successful
  */
 export function CheckSkid(Client: Client) {
-    if (Client.Speed.x < Client.Physics.JogSpeed) { return }
+    if (Client.Speed.x < Client.Config.JogSpeed) { return }
 
     const [HasControl, Turn] = Client.Input.Get()
 

@@ -1,8 +1,8 @@
 import Client from "./Client"
 import { StateList } from "./States"
-import { FrameworkState } from "Code/Shared/Common/FrameworkState"
 import { SrcState } from "./Modules/State"
 import { CFrame } from "Code/Shared/Types"
+import Config, { Constants } from "Code/Shared/Components/ConfigSingleton"
 
 /**
  * State machine
@@ -45,7 +45,7 @@ export class StateMachine {
      * Update the state machine, **only run this if you know what you're doing!**
      */
     public Update(DeltaTime: number) {
-        if (FrameworkState.GameSpeed === 0) {
+        if (Constants().GameSpeed === 0) {
             this.Client.Input.PrepareReset()
             this.Client.Input.Update()
 
@@ -53,20 +53,34 @@ export class StateMachine {
         }
 
         // Internal fixed update loop
-        this.TickTimer = math.min(this.TickTimer + DeltaTime * (60 * FrameworkState.GameSpeed), 10)
+        this.TickTimer = math.min(this.TickTimer + DeltaTime * (60 * Constants().GameSpeed), 10)
         while (this.TickTimer > 1) {
             // Timers
-            if (this.Client.Flags.LockTimer > 0) {
+            if (this.Client.Flags.LockTimer > 0)
                 this.Client.Flags.LockTimer--
-            }
 
-            if (this.Client.Flags.Invulnerability > 0) {
+            if (this.Client.Flags.Invulnerability > 0)
                 this.Client.Flags.Invulnerability--
-            }
+
+            if (this.Client.Flags.JumpTimer > 0)
+                this.Client.Flags.JumpTimer--
+
+            if (this.Client.Flags.JumpStretchTimer > 0)
+                this.Client.Flags.JumpStretchTimer--
 
             // Main update
             this.Client.Input.Update()
             this.Client.Input.PrepareReset()
+
+            // DEBUG
+            if (this.Client.Input.Button.Debug.Pressed) {
+                this.Client.Flags.Gravity = this.Client.Flags.Gravity.mul(-1)
+                this.Client.Ground.Grounded = false
+                this.Client.Angle = this.Client.Angle.mul(Quaternion.Euler(0, 0, 180))
+                this.Client.Speed = this.Client.Speed.mul(new Vector3(1, -1, 0))
+            }
+
+            this.Client.Animation.Turn = 0
 
             this.Client.Object.TickObjects()
             this.TickState()

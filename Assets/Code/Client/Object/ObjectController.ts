@@ -1,4 +1,4 @@
-import { Constants } from "Code/Shared/Common/Constants"
+import { Constants } from "Code/Shared/Components/ConfigSingleton"
 import Client from "../Client"
 import _OBJBase from "./Objects/Base"
 
@@ -32,7 +32,7 @@ export class ObjectController {
         const LastPosition = this.Client.LastCFrame.Position
         if (LastPosition !== this.Client.Position) {
             const Look = this.Client.Position.sub(LastPosition)
-            const [Cast, _1, _2, Collider] = Physics.SphereCast(LastPosition, this.Client.Physics.Radius * this.Client.Physics.Scale, Look.normalized, Look.magnitude, Constants.ObjectLayer)
+            const [Cast, _1, _2, Collider] = Physics.SphereCast(LastPosition, this.Client.Config.Radius * this.Client.Config.Scale, Look.normalized, Look.magnitude, Constants().Masks().ObjectLayer)
 
             if (Cast) {
                 const Object = Objects.get(Collider as BoxCollider)

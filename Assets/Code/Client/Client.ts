@@ -2,17 +2,18 @@ import { Camera } from "./Draw/Camera"
 import { Renderer } from "./Draw/Renderer"
 import { StateMachine } from "./StateMachine"
 import { Input } from "./Control/Input"
-import { CharacterInfo } from "Code/Shared/CharacterInfo"
+import { Animations } from "Code/Shared/CharacterInfo"
 import { Animation } from "./Draw/Animation"
 import { ObjectController } from "./Object/ObjectController"
 import { Rail, SetRail } from "./Modules/Rail"
 import { SoundController } from "./Draw/Sound"
 import { PlaneProject } from "Code/Shared/Common/Utility/VUtil"
-import { Constants } from "Code/Shared/Common/Constants"
 import { CFrame } from "Code/Shared/Types"
 import { Mouse } from "@Easy/Core/Shared/UserInput"
 import { Bin } from "@Easy/Core/Shared/Util/Bin"
 import _OBJBase from "./Object/Objects/Base"
+import { PhysicsHandler } from "./Physics/Physics"
+import Config, { Constants } from "Code/Shared/Components/ConfigSingleton"
 
 /**
  * Flags list
@@ -38,6 +39,7 @@ class Flags {
      * Timer to reduce gravity while holding `Client.Input.Button.Jump` 
      */
     public JumpTimer = 0
+    public JumpStretchTimer = 0
     public SpindashSpeed = 0
     public Bounces = 0
     public InBounce = false
@@ -99,8 +101,9 @@ class Ground {
  * @ClientComponent
  */
 class HomingAttack {
-    public Target: _OBJBase|undefined
+    public Target: _OBJBase | undefined
     public Timer: number = 0
+    public Speed: number = 0
 }
 
 /**
@@ -110,22 +113,23 @@ class HomingAttack {
 export default class Client extends AirshipBehaviour {
     // Main
     public Controller: Animator
+    public RigParent: GameObject
 
-    public Position: Vector3
-    public Speed: Vector3
-    public Angle: Quaternion
+    @NonSerialized() public Position: Vector3
+    @NonSerialized() public Speed: Vector3
+    @NonSerialized() public Angle: Quaternion
+    @NonSerialized() public PreviousAngle: Quaternion
     public LastCFrame: CFrame
     public CurrentCFrame: CFrame
     public RenderCFrame: CFrame
-    public PreviousAngle: Quaternion
 
     // Flags
     public Flags: Flags
     public CollectState: CollectState
 
     // Character info
-    public Physics: typeof CharacterInfo.Physics
-    public Animations: typeof CharacterInfo.Animations
+    public Config: Config["Character"] = Constants().Character
+    public Animations: typeof Animations
 
     // Modules
     public State: StateMachine
@@ -147,48 +151,59 @@ export default class Client extends AirshipBehaviour {
     public HomingAttack: HomingAttack
 
     override Start() {
-        this.Position = this.transform.position
-        this.Angle = this.transform.rotation
-        this.Speed = Vector3.zero
+        const [Success, Error] = pcall(() => {
+            this.Position = this.transform.position
+            this.Angle = this.transform.rotation
+            this.Speed = Vector3.zero
 
-        this.CurrentCFrame = CFrame.FromTransform(this.transform)
-        this.LastCFrame = this.CurrentCFrame
-        this.RenderCFrame = this.CurrentCFrame
+            this.CurrentCFrame = CFrame.FromTransform(this.transform)
+            this.LastCFrame = this.CurrentCFrame
+            this.RenderCFrame = this.CurrentCFrame
 
-        this.Physics = CharacterInfo.Physics
-        this.Animations = CharacterInfo.Animations
+            this.Animations = Animations
 
-        this.State = new StateMachine(this)
-        this.Animation = new Animation(this)
-        this.Camera = new Camera(this)
-        this.Renderer = new Renderer(this)
-        this.Input = new Input(this)
-        this.Object = new ObjectController(this)
-        this.Rail = new Rail()
-        this.Sound = new SoundController(this)
+            this.State = new StateMachine(this)
+            this.Animation = new Animation(this)
+            this.Camera = new Camera(this)
+            this.Renderer = new Renderer(this)
+            this.Input = new Input(this)
+            this.Object = new ObjectController(this)
+            this.Rail = new Rail()
+            this.Sound = new SoundController(this)
 
-        this.Ground = new Ground()
+            this.Ground = new Ground()
 
-        this.Flags = new Flags()
-        this.CollectState = new CollectState()
-        this.HomingAttack = new HomingAttack()
+            this.Flags = new Flags()
+            this.CollectState = new CollectState()
+            this.HomingAttack = new HomingAttack()
 
-        this.PreviousAngle = Quaternion.identity
+            this.PreviousAngle = Quaternion.identity
+        })
+
+        if (!Success) {
+            warn(`Client failed to initialize:\n${Error}`)
+            this.gameObject.SetActive(false)
+        }
     }
 
     override OnDestroy() {
         this.Mouse.Bin.Clean()
+
+        this.Destroy()
     }
 
     /**
      * Destroys the Client
      */
     public Destroy() {
-        //TODO
+        this.Renderer.Destroy()
+
         this.Sound.Destroy()
     }
 
     public Update(DeltaTime: number) {
+        Profiler.BeginSample("Client:Update")
+
         // Angle reset
         if (this.PreviousAngle !== this.Angle) {
             this.SetGroundRelative()
@@ -206,6 +221,12 @@ export default class Client extends AirshipBehaviour {
         this.Camera.Update(DeltaTime)
 
         this.Sound.Update(this.State.GetStateName(this.State.Current))
+
+        Profiler.EndSample()
+    }
+
+    public LateUpdate(DeltaTime: number) {
+        this.Animation.DynamicTilt(DeltaTime)
     }
 
     // Utility functions
@@ -250,7 +271,7 @@ export default class Client extends AirshipBehaviour {
      * @returns Client center position
      */
     public GetMiddle() {
-        return this.Position.add(this.Angle.mul(Vector3.up).mul(this.Physics.Height * this.Physics.Scale))
+        return this.Position.add(this.Angle.mul(Vector3.up).mul(this.Config.Height * this.Config.Scale))
     }
 
     /**
@@ -309,25 +330,29 @@ export default class Client extends AirshipBehaviour {
         SetRail(this)
     }
 
+    public StretchJumpBall() {
+        this.Flags.JumpStretchTimer = this.Config.JumpStretchTimer
+    }
+
     /**
      * Air resist when affected by water
      */
     public GetAirResist() {
-        return this.Physics.AirResist.mul(new Vector3(1, this.Flags.InWater && 1.5 || 1, 1))
+        return this.Config.AirResist.mul(new Vector3(1, this.Flags.InWater && 1.5 || 1, 1))
     }
 
     /**
      * Run acceleration when affected by water
      */
     public GetRunAcceleration() {
-        return this.Physics.RunAcceleration * (this.Flags.InWater && .65 || 1)
+        return this.Config.RunAcceleration * (this.Flags.InWater && .65 || 1)
     }
 
     /**
      * Weight when affected by water
      */
     public GetWeight() {
-        return this.Physics.Weight * (this.Flags.InWater && .45 || 1)
+        return this.Config.Weight * (this.Flags.InWater && .45 || 1)
     }
 
     /**
@@ -350,8 +375,8 @@ export default class Client extends AirshipBehaviour {
 
         this.ResetObjectState()
         this.ExitBall()
-        this.Flags.HurtTime = math.floor(1.5 * Constants.Tickrate)
-        this.Flags.Invulnerability = math.floor(2.75 * Constants.Tickrate)
+        this.Flags.HurtTime = math.floor(1.5 * Constants().Tickrate)
+        this.Flags.Invulnerability = math.floor(2.75 * Constants().Tickrate)
         this.State.Current = this.State.States.Hurt
 
         const [AngleDiff] = PlaneProject(Source ? (Source.sub(this.GetMiddle())) : (this.Angle.mul(Vector3.forward)), this.Flags.Gravity.normalized.mul(-1))

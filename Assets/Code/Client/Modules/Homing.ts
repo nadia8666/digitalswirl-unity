@@ -25,6 +25,7 @@ export function CheckHomingAttack(Client: Client) {
             Client.HomingAttack.Timer = 0
 
             Client.State.Current = Client.State.States.Homing
+            Client.HomingAttack.Speed = math.max(Client.Speed.magnitude, Client.Config.HomingForceAttack)
         } else {
             Client.Animation.Current = "HomingAttack"
             Client.ExitBall()
@@ -32,7 +33,7 @@ export function CheckHomingAttack(Client: Client) {
             Client.State.Current = Client.State.States.Airborne
         }
 
-        Client.Speed = new Vector3(math.max(Client.Speed.x, Client.Physics.HomingForce.AirDash), Client.Speed.y, Client.Speed.z)
+        Client.Speed = new Vector3(math.max(Client.Speed.x, Client.Config.HomingForceDash), Client.Speed.y, Client.Speed.z)
 
         return true
     }
@@ -69,7 +70,7 @@ export class StateHoming extends SrcState {
         const ObjectPos = new CFrame(Client.Position, Client.Angle).Inverse().mul(Center)
 
         // Speed
-        const Speed = Client.Physics.HomingForce.HomingAttack * (Client.HomingAttack.Timer >= 180 ? (.7 + math.random() * .1) : 1)
+        const Speed = Client.HomingAttack.Speed * (Client.HomingAttack.Timer >= 180 ? (.7 + math.random() * .1) : 1)
 
         if (ObjectPos.magnitude <= Collider.size.magnitude / 2) {
             Client.HomingAttack.Target!.TouchClient(Client)

@@ -19,18 +19,20 @@ export class StateGrounded extends SrcState {
         return CheckJump(Client) || CheckSpindash(Client) || CheckSkid(Client) || CheckRail(Client)
     }
 
-    protected AfterUpdateHook(Client: Client) {
+    protected BeforeUpdateHook(Client: Client) {
         if (Client.Speed.x === 0) {
             PhysicsHandler.RotateWithGravity(Client)
         }
-        
+
         PhysicsHandler.ApplyGravity(Client)
         PhysicsHandler.AccelerateGrounded(Client)
+    }
 
+    protected AfterUpdateHook(Client: Client) {
         if (Client.Ground.Grounded) {
             const Slip = math.sqrt(1)
-            const Acceleration = math.min(math.abs(Client.Speed.x) / Client.Physics.CrashSpeed, 1)
-            
+            const Acceleration = math.min(math.abs(Client.Speed.x) / Client.Config.CrashSpeed, 1)
+
             const IdleCheck = math.abs(Client.Speed.x) <= 0 ? (!Client.Animation.Current.find("Idle")[0] && !Client.Animation.Current.find("Land")[0]) : true
             if (Client.Animation.Current !== "LandMoving" && IdleCheck) {
                 Client.Animation.Current = math.abs(Client.Speed.x) > 0 && "Run" || "Idle"

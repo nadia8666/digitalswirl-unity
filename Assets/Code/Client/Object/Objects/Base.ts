@@ -3,8 +3,8 @@ import { Bin } from "@Easy/Core/Shared/Util/Bin"
 import Client from "Code/Client/Client"
 
 export default class _OBJBase extends AirshipBehaviour {
-    public Collider: BoxCollider
-    public HomingTarget = false
+    @NonSerialized() public Collider = this.gameObject.GetComponent<BoxCollider>()!
+    @NonSerialized() public HomingTarget = false
     protected Connections = new Bin()
     protected Debounce = 0
     public readonly Injects = {

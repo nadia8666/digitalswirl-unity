@@ -116,3 +116,7 @@ export class CFrame {
         return $tuple(rx, ry, rz);
     }
 }
+
+export function ToFloat3(Input: Vector3) {
+    return new float3(Input.x, Input.y, Input.z)
+}

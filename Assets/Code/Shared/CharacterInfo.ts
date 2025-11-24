@@ -1,4 +1,4 @@
-export type ValidAnimation = keyof typeof CharacterInfo["Animations"]
+export type ValidAnimation = keyof typeof Animations
 export interface InferredAnimation {
 	[Index: number]: {
 		Name: string,
@@ -12,7 +12,7 @@ export interface InferredAnimation {
 }
 
 export interface AnimationData {
-	EndAnimation?: keyof typeof CharacterInfo["Animations"],
+	EndAnimation?: keyof typeof Animations,
 	Transitions?: {
 		From?: {
 			[Index: string]: number | undefined
@@ -27,180 +27,138 @@ export interface AnimationData {
 
 export type SetAnimation = InferredAnimation & AnimationData
 
-export const CharacterInfo = {
-	Physics: {
-		// Collision
-		Height: 5,
-		Scale: .6 / 3,
-		Radius: 3,
-		PositionError: 2,
-
-		// Physics
-		Weight: .08,
-
-		JogSpeed: .46,
-		RunSpeed: 1.39,
-		RollGetup: 1.39, // Point at which the roll state should uncurl you
-		RushSpeed: 2.3,
-		DashSpeed: 5.09,
-		CrashSpeed: 3.7, // Used in Grounded's acceleration animation speed check
-
-		AirAcceleration: .031,
-		RunAcceleration: .05,
-		MaxXSpeed: 3,
-
-		JumpInitalForce: 1.66,
-		JumpHoldForce: .076,
-		JumpTicks: 60,
-
-		AirDeceleration: -0.17,
-
-		StandardDeceleration: -.06,
-
-		SkidFriction: -.18,
-		GroundFriction: new Vector3(-.1, 0, -.6),
-
-		AirResist: new Vector3(-.008, -.01, -.4),
-
-		CameraOffset: new Vector3(0, 13, 0),
-
-		// Moves
-		HomingForce: { AirDash: 5, HomingAttack: 5 }
+export const Animations = {
+	Land: {
+		[0]: { Name: "Land" },
+		EndAnimation: "Idle",
 	},
-
-	Animations: {
-		Land: {
-			[0]: { Name: "Land" },
-			EndAnimation: "Idle",
-		},
-		LandMoving: {
-			[0]: { Name: "LandMoving" },
-			EndAnimation: "Run",
-			Transitions: {
-				To: {
-					Run: .0
-				}
+	LandMoving: {
+		[0]: { Name: "LandMoving" },
+		EndAnimation: "Run",
+		Transitions: {
+			To: {
+				Run: .125
 			}
-		},
-		Idle: {
-			[0]: { Name: "Idle" },
-		},
-		HomingAttack: {
-			[0]: { Name: "HomingAttack" },
-			EndAnimation: "SpecialFall",
-		},
-		Idle2: {
-			[0]: { Name: "Idle2" },
-			EndAnimation: "Idle",
-		},
-		Roll: {
-			[0]: { Name: "Roll", Speed: { Base: .25, Increment: 1 / 8, Absolute: true } },
-			Transitions: {
-				From: {
-					All: 0
-				},
-				To: {
-					All: 0
-				}
-			}
-		},
-		Spindash: {
-			[0]: { Name: "Spindash" },
-			Transitions: {
-				From: {
-					All: 0
-				},
-				To: {
-					All: 0
-				}
-			}
-		},
-		Fall: {
-			[0]: { Name: "Fall" }
-		},
-		SpecialFall: {
-			[0]: { Name: "SpecialFall" }
-		},
-		Skid: {
-			[0]: { Name: "Skid" },
-			EndAnimation: "Idle",
-		},
-		Spring: {
-			[0]: { Name: "Spring" },
-			Transitions: {
-				To: {
-					All: .4
-				}
-			}
-		},
-		Run: {
-			[0]: {
-				Name: "Jog",
-				Position: 0,
-				Speed: {
-					Base: 0,
-					Increment: 1,
-					Absolute: false
-				}
-			},
-			[1]: {
-				Name: "Run",
-				Position: 2.65,
-				Speed: {
-					Base: 0,
-					Increment: 1,
-					Absolute: false
-				}
-			},
-			[2]: {
-				Name: "Jet",
-				Position: 5,
-				Speed: {
-					Base: 0,
-					Increment: 1,
-					Absolute: false
-				}
-			},
-		},
-		Rail: {
-			[0]: { Name: "Rail" }
-		},
-		RailCrouch: {
-			[0]: { Name: "RailCrouch" }
-		},
-		RailLand: {
-			[0]: { Name: "RailLand" }
-		},
-		RailBalance: {
-			[0]: { Name: "RailBalance" }
-		},
-		RailSwitchLeft: {
-			[0]: { Name: "RailSwitchLeft" }
-		},
-		RailSwitchRight: {
-			[0]: { Name: "RailSwitchRight" }
-		},
-		AirKick: {
-			[0]: { Name: "AirKick" }
-		},
-		AirKickUp: {
-			[0]: { Name: "AirKickUp" }
 		}
-	} as const satisfies {
-		[Index: string]: {
-			[Index: number]: {
-				Name: string,
-				Position?: number,
-				Speed?: {
-					Base: number,
-					Increment: number,
-					Absolute: boolean
-				}
+	},
+	Idle: {
+		[0]: { Name: "Idle" },
+	},
+	HomingAttack: {
+		[0]: { Name: "HomingAttack" },
+		EndAnimation: "SpecialFall",
+	},
+	Idle2: {
+		[0]: { Name: "Idle2" },
+		EndAnimation: "Idle",
+	},
+	Roll: {
+		[0]: { Name: "Roll", Speed: { Base: .25, Increment: 1 / 8, Absolute: true } },
+		Transitions: {
+			From: {
+				All: 0
+			},
+			To: {
+				All: 0
 			}
-		} & {
-			EndAnimation?: string,
-			Transitions?: AnimationData["Transitions"]
 		}
+	},
+	Spindash: {
+		[0]: { Name: "Spindash" },
+		Transitions: {
+			From: {
+				All: 0
+			},
+			To: {
+				All: 0
+			}
+		}
+	},
+	Fall: {
+		[0]: { Name: "Fall" }
+	},
+	SpecialFall: {
+		[0]: { Name: "SpecialFall" }
+	},
+	Skid: {
+		[0]: { Name: "Skid" },
+		EndAnimation: "Idle",
+	},
+	Spring: {
+		[0]: { Name: "Spring" },
+		Transitions: {
+			To: {
+				All: .4
+			}
+		}
+	},
+	Run: {
+		[0]: {
+			Name: "Jog",
+			Position: 0,
+			Speed: {
+				Base: 0,
+				Increment: 1,
+				Absolute: false
+			}
+		},
+		[1]: {
+			Name: "Run",
+			Position: 2.65,
+			Speed: {
+				Base: 0,
+				Increment: 1,
+				Absolute: false
+			}
+		},
+		[2]: {
+			Name: "Jet",
+			Position: 5,
+			Speed: {
+				Base: 0,
+				Increment: 1,
+				Absolute: false
+			}
+		},
+	},
+	Rail: {
+		[0]: { Name: "Rail" }
+	},
+	RailCrouch: {
+		[0]: { Name: "RailCrouch" }
+	},
+	RailLand: {
+		[0]: { Name: "RailLand" }
+	},
+	RailBalance: {
+		[0]: { Name: "RailBalance" }
+	},
+	RailSwitchLeft: {
+		[0]: { Name: "RailSwitchLeft" }
+	},
+	RailSwitchRight: {
+		[0]: { Name: "RailSwitchRight" }
+	},
+	AirKick: {
+		[0]: { Name: "AirKick" }
+	},
+	AirKickUp: {
+		[0]: { Name: "AirKickUp" }
+	}
+} as const satisfies {
+	[Index: string]: {
+		[Index: number]: {
+			Name: string,
+			Position?: number,
+			Speed?: {
+				Base: number,
+				Increment: number,
+				Absolute: boolean
+			}
+		}
+	} & {
+		EndAnimation?: string,
+		Transitions?: AnimationData["Transitions"]
 	}
 }
 

@@ -48,11 +48,11 @@ export class StateAirKick extends SrcState {
     protected BeforeUpdateHook(Client: Client) {
         const [_, Turn, Magnitude] = Client.Input.Get()
         Client.Speed = Client.Speed.add(Client.Speed.mul(new Vector3(
-            Client.Physics.AirResist.x * (.285 - Magnitude * .1),
+            Client.Config.AirResist.x * (.285 - Magnitude * .1),
             Client.GetAirResist().y,
-            Client.Physics.AirResist.z
+            Client.Config.AirResist.z
         )))
-        Client.Speed = Client.Speed.add(Client.ToLocal(Client.Flags.Gravity).mul(Client.Physics.Weight * 0.4))
+        Client.Speed = Client.Speed.add(Client.ToLocal(Client.Flags.Gravity).mul(Client.Config.Weight * 0.4))
 
         PhysicsHandler.Turn(Client, Turn, IntertiaState.GROUND_NOFRICT)
 

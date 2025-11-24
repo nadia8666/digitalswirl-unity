@@ -1,6 +1,42 @@
 import { Network } from "Code/Shared/Network";
 import Client from "../Client";
 import { InferredAnimation, SetAnimation, ValidAnimation } from "Code/Shared/CharacterInfo";
+import { CFrame } from "Code/Shared/Types";
+import Config, { Constants } from "Code/Shared/Components/ConfigSingleton";
+
+class Tilt {
+    public CurrentTilt: number = 0
+    public RotationFunction
+    public transform
+    public LerpForce
+    public ClearRotation
+
+    constructor(Client: Client, Path: string[], ClearRotation: boolean, LerpForce: number, RotationFunction: (Tilt: number) => Quaternion) {
+        this.RotationFunction = RotationFunction
+
+        let CurrentTransform = Client.RigParent.transform
+        for (const [_, Value] of pairs(Path)) {
+            CurrentTransform = CurrentTransform.FindChild(Value)
+
+            if (!CurrentTransform) error(`Failed to find transform on path ${Value}`)
+        }
+
+        this.transform = CurrentTransform
+        this.LerpForce = LerpForce
+        this.ClearRotation = ClearRotation
+    }
+
+    public Update(DeltaTime: number, NewTilt: number) {
+        this.CurrentTilt = math.lerp(this.CurrentTilt, NewTilt, DeltaTime * this.LerpForce)
+
+        const Target = this.RotationFunction(this.CurrentTilt)
+        this.transform.localRotation = this.ClearRotation ? Target : this.transform.localRotation.mul(Target)
+    }
+}
+
+function Evaluate(Curve: AnimationCurve, Tilt: number) {
+    return Curve.Evaluate(math.abs(Tilt) / 80) * math.sign(Tilt) * 80
+}
 
 /**
  * @class
@@ -11,6 +47,8 @@ export class Animation {
     private LastSpeed: number = 1
     private Last: ValidAnimation
     private Client: Client
+    private Tilts: Tilt[] = []
+    public Turn: number = 0
     public WeightLayers = {
         [0]: { Target: 1, Current: 1 },
         [1]: { Target: 1, Current: 0 },
@@ -31,6 +69,18 @@ export class Animation {
                 }
             }
         })
+
+        const Tilts = Constants()
+
+        this.Tilts.push(new Tilt(Client, ["RigAnimation"], true, 5, function (Tilt) { return Quaternion.Euler(-90, 0, 0).mul(Quaternion.Euler(0, Evaluate(Tilts.RigAnimationTilt, -Tilt) / 3, 0)) }))
+        this.Tilts.push(new Tilt(Client, ["RigAnimation", "ref", "root", "root_pivot", "torso", "lower_torso", "chest", "upper_torso", "neck"], false, 5,
+            function (Tilt) {
+                return Quaternion.Euler(0, Evaluate(Tilts.HeadTilt, Tilt), 0)
+            }))
+        this.Tilts.push(new Tilt(Client, ["RigAnimation", "ref", "root", "root_pivot", "torso", "lower_torso", "chest", "upper_torso", "neck", "head", "eye_root", "eye.l"], false, 7,
+            function (Tilt) { return Quaternion.Euler(0, 0, math.clamp(Evaluate(Tilts.EyeTilt, Tilt) / 2, -40, 0)) }))
+        this.Tilts.push(new Tilt(Client, ["RigAnimation", "ref", "root", "root_pivot", "torso", "lower_torso", "chest", "upper_torso", "neck", "head", "eye_root", "eye.r"], false, 7,
+            function (Tilt) { return Quaternion.Euler(0, 0, math.clamp(Evaluate(Tilts.EyeTilt, Tilt) / 2, 0, 40)) }))
     }
 
     /**
@@ -54,7 +104,7 @@ export class Animation {
     }
 
     private GetCurrentTrack(Animation: InferredAnimation) {
-        let Track
+        let [Track, Layer] = [Animation[0].Name, 0]
 
         for (const [Key, Value] of pairs(Animation)) {
             if (typeOf(Key) !== "number") { continue }
@@ -71,16 +121,13 @@ export class Animation {
 
                 if (Triggered) {
                     Track = Value.Name
+                    Layer = Key
                     break
                 }
             }
         }
 
-        if (!Track) {
-            Track = Animation[0].Name
-        }
-
-        return Track
+        return $tuple(Track, Layer)
     }
 
     private UpdateSpeed(Value: InferredAnimation[0]) {
@@ -103,7 +150,7 @@ export class Animation {
             if (typeOf(Key) !== "number") { continue }
 
             if (Value.Position !== undefined) {
-                this.WeightLayers[Key as 0].Target = this.GetCurrentTrack(Animation) === Value.Name ? 1 : .01
+                this.WeightLayers[Key as 0].Target = this.GetCurrentTrack(Animation)[0] === Value.Name ? 1 : .01
 
                 if (Initial)
                     this.WeightLayers[Key as 0].Current = this.WeightLayers[Key as 0].Target
@@ -192,8 +239,17 @@ export class Animation {
     }
 
     public GetRate() {
-        const Track = this.GetCurrentTrack(this.Client.Animations[this.Current])
+        const [_, Layer] = this.GetCurrentTrack(this.Client.Animations[this.Current])
+        const Clip = this.Client.Controller.GetCurrentAnimatorStateInfo(Layer)
 
-        return //Track && Track.Length > 0 ? Track.Speed / Track.Length : 0
+        return (Clip.speed * Clip.speedMultiplier) / Clip.length
+    }
+
+    public DynamicTilt(DeltaTime: number) {
+        const NewTilt = this.Turn >= math.rad(135) ? 0 : math.clamp(this.Turn, math.rad(-80), math.rad(80))
+
+        for (const [_, Tilt] of pairs(this.Tilts)) {
+            Tilt.Update(DeltaTime, math.deg(NewTilt))
+        }
     }
 }

@@ -1,7 +1,9 @@
 import Client from "../Client"
 import { Mouse } from "@Easy/Core/Shared/UserInput"
 import { CFrame } from "Code/Shared/Types"
-import { Constants } from "Code/Shared/Common/Constants"
+import { Airship } from "@Easy/Core/Shared/Airship"
+import { Settings } from "Code/Shared/Settings"
+import { Constants } from "Code/Shared/Components/ConfigSingleton"
 
 const MouseSensitivity = new Vector2(1, 0.77).mul(math.rad(0.5))
 const PitchMax = 85
@@ -28,7 +30,7 @@ export class Camera {
             this.Zoom = math.clamp(this.Zoom - (Delta.delta * 4), 0, 64)
         })
 
-        this.CameraOffset = Client.Physics.CameraOffset
+        this.CameraOffset = Client.Config.CameraOffset
     }
 
     /**
@@ -40,7 +42,7 @@ export class Camera {
         let JoyRight = Vector2.zero
         const MouseDelta = Mouse.GetDelta()
 
-        const Scale = this.Client.Physics.Scale
+        const Scale = this.Client.Config.Scale
         const Angle = this.Client.Renderer.Angle
         const RenderPos = this.Client.RenderCFrame.Position
         const RenderCFrame = new CFrame(RenderPos, Angle)
@@ -52,7 +54,7 @@ export class Camera {
         if (RotatingCamera) {
             let CamDelta = MouseDelta
 
-            const Delta = CamDelta.mul(MouseSensitivity).mul(50)
+            const Delta = CamDelta.mul(MouseSensitivity).mul(Airship.Input.GetMouseSensitivity() * 50 * Settings.CameraSensitivity)
 
             const PitchMod = -Delta.y
             const YawMod = Delta.x
@@ -74,7 +76,7 @@ export class Camera {
         // Origin cast
         {
             const Look = Origin.sub(RenderPos.add(Angle.mul(Vector3.up.mul(.25))))
-            const [Hit, Position] = Physics.Raycast(RenderPos.add(Angle.mul(Vector3.up.mul(.25))), Look.normalized, Look.magnitude, Constants.CollisionLayer)
+            const [Hit, Position] = Physics.Raycast(RenderPos.add(Angle.mul(Vector3.up.mul(.25))), Look.normalized, Look.magnitude, Constants().Masks().CollisionLayer)
 
             if (Hit) {
                 Origin = Position!.sub(Look.normalized.mul(.1))
@@ -86,7 +88,7 @@ export class Camera {
             const Look = FinalCFrame.Position.sub(Origin)
             const Velocity = Look.magnitude
 
-            const [Hit, Position] = Physics.Raycast(Origin, Look.normalized, Velocity, Constants.CollisionLayer)
+            const [Hit, Position] = Physics.Raycast(Origin, Look.normalized, Velocity, )
 
             if (Hit) {
                 FinalCFrame = new CFrame(Position!.sub(Look.normalized.mul(.1)), FinalCFrame.Rotation)

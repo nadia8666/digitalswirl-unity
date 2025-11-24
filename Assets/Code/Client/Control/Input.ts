@@ -22,6 +22,8 @@ export class Input {
             Roll: new ButtonState([Key.E, Key.LeftShift]),
             Bounce: new ButtonState([Key.E, Key.LeftShift]),
             AirKick: new ButtonState([Key.R]),
+
+            Debug: new ButtonState([Key.Digit1])
         }
 
         this.PlatformContext = "PC"
@@ -114,46 +116,43 @@ export class Input {
      * @returns Current turn value
      */
     public GetTurn() {
-        if (this.Client.Flags.LockTimer > 0) {
-            return 0
-        }
-
-        if (this.Stick.magnitude <= 0) { return 0 }
+        if (this.Client.Flags.LockTimer > 0 || this.Stick.magnitude <= 0) return 0
 
         //Get character vectors
-        const tgt_up = Vector3.up // TODO: camera chagne
-        const look = this.Client.Angle.mul(Vector3.forward)
-        const up = this.Client.Angle.mul(Vector3.up)
+        const TargetUp = Vector3.up // TODO: camera chagne
+        const Look = this.Client.Angle.mul(Vector3.forward)
+        const Up = this.Client.Angle.mul(Vector3.up)
 
         //Get camera angle, aligned to our target up vector
-        let [cam_look] = VUtil.PlaneProject(this.Client.Camera.Transform.forward, tgt_up)
-        if (cam_look.magnitude !== 0) {
-            cam_look = cam_look.normalized
+        let [CameraLook] = VUtil.PlaneProject(this.Client.Camera.Transform.forward, TargetUp)
+        if (CameraLook.magnitude !== 0) {
+            CameraLook = CameraLook.normalized
         } else {
-            cam_look = look
+            CameraLook = Look
         }
 
         //Get move vector in world space, aligned to our target up vector
-        let cam_move = Quaternion.Euler(0, math.deg(math.atan2(this.Client.Input.Stick.x, -this.Client.Input.Stick.y)), 0).mul(cam_look)
+        let CameraMove = Quaternion.Euler(0, math.deg(math.atan2(this.Client.Input.Stick.x, -this.Client.Input.Stick.y)), 0).mul(CameraLook)
 
         //Update last up
-        if (tgt_up.Dot(up) >= -0.999) {
-            this.Client.Flags.LastUp = up
+        if (TargetUp.Dot(Up) >= -0.999) {
+            this.Client.Flags.LastUp = Up
         }
 
         //Get final rotation and move vector
-        const final_rotation = Quaternion.FromToRotation(tgt_up, this.Client.Flags.LastUp)
+        const FinalRot = Quaternion.FromToRotation(TargetUp, this.Client.Flags.LastUp)
 
-        let [final_move] = VUtil.PlaneProject(final_rotation.mul(cam_move), up)
-        if (final_move.magnitude !== 0) {
-            final_move = final_move.normalized
+        let [FinalLook] = VUtil.PlaneProject(FinalRot.mul(CameraMove), Up)
+        if (FinalLook.magnitude !== 0) {
+            FinalLook = FinalLook.normalized
         } else {
-            final_move = look
+            FinalLook = Look
         }
 
         //Get turn amount
-        const turn = VUtil.SignedAngle(look, final_move, up)
-        return turn
+        const Turn = VUtil.SignedAngle(Look, FinalLook, Up)
+        this.Client.Animation.Turn = Turn
+        return Turn
     }
 
     /**

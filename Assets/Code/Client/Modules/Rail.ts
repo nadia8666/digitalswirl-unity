@@ -1,9 +1,9 @@
 import Client from "Code/Client/Client"
 import { CheckJump } from "./Jump"
 import { SrcState } from "./State"
-import { Constants } from "Code/Shared/Common/Constants"
 import { Signal } from "@Easy/Core/Shared/Util/Signal"
-import { CFrame } from "Code/Shared/Types"
+import { CFrame, ToFloat3 } from "Code/Shared/Types"
+import { Constants } from "Code/Shared/Components/ConfigSingleton"
 
 /**
  * Rail component interface
@@ -135,7 +135,19 @@ export function CheckRail(Client: Client) {
     const LastPosition = Client.LastCFrame.Position
 
     if (LastPosition !== Client.Position) {
-        
+        const Rails = Physics.OverlapSphere(Client.Position, Client.Config.Radius*2, Constants().Masks().RailLayer)
+
+        for (const [_, Collider] of pairs(Rails)) {
+            const Spline = Collider.gameObject.GetComponent<SplineContainer>();
+            
+            if (!Spline) continue
+
+            //const [NearpPos,Delta] = (SplineUtility as unknown as {GetNearestPoint<T>(this: SplineUtility, Spline: T, Point: float3, Res?: number, It?: number): [float3, number]}).GetNearestPoint(Spline, ToFloat3(Client.Position), 4, 2)
+
+            //print(NearpPos, Delta)
+
+            break
+        }
     }
 
     return Client.State.Current === Client.State.States.Rail

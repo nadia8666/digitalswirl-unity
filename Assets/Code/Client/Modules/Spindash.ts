@@ -83,7 +83,7 @@ export class StateRoll extends SrcState {
     }
 
     protected CheckInput(Client: Client) {
-        if (Client.Input.Button.Roll.Pressed || Client.Speed.x < Client.Physics.RollGetup) {
+        if (Client.Input.Button.Roll.Pressed || Client.Speed.x < Client.Config.RollGetUp) {
             // TODO: ceil clip
             Client.State.Current = Client.State.States.Grounded
             Client.ExitBall()

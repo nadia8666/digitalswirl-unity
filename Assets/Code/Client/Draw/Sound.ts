@@ -2,6 +2,7 @@ import { Asset } from "@Easy/Core/Shared/Asset";
 import { StateList } from "Code/Client/States";
 import Client from "../Client";
 import SoundDataComponent from "Code/Shared/Components/SoundDataComponent";
+import { Settings } from "Code/Shared/Settings";
 
 type PlayConfig = {
     /**
@@ -39,13 +40,14 @@ export class SoundController {
     }
 
     public Play(Path: string, Config: PlayConfig = {}): GameObject {
-        const SoundContainer = Instantiate(Asset.LoadAsset("Assets/Resources/Empty.prefab"))
+        const SoundContainer = Instantiate(Asset.LoadAsset("Assets/Resources/SoundContainer.prefab"))
         SoundContainer.transform.SetParent(this.Client.gameObject.transform)
         SoundContainer.transform.localPosition = Vector3.zero
 
         const Audio = SoundContainer.AddComponent<AudioSource>()
         Audio.clip = Asset.LoadAsset(`Assets/Resources/Sounds/${Path}`)
         Audio.loop = Config.Loop ?? false
+        Audio.volume = Settings.SFXVolume
 
         const Data = SoundContainer.AddAirshipComponent<SoundDataComponent>()
         Data.State = Config.BoundState
@@ -96,7 +98,7 @@ export class SoundController {
             }
         } else {
             for (const [Index, Sound] of pairs(this.Registry)) {
-                const Data = Sound && Sound.GetAirshipComponent<SoundDataComponent>()
+                const Data = !Sound.IsDestroyed() ? Sound.GetAirshipComponent<SoundDataComponent>() : undefined
 
                 if (Data && Data.Class === Clip.name) {
                     Destroy(Sound)

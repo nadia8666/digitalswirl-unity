@@ -1,4 +1,4 @@
-import { Constants } from "Code/Shared/Common/Constants";
+import { Constants } from "Code/Shared/Components/ConfigSingleton";
 import Client from "../Client";
 import * as VUtil from "Code/Shared/Common/Utility/VUtil";
 
@@ -14,7 +14,7 @@ export const PhysicsHandler = {
      * @param Client 
      */
     AccelerateGrounded: (Client: Client) => {
-        const MaxXSpeed = Client.Physics.MaxXSpeed
+        const MaxXSpeed = Client.Config.MaxXSpeed
         const RunAcceleration = Client.GetRunAcceleration()
         const Friction = /*self.flag.grounded and self.frict_mult*/ 1 || 1
 
@@ -27,25 +27,25 @@ export const PhysicsHandler = {
         if (HasControl) {
             if (Client.Speed.x <= MaxXSpeed || Client.Ground.DotProduct <= 0.96) {
                 if (Client.Speed.x > MaxXSpeed) {
-                    Acceleration = Acceleration.add(new Vector3((Client.Speed.x - MaxXSpeed) * Client.Physics.AirResist.x, 0, 0))
+                    Acceleration = Acceleration.add(new Vector3((Client.Speed.x - MaxXSpeed) * Client.Config.AirResist.x, 0, 0))
                 } else if (Client.Speed.x < 0) {
-                    Acceleration = Acceleration.add(new Vector3(Client.Speed.x * Client.Physics.AirResist.x, 0, 0))
+                    Acceleration = Acceleration.add(new Vector3(Client.Speed.x * Client.Config.AirResist.x, 0, 0))
                 }
             } else {
-                Acceleration = Acceleration.add(new Vector3((Client.Speed.x - MaxXSpeed) * (Client.Physics.AirResist.x * 1.7), 0, 0))
+                Acceleration = Acceleration.add(new Vector3((Client.Speed.x - MaxXSpeed) * (Client.Config.AirResist.x * 1.7), 0, 0))
             }
         } else {
-            if (Client.Speed.x > Client.Physics.RunSpeed) {
-                Acceleration = Acceleration.add(new Vector3(Client.Speed.x * Client.Physics.AirResist.x, 0, 0))
+            if (Client.Speed.x > Client.Config.RunSpeed) {
+                Acceleration = Acceleration.add(new Vector3(Client.Speed.x * Client.Config.AirResist.x, 0, 0))
             } else if (Client.Speed.x > MaxXSpeed) {
-                Acceleration = Acceleration.add(new Vector3((Client.Speed.x - MaxXSpeed) * Client.Physics.AirResist.x, 0, 0))
+                Acceleration = Acceleration.add(new Vector3((Client.Speed.x - MaxXSpeed) * Client.Config.AirResist.x, 0, 0))
             } else if (Client.Speed.x < 0) {
-                Acceleration = Acceleration.add(new Vector3(Client.Speed.x * Client.Physics.AirResist.x, 0, 0))
+                Acceleration = Acceleration.add(new Vector3(Client.Speed.x * Client.Config.AirResist.x, 0, 0))
             }
         }
 
         //Y and Z air drag
-        Client.Speed = Client.Speed.add(Client.Speed.mul(new Vector3(0, Client.Physics.AirResist.y, Client.Physics.AirResist.z)))
+        Client.Speed = Client.Speed.add(Client.Speed.mul(new Vector3(0, Client.Config.AirResist.y, Client.Config.AirResist.z)))
 
         //Movement
         if (HasControl) {
@@ -61,22 +61,22 @@ export const PhysicsHandler = {
                 //Get acceleration, stopping at intervals based on analogue stick magnitude
                 MovementAcceleration = 0
 
-                if (Client.Speed.x >= Client.Physics.JogSpeed) {
-                    if (Client.Speed.x >= Client.Physics.RunSpeed) {
+                if (Client.Speed.x >= Client.Config.JogSpeed) {
+                    if (Client.Speed.x >= Client.Config.RunSpeed) {
                         if (Magnitude <= 0.9) {
                             MovementAcceleration = RunAcceleration * Magnitude * 0.3
                         } else {
                             MovementAcceleration = RunAcceleration * Magnitude
                         }
                     } else if (Magnitude <= 0.7) {
-                        if (Client.Speed.x < Client.Physics.RunSpeed) {
+                        if (Client.Speed.x < Client.Config.RunSpeed) {
                             MovementAcceleration = RunAcceleration * Magnitude
                         }
                     } else {
                         MovementAcceleration = RunAcceleration * Magnitude
                     }
                 } else if (Magnitude <= 0.5) {
-                    if (Client.Speed.x < (Client.Physics.JogSpeed + Client.Physics.RunSpeed) * 0.5) {
+                    if (Client.Speed.x < (Client.Config.JogSpeed + Client.Config.RunSpeed) * 0.5) {
                         MovementAcceleration = RunAcceleration * Magnitude
                     }
                 } else {
@@ -90,10 +90,10 @@ export const PhysicsHandler = {
                 MovementAcceleration = 0
                 PhysicsHandler.Turn(Client, Turn, IntertiaState.FULL_INERTIA)
             } else {
-                if (Client.Speed.x < (Client.Physics.JogSpeed + Client.Physics.RunSpeed) * 0.5 || AbsoluteTurn <= math.rad(22.5)) {
-                    if (Client.Speed.x < Client.Physics.JogSpeed || AbsoluteTurn >= math.rad(22.5)) {
-                        if (Client.Speed.x < Client.Physics.DashSpeed || !Client.Ground.Grounded) {
-                            if (Client.Speed.x >= Client.Physics.JogSpeed && Client.Speed.x <= Client.Physics.RushSpeed && AbsoluteTurn > math.rad(45)) {
+                if (Client.Speed.x < (Client.Config.JogSpeed + Client.Config.RunSpeed) * 0.5 || AbsoluteTurn <= math.rad(22.5)) {
+                    if (Client.Speed.x < Client.Config.JogSpeed || AbsoluteTurn >= math.rad(22.5)) {
+                        if (Client.Speed.x < Client.Config.DashSpeed || !Client.Ground.Grounded) {
+                            if (Client.Speed.x >= Client.Config.JogSpeed && Client.Speed.x <= Client.Config.RushSpeed && AbsoluteTurn > math.rad(45)) {
                                 MovementAcceleration *= 0.8
                             }
                             PhysicsHandler.Turn(Client, Turn, undefined)
@@ -104,13 +104,13 @@ export const PhysicsHandler = {
                         PhysicsHandler.Turn(Client, Turn, IntertiaState.GROUND_NOFRICT)
                     }
                 } else {
-                    MovementAcceleration = Client.Physics.StandardDeceleration / Friction
+                    MovementAcceleration = Client.Config.StandardDeceleration / Friction
                     PhysicsHandler.Turn(Client, Turn, undefined)
                 }
             }
         } else {
             //Decelerate
-            MovementAcceleration = PhysicsHandler.GetDecel(Client.Speed.x + Acceleration.x, Client.Physics.StandardDeceleration)
+            MovementAcceleration = PhysicsHandler.GetDecel(Client.Speed.x + Acceleration.x, Client.Config.StandardDeceleration)
         }
 
         //Apply movement acceleration
@@ -133,28 +133,27 @@ export const PhysicsHandler = {
 
         //Use lighter gravity if A is held or doing a rail trick
         if ((Client.Rail.RailTrick > 0) || (Client.Flags.JumpTimer > 0 && Client.Flags.BallEnabled && Client.Input.Button.Jump.Activated)) {
-            Client.Flags.JumpTimer--
-            Client.Speed = Client.Speed.add(new Vector3(0, Client.Physics.JumpHoldForce * 0.8 * (1 + Client.Rail.RailTrick / 2), 0))
+            Client.Speed = Client.Speed.add(new Vector3(0, Client.Config.JumpHoldForce * 0.8 * (1 + Client.Rail.RailTrick / 2), 0))
         }
 
         //Get our acceleration
-        const DoSkid = (Client.Speed.x <= Client.Physics.RunSpeed || math.abs(Turn) <= math.rad(135))
+        const DoSkid = (Client.Speed.x <= Client.Config.RunSpeed || math.abs(Turn) <= math.rad(135))
         if (DoSkid) {
             PhysicsHandler.Turn(Client, Turn)
         }
         const Acceleration =
             Client.Rail.RailTrick > 0 ?
-                Client.Physics.AirAcceleration * (1 + Client.Rail.RailTrick / 2.5) :
+                Client.Config.AirAcceleration * (1 + Client.Rail.RailTrick / 2.5) :
                 !HasControl ?
                     0 :
                     // Check for skid
                     DoSkid ?
                         math.abs(Turn) <= math.rad(22.5) ?
                             (
-                                Client.Physics.AirAcceleration * Magnitude * (Client.Speed.y >= 0 && 2 || 1)
+                                Client.Config.AirAcceleration * Magnitude * (Client.Speed.y >= 0 && 2 || 1)
                             ) : 0
                         // Air brake
-                        : Client.Physics.AirDeceleration * Magnitude
+                        : Client.Config.AirDeceleration * Magnitude
 
         //Accelerate
         Client.Speed = Client.Speed.add(Vector3.right.mul(Acceleration))
@@ -176,10 +175,10 @@ export const PhysicsHandler = {
 
                     } else if (Client.Ground.DotProduct < -0.1 && Client.Speed.x > 1.16) {
 
-                    } else if (Client.Ground.DotProduct < 0.5 && math.abs(Client.Speed.x) < Client.Physics.RunSpeed) {
+                    } else if (Client.Ground.DotProduct < 0.5 && math.abs(Client.Speed.x) < Client.Config.RunSpeed) {
                         GravityAcceleration = GravityAcceleration.mul(new Vector3(4.225, 1, 4.225))
-                    } else if (Client.Ground.DotProduct >= 0.7 || math.abs(Client.Speed.x) > Client.Physics.RunSpeed) {
-                        if (Client.Ground.DotProduct >= 0.87 || Client.Physics.JogSpeed <= math.abs(Client.Speed.x)) {
+                    } else if (Client.Ground.DotProduct >= 0.7 || math.abs(Client.Speed.x) > Client.Config.RunSpeed) {
+                        if (Client.Ground.DotProduct >= 0.87 || Client.Config.JogSpeed <= math.abs(Client.Speed.x)) {
 
                         } else {
                             GravityAcceleration = GravityAcceleration.mul(new Vector3(1, 1, 1.4))
@@ -229,7 +228,7 @@ export const PhysicsHandler = {
         const GlobalSpeed = Client.ToGlobal(Client.Speed)
         const DotProduct = GlobalSpeed.normalized.Dot(Client.Flags.Gravity.normalized)
 
-        if (GlobalSpeed.magnitude <= Client.Physics.JogSpeed || DotProduct >= -.86) {
+        if (GlobalSpeed.magnitude <= Client.Config.JogSpeed || DotProduct >= -.86) {
             let Gravity = Client.ToLocal(Client.Flags.Gravity.normalized)
 
             if (Gravity.y <= 0 && Gravity.y > -.87) {
@@ -238,8 +237,8 @@ export const PhysicsHandler = {
                     Gravity = Gravity.WithX(-Gravity.x)
                 }
 
-                const Turn = -math.atan2(Gravity.z / Client.Physics.Scale, Gravity.x / Client.Physics.Scale)
-                const MaxTurn = math.abs(Gravity.z / Client.Physics.Scale) * math.rad(8.4375)
+                const Turn = -math.atan2(Gravity.z / Client.Config.Scale, Gravity.x / Client.Config.Scale)
+                const MaxTurn = math.abs(Gravity.z / Client.Config.Scale) * math.rad(8.4375)
 
                 PhysicsHandler.Turn(Client, math.clamp(Turn, -MaxTurn, MaxTurn))
             }
@@ -255,10 +254,10 @@ export const PhysicsHandler = {
     Skid: (Client: Client) => {
         const FrictionMultiplier = 1 // TODO: fricton mult
 
-        const XFriction = Client.Physics.SkidFriction * FrictionMultiplier
-        const ZFriction = Client.Physics.GroundFriction.z * FrictionMultiplier
+        const XFriction = Client.Config.SkidFriction * FrictionMultiplier
+        const ZFriction = Client.Config.GroundFriction.z * FrictionMultiplier
 
-        Client.Speed = Client.Speed.add(Client.Speed.mul(Client.Physics.AirResist)).add(new Vector3(PhysicsHandler.GetDecel(Client.Speed.x, XFriction), 0, PhysicsHandler.GetDecel(Client.Speed.z, ZFriction)))
+        Client.Speed = Client.Speed.add(Client.Speed.mul(Client.Config.AirResist)).add(new Vector3(PhysicsHandler.GetDecel(Client.Speed.x, XFriction), 0, PhysicsHandler.GetDecel(Client.Speed.z, ZFriction)))
     },
 
     /**
@@ -270,7 +269,7 @@ export const PhysicsHandler = {
         const Weight = Client.GetWeight()
         let Acceleration = Client.ToLocal(Client.Flags.Gravity.mul(Weight))
 
-        if (Client.Ground.Grounded && Client.Speed.x > Client.Physics.RunSpeed && Client.Ground.DotProduct < 0) {
+        if (Client.Ground.Grounded && Client.Speed.x > Client.Config.RunSpeed && Client.Ground.DotProduct < 0) {
             // TODO: make dynamic
             Acceleration = Acceleration.mul(new Vector3(1, -8, 1))
         }
@@ -278,10 +277,10 @@ export const PhysicsHandler = {
         if (Client.Flags.BallEnabled && Client.Ground.DotProduct < .98) {
             Acceleration = Acceleration.add(new Vector3(Client.Speed.x * -.0002, 0, 0))
         } else {
-            Acceleration = Acceleration.add(new Vector3(Client.Speed.x * Client.Physics.AirResist.x, 0, 0))
+            Acceleration = Acceleration.add(new Vector3(Client.Speed.x * Client.Config.AirResist.x, 0, 0))
         }
 
-        Acceleration = Acceleration.add(new Vector3(0, Client.Speed.y, Client.Speed.z).mul(Client.Physics.AirResist.z))
+        Acceleration = Acceleration.add(new Vector3(0, Client.Speed.y, Client.Speed.z).mul(Client.Config.AirResist.z))
 
         Client.Speed = Client.Speed.add(Acceleration)
     },
@@ -335,8 +334,8 @@ export const PhysicsHandler = {
             MaxTurn = math.clamp(Turn, math.rad(-45), math.rad(45))
         } else if (IState === IntertiaState.GROUND_NOFRICT) {
             MaxTurn = math.rad(1.40625)
-            if (Client.Speed.x > Client.Physics.DashSpeed) {
-                MaxTurn = math.max(MaxTurn - (math.sqrt(((Client.Speed.x - Client.Physics.DashSpeed) * 0.0625)) * MaxTurn), 0)
+            if (Client.Speed.x > Client.Config.DashSpeed) {
+                MaxTurn = math.max(MaxTurn - (math.sqrt(((Client.Speed.x - Client.Config.DashSpeed) * 0.0625)) * MaxTurn), 0)
             }
         }
 
@@ -402,7 +401,7 @@ export const PhysicsHandler = {
 
     GetHomingObject(Client: Client) {
         const Look = Client.Angle.mul(Vector3.forward)
-        const Colliders = Physics.OverlapSphere(Client.Position, 25, Constants.ObjectLayer) as BoxCollider[]
+        const Colliders = Physics.OverlapSphere(Client.Position, 25, Constants().Masks().ObjectLayer) as BoxCollider[]
         const Objects = []
 
         for (const [_, Collider] of pairs(Colliders)) {
@@ -412,7 +411,7 @@ export const PhysicsHandler = {
             const Center = Collider.transform.TransformPoint(Collider.center)
             const Offset = Center.sub(Client.Position)
             const Dot = Offset.mul(new Vector3(1, 0, 1)).normalized.Dot(Look)
-            const [Hit] = Physics.Raycast(Client.Position, Offset, Offset.magnitude, Constants.CollisionLayer)
+            const [Hit] = Physics.Raycast(Client.Position, Offset, Offset.magnitude, Constants().Masks().CollisionLayer)
             const YOff = Collider.transform.InverseTransformPoint(Client.Position).y
             const PosValid = YOff <= 15 && YOff >= -5
 

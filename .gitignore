@@ -108,13 +108,6 @@ Assets/FishNet.Config.XML
 bundles/
 Assets/TypeScriptEditorMetadata.aseditorinfo
 
-*.mat
-*.asset
-*.prefab
-*.fbm/
-*.controller
-*.fbx
-
 **/TextMesh Pro
 *.exr
 *.unity

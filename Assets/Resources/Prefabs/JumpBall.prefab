@@ -1,0 +1,222 @@
+%YAML 1.1
+%TAG !u! tag:unity3d.com,2011:
+--- !u!1 &2155005655280205459
+GameObject:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  serializedVersion: 6
+  m_Component:
+  - component: {fileID: 8292766017260425251}
+  - component: {fileID: 1565869913106800455}
+  m_Layer: 0
+  m_Name: JumpBall
+  m_TagString: Untagged
+  m_Icon: {fileID: 0}
+  m_NavMeshLayer: 0
+  m_StaticEditorFlags: 0
+  m_IsActive: 1
+--- !u!4 &8292766017260425251
+Transform:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 2155005655280205459}
+  serializedVersion: 2
+  m_LocalRotation: {x: 0, y: 0, z: 0, w: 1}
+  m_LocalPosition: {x: 0, y: 0, z: 0}
+  m_LocalScale: {x: 0.2, y: 0.2, z: 0.2}
+  m_ConstrainProportionsScale: 0
+  m_Children:
+  - {fileID: 2518472850951442106}
+  m_Father: {fileID: 0}
+  m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
+--- !u!114 &1565869913106800455
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 2155005655280205459}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: fa4feffba88dce746a2607f0ec6233b4, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  guid: 10448023-e696-4e62-942f-dcce721cedd6
+  script: {fileID: -136391928806417719, guid: f1fedbf28c8c00f43a12e3a1f7f36ca8, type: 3}
+  scriptPath: Assets/Code/Client/Draw/Components/JumpBall.lua
+  forceContext: 0
+  metadata:
+    name: JumpBall
+    singleton: 0
+    decorators:
+    - name: AirshipComponentMenu
+      parameters:
+      - type: string
+        serializedValue: '"Draw/JumpBall"'
+    properties:
+    - name: StretchCurve
+      type: AnimationCurve
+      objectType: 
+      items:
+        type: 
+        objectType: 
+        serializedItems: []
+        objectRefs: []
+      refPath: 
+      fileRef: 
+      jsDocs:
+        text: []
+        tags: []
+      decorators: []
+      nullable: 0
+      serializedValue: 0,0,2,2,0,0;1,1,0,0,0,0
+      serializedObject: {fileID: 0}
+      modified: 1
+    - name: RotationSpeedCurve
+      type: AnimationCurve
+      objectType: 
+      items:
+        type: 
+        objectType: 
+        serializedItems: []
+        objectRefs: []
+      refPath: 
+      fileRef: 
+      jsDocs:
+        text: []
+        tags: []
+      decorators: []
+      nullable: 0
+      serializedValue: 0,0,2.909091,2.909091,0,0.1375;0.1536427,0.5492581,1.503181,1.503181,0.3333333,0.0941572;1,0.9999975,0.03758613,0.03758613,0.3741525,0
+      serializedObject: {fileID: 0}
+      modified: 1
+    - name: RPM
+      type: number
+      objectType: 
+      items:
+        type: 
+        objectType: 
+        serializedItems: []
+        objectRefs: []
+      refPath: 
+      fileRef: 
+      jsDocs:
+        text: []
+        tags: []
+      decorators: []
+      nullable: 0
+      serializedValue: 300
+      serializedObject: {fileID: 0}
+      modified: 0
+    - name: Parts
+      type: Array
+      objectType: 
+      items:
+        type: object
+        objectType: MeshRenderer
+        serializedItems:
+        - 
+        - 
+        objectRefs:
+        - {fileID: 3055908533774276175}
+        - {fileID: 5044642235096878551}
+      refPath: 
+      fileRef: 
+      jsDocs:
+        text: []
+        tags: []
+      decorators: []
+      nullable: 0
+      serializedValue: 
+      serializedObject: {fileID: 0}
+      modified: 1
+    displayIcon: {fileID: 0}
+    displayName: 
+--- !u!1001 &2700419024429279569
+PrefabInstance:
+  m_ObjectHideFlags: 0
+  serializedVersion: 2
+  m_Modification:
+    serializedVersion: 3
+    m_TransformParent: {fileID: 8292766017260425251}
+    m_Modifications:
+    - target: {fileID: -8679921383154817045, guid: ba4c9c09d28c3c14aaad38bac85e7cdb, type: 3}
+      propertyPath: m_LocalPosition.x
+      value: 0
+      objectReference: {fileID: 0}
+    - target: {fileID: -8679921383154817045, guid: ba4c9c09d28c3c14aaad38bac85e7cdb, type: 3}
+      propertyPath: m_LocalPosition.y
+      value: 0
+      objectReference: {fileID: 0}
+    - target: {fileID: -8679921383154817045, guid: ba4c9c09d28c3c14aaad38bac85e7cdb, type: 3}
+      propertyPath: m_LocalPosition.z
+      value: 0
+      objectReference: {fileID: 0}
+    - target: {fileID: -8679921383154817045, guid: ba4c9c09d28c3c14aaad38bac85e7cdb, type: 3}
+      propertyPath: m_LocalRotation.w
+      value: 1
+      objectReference: {fileID: 0}
+    - target: {fileID: -8679921383154817045, guid: ba4c9c09d28c3c14aaad38bac85e7cdb, type: 3}
+      propertyPath: m_LocalRotation.x
+      value: -0
+      objectReference: {fileID: 0}
+    - target: {fileID: -8679921383154817045, guid: ba4c9c09d28c3c14aaad38bac85e7cdb, type: 3}
+      propertyPath: m_LocalRotation.y
+      value: -0
+      objectReference: {fileID: 0}
+    - target: {fileID: -8679921383154817045, guid: ba4c9c09d28c3c14aaad38bac85e7cdb, type: 3}
+      propertyPath: m_LocalRotation.z
+      value: -0
+      objectReference: {fileID: 0}
+    - target: {fileID: -8679921383154817045, guid: ba4c9c09d28c3c14aaad38bac85e7cdb, type: 3}
+      propertyPath: m_LocalEulerAnglesHint.x
+      value: 0
+      objectReference: {fileID: 0}
+    - target: {fileID: -8679921383154817045, guid: ba4c9c09d28c3c14aaad38bac85e7cdb, type: 3}
+      propertyPath: m_LocalEulerAnglesHint.y
+      value: 0
+      objectReference: {fileID: 0}
+    - target: {fileID: -8679921383154817045, guid: ba4c9c09d28c3c14aaad38bac85e7cdb, type: 3}
+      propertyPath: m_LocalEulerAnglesHint.z
+      value: 0
+      objectReference: {fileID: 0}
+    - target: {fileID: -2054772101458320250, guid: ba4c9c09d28c3c14aaad38bac85e7cdb, type: 3}
+      propertyPath: 'm_Materials.Array.data[0]'
+      value: 
+      objectReference: {fileID: 2100000, guid: c41332454dcab6d43a6a526df4278dfe, type: 2}
+    - target: {fileID: 919132149155446097, guid: ba4c9c09d28c3c14aaad38bac85e7cdb, type: 3}
+      propertyPath: m_Name
+      value: JumpBall
+      objectReference: {fileID: 0}
+    - target: {fileID: 1085671341725794078, guid: ba4c9c09d28c3c14aaad38bac85e7cdb, type: 3}
+      propertyPath: 'm_Materials.Array.data[0]'
+      value: 
+      objectReference: {fileID: 2100000, guid: c41332454dcab6d43a6a526df4278dfe, type: 2}
+    - target: {fileID: 8330938450325433214, guid: ba4c9c09d28c3c14aaad38bac85e7cdb, type: 3}
+      propertyPath: m_Name
+      value: Character
+      objectReference: {fileID: 0}
+    m_RemovedComponents: []
+    m_RemovedGameObjects: []
+    m_AddedGameObjects: []
+    m_AddedComponents: []
+  m_SourcePrefab: {fileID: 100100000, guid: ba4c9c09d28c3c14aaad38bac85e7cdb, type: 3}
+--- !u!4 &2518472850951442106 stripped
+Transform:
+  m_CorrespondingSourceObject: {fileID: -8679921383154817045, guid: ba4c9c09d28c3c14aaad38bac85e7cdb, type: 3}
+  m_PrefabInstance: {fileID: 2700419024429279569}
+  m_PrefabAsset: {fileID: 0}
+--- !u!23 &3055908533774276175 stripped
+MeshRenderer:
+  m_CorrespondingSourceObject: {fileID: 1085671341725794078, guid: ba4c9c09d28c3c14aaad38bac85e7cdb, type: 3}
+  m_PrefabInstance: {fileID: 2700419024429279569}
+  m_PrefabAsset: {fileID: 0}
+--- !u!23 &5044642235096878551 stripped
+MeshRenderer:
+  m_CorrespondingSourceObject: {fileID: -2054772101458320250, guid: ba4c9c09d28c3c14aaad38bac85e7cdb, type: 3}
+  m_PrefabInstance: {fileID: 2700419024429279569}
+  m_PrefabAsset: {fileID: 0}

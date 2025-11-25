@@ -120,3 +120,28 @@ export class CFrame {
 export function ToFloat3(Input: Vector3) {
     return new float3(Input.x, Input.y, Input.z)
 }
+
+export interface DrawInformation {
+    Position: Vector3
+    Rotation: Quaternion
+    
+    // Rail
+    RailOffset: Vector3
+    RailBalance: number
+    
+    // JumpBall
+    JumpBall: boolean
+    AnimationRate: number
+    JumpBallHeight: number
+    JumpBallStretch: number
+    JumpBallSpeed: number
+    
+    // SpindashBall
+    SpindashBall: boolean
+    SpindashSpeed: number
+
+    // Animation
+    Animation: string
+    AnimationSpeed: number
+    Speed: Vector3
+}

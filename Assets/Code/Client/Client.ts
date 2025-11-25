@@ -8,7 +8,7 @@ import { ObjectController } from "./Object/ObjectController"
 import { Rail, SetRail } from "./Modules/Rail"
 import { SoundController } from "./Draw/Sound"
 import { PlaneProject } from "Code/Shared/Common/Utility/VUtil"
-import { CFrame } from "Code/Shared/Types"
+import { CFrame, DrawInformation } from "Code/Shared/Types"
 import { Bin } from "@Easy/Core/Shared/Util/Bin"
 import _OBJBase from "./Object/Objects/Base"
 import Config, { Constants } from "Code/Shared/Components/ConfigSingleton"
@@ -133,7 +133,7 @@ export default class Client extends AirshipBehaviour {
 
     // Character info
     public Config: Config["Character"]
-    public Animations: typeof Animations
+    public Animations: typeof Animations = Animations
 
     // Modules
     public State: StateMachine
@@ -154,6 +154,8 @@ export default class Client extends AirshipBehaviour {
     public EventListener: AnimationEventListener
     public HomingAttack: HomingAttack
 
+    private RenderInfo: DrawInformation
+
     override Start() {
         this.Config = Constants().Character
 
@@ -166,12 +168,10 @@ export default class Client extends AirshipBehaviour {
             this.LastCFrame = this.CurrentCFrame
             this.RenderCFrame = this.CurrentCFrame
 
-            this.Animations = Animations
-
             this.State = new StateMachine(this)
-            this.Animation = new Animation(this)
+            this.Animation = new Animation(this.EventListener, this.RigParent.transform, this.Animations, this.Controller, {} as unknown as DrawInformation)
             this.Camera = new Camera(this)
-            this.Renderer = new Renderer(this)
+            this.Renderer = new Renderer(this.transform, this.RigParent)
             this.Input = new Input(this)
             this.Object = new ObjectController(this)
             this.Rail = new Rail()
@@ -184,6 +184,9 @@ export default class Client extends AirshipBehaviour {
             this.HomingAttack = new HomingAttack()
 
             this.PreviousAngle = Quaternion.identity
+
+            this.UpdateRenderInfo()
+            this.Animation.DrawInfo = this.GetRenderInfo()
         })
 
         if (!Success) {
@@ -207,6 +210,38 @@ export default class Client extends AirshipBehaviour {
         this.Sound.Destroy()
     }
 
+    protected UpdateRenderInfo() {
+        const JumpBall = this.Flags.BallEnabled && this.Animation.Current === "Roll"
+        const SpindashBall = this.Flags.BallEnabled && this.Animation.Current === "Spindash"
+        const AnimationRate = this.Animation.GetRate()
+
+        this.RenderInfo = {
+            Speed: this.Speed,
+
+            RailOffset: this.Rail.RailOffset,
+            RailBalance: this.Rail.RailBalance,
+            Position: this.RenderCFrame.Position,
+            Rotation: this.RenderCFrame.Rotation,
+            JumpBall: JumpBall,
+            SpindashBall: SpindashBall,
+
+            AnimationRate: AnimationRate,
+            JumpBallHeight: this.Ground.Grounded ? this.Config.JumpBallHeightRoll : this.Config.JumpBallHeightAir,
+            JumpBallStretch: Constants().JumpBallStretchCurve.Evaluate(this.Flags.JumpStretchTimer / this.Config.JumpStretchTimer) * this.Config.JumpBallStretch,
+            JumpBallSpeed: Constants().JumpBallRotationSpeed.Evaluate(math.clamp01(AnimationRate / 20)),
+
+            SpindashSpeed: Constants().SpindashBallRotationSpeed.Evaluate(math.clamp01(this.Flags.SpindashSpeed / 10) + .15),
+
+            Animation: this.Animation.Current,
+            AnimationSpeed: this.Animation.Speed,
+        }
+    }
+
+    public GetRenderInfo() {
+        while (!this.RenderInfo) { } // purposefully freeze
+        return this.RenderInfo
+    }
+
     public Update(DeltaTime: number) {
         Profiler.BeginSample("Client:Update")
 
@@ -222,7 +257,9 @@ export default class Client extends AirshipBehaviour {
         // Interpolate positions
         this.RenderCFrame = this.LastCFrame.Lerp(new CFrame(this.Position, this.Angle), this.State.TickTimer)
 
-        this.Renderer.Draw(DeltaTime)
+        this.UpdateRenderInfo()
+        this.Renderer.Draw(DeltaTime, this.GetRenderInfo())
+
         this.Object.DrawObjects(DeltaTime)
         this.Camera.Update(DeltaTime)
 

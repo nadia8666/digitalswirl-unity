@@ -1,8 +1,6 @@
-import { Network } from "Code/Shared/Network";
-import Client from "../Client";
-import { InferredAnimation, SetAnimation, ValidAnimation } from "Code/Shared/Animations";
-import { CFrame } from "Code/Shared/Types";
-import Config, { Constants } from "Code/Shared/Components/ConfigSingleton";
+import { Animations, InferredAnimation, SetAnimation, ValidAnimation } from "Code/Shared/Animations";
+import { DrawInformation } from "Code/Shared/Types";
+import { Constants } from "Code/Shared/Components/ConfigSingleton";
 
 class Tilt {
     public CurrentTilt: number = 0
@@ -11,10 +9,10 @@ class Tilt {
     public LerpForce
     public ClearRotation
 
-    constructor(Client: Client, Path: string[], ClearRotation: boolean, LerpForce: number, RotationFunction: (Tilt: number) => Quaternion) {
+    constructor(RigParent: Transform, Path: string[], ClearRotation: boolean, LerpForce: number, RotationFunction: (Tilt: number) => Quaternion) {
         this.RotationFunction = RotationFunction
 
-        let CurrentTransform = Client.RigParent.transform
+        let CurrentTransform = RigParent
         for (const [_, Value] of pairs(Path)) {
             CurrentTransform = CurrentTransform.FindChild(Value)
 
@@ -44,9 +42,8 @@ function Evaluate(Curve: AnimationCurve, Tilt: number) {
 export class Animation {
     public Current: ValidAnimation
     public Speed: number = 1
-    private LastSpeed: number = 1
+    private ClientSpeed: Vector3 = Vector3.zero
     private Last: ValidAnimation
-    private Client: Client
     private Tilts: Tilt[] = []
     public Turn: number = 0
     public WeightLayers = {
@@ -55,14 +52,13 @@ export class Animation {
         [2]: { Target: 1, Current: 0 },
     }
 
-    constructor(Client: Client) {
+    constructor(EventListener: AnimationEventListener, RigParent: Transform, public AnimList: typeof Animations, private Controller: Animator, public DrawInfo: DrawInformation) {
         this.Last = "Idle"
         this.Current = "Fall"
-        this.Client = Client
 
-        this.Client.EventListener.OnAnimEvent((Key) => {
+        EventListener.OnAnimEvent((Key) => {
             if (Key === "EndAnimation") {
-                const Animation = Client.Animations[this.Current] as SetAnimation
+                const Animation = AnimList[this.Current] as SetAnimation
 
                 if (Animation.EndAnimation) {
                     this.Current = Animation.EndAnimation
@@ -72,14 +68,14 @@ export class Animation {
 
         const Tilts = Constants()
 
-        this.Tilts.push(new Tilt(Client, ["RigAnimation"], true, 5, function (Tilt) { return Quaternion.Euler(-90, 0, 0).mul(Quaternion.Euler(0, Evaluate(Tilts.RigAnimationTilt, -Tilt) / 3, 0)) }))
-        this.Tilts.push(new Tilt(Client, ["RigAnimation", "ref", "root", "root_pivot", "torso", "lower_torso", "chest", "upper_torso", "neck"], false, 5,
+        this.Tilts.push(new Tilt(RigParent, ["RigAnimation"], true, 5, function (Tilt) { return Quaternion.Euler(-90, 0, 0).mul(Quaternion.Euler(0, Evaluate(Tilts.RigAnimationTilt, -Tilt) / 3, 0)) }))
+        this.Tilts.push(new Tilt(RigParent, ["RigAnimation", "ref", "root", "root_pivot", "torso", "lower_torso", "chest", "upper_torso", "neck"], false, 5,
             function (Tilt) {
                 return Quaternion.Euler(0, Evaluate(Tilts.HeadTilt, Tilt), 0)
             }))
-        this.Tilts.push(new Tilt(Client, ["RigAnimation", "ref", "root", "root_pivot", "torso", "lower_torso", "chest", "upper_torso", "neck", "head", "eye_root", "eye.l"], false, 7,
+        this.Tilts.push(new Tilt(RigParent, ["RigAnimation", "ref", "root", "root_pivot", "torso", "lower_torso", "chest", "upper_torso", "neck", "head", "eye_root", "eye.l"], false, 7,
             function (Tilt) { return Quaternion.Euler(0, 0, math.clamp(Evaluate(Tilts.EyeTilt, Tilt) / 2, -40, 0)) }))
-        this.Tilts.push(new Tilt(Client, ["RigAnimation", "ref", "root", "root_pivot", "torso", "lower_torso", "chest", "upper_torso", "neck", "head", "eye_root", "eye.r"], false, 7,
+        this.Tilts.push(new Tilt(RigParent, ["RigAnimation", "ref", "root", "root_pivot", "torso", "lower_torso", "chest", "upper_torso", "neck", "head", "eye_root", "eye.r"], false, 7,
             function (Tilt) { return Quaternion.Euler(0, 0, math.clamp(Evaluate(Tilts.EyeTilt, Tilt) / 2, 0, 40)) }))
     }
 
@@ -90,14 +86,14 @@ export class Animation {
      */
     private UpdateState(Animation: InferredAnimation, Playing: boolean, TransitionTime?: number) {
         if (Playing) {
-            for (let i of $range(0, this.Client.Controller.layerCount - 1)) {
+            for (let i of $range(0, this.Controller.layerCount - 1)) {
                 this.WeightLayers[i as 0].Target = 0
             }
 
             for (const [Key, Value] of pairs(Animation)) {
                 if (typeOf(Key) !== "number") { continue }
 
-                this.Client.Controller.CrossFadeInFixedTime(Value.Name, TransitionTime ?? .2, Key)
+                this.Controller.CrossFadeInFixedTime(Value.Name, TransitionTime ?? .2, Key)
                 this.WeightLayers[Key as 0].Target = 1
             }
         }
@@ -114,9 +110,9 @@ export class Animation {
 
                 const Next = Animation[Key + 1]
                 if (Next && Next.Position) {
-                    Triggered = this.Client.Speed.x >= Value.Position && this.Client.Speed.x < Next.Position
+                    Triggered = this.ClientSpeed.x >= Value.Position && this.ClientSpeed.x < Next.Position
                 } else {
-                    Triggered = this.Client.Speed.x >= Value.Position
+                    Triggered = this.ClientSpeed.x >= Value.Position
                 }
 
                 if (Triggered) {
@@ -142,7 +138,7 @@ export class Animation {
             Speed = this.Speed
         }
 
-        this.Client.Controller.SetFloat("AnimSpeed", Speed)
+        this.Controller.SetFloat("AnimSpeed", Speed)
     }
 
     private CalculateWeightAndSpeed(Animation: InferredAnimation, Initial: boolean = false) {
@@ -169,11 +165,11 @@ export class Animation {
     private UpdateCurrent(Animation: InferredAnimation, Delta: number) {
         this.CalculateWeightAndSpeed(Animation)
 
-        for (let i of $range(0, this.Client.Controller.layerCount - 1)) {
+        for (let i of $range(0, this.Controller.layerCount - 1)) {
             const Layer = this.WeightLayers[i as 0]
             Layer.Current = math.lerpClamped(Layer.Current, Layer.Target, 8 * Delta)
 
-            this.Client.Controller.SetLayerWeight(i, Layer.Current)
+            this.Controller.SetLayerWeight(i, Layer.Current)
         }
     }
 
@@ -215,12 +211,13 @@ export class Animation {
      * @param Client 
      */
     public Animate(DeltaTime: number) {
-        const Previous = (this.Client.Animations[this.Last]) as SetAnimation
-        const Next = (this.Client.Animations[this.Current]) as SetAnimation
+        this.ClientSpeed = this.DrawInfo.Speed ?? Vector3.zero
+
+        const Previous = (this.AnimList[this.Last]) as SetAnimation
+        const Next = (this.AnimList[this.Current]) as SetAnimation
 
         if (Previous !== Next) {
             this.Speed = 1
-            Network.Replication.AnimationChanged.client.FireServer(0, this.Current, this.Speed, 2)
 
             const TargetTime = this.GetTransitions(Previous, Next)
 
@@ -230,17 +227,12 @@ export class Animation {
             this.Last = this.Current
         }
 
-        if (this.Speed !== this.LastSpeed) {
-            Network.Replication.AnimationChanged.client.FireServer(0, this.Current, this.Speed, 1)
-            this.LastSpeed = this.Speed
-        }
-
         this.UpdateCurrent(Next, DeltaTime)
     }
 
     public GetRate() {
-        const [_, Layer] = this.GetCurrentTrack(this.Client.Animations[this.Current])
-        const Clip = this.Client.Controller.GetCurrentAnimatorStateInfo(Layer)
+        const [_, Layer] = this.GetCurrentTrack(this.AnimList[this.Current])
+        const Clip = this.Controller.GetCurrentAnimatorStateInfo(Layer)
 
         return (Clip.speed * Clip.speedMultiplier) / Clip.length
     }

@@ -36,7 +36,17 @@ public class ConfigEditor : AirshipEditor
 
     void DrawAnimationTab()
     {
+        AirshipEditorGUI.BeginGroup(new GUIContent("Animation"));
         PropertyFields("RigAnimationTilt", "HeadTilt", "EyeTilt");
+        AirshipEditorGUI.EndGroup();
+
+        AirshipEditorGUI.BeginGroup(new GUIContent("JumpBall"));
+        PropertyFields("JumpBallStretchCurve", "JumpBallRotationSpeed");
+        AirshipEditorGUI.EndGroup();
+
+        AirshipEditorGUI.BeginGroup(new GUIContent("SpindashBall"));
+        PropertyFields("SpindashBallRotationSpeed");
+        AirshipEditorGUI.EndGroup();
     }
 
     void DrawUITab()

@@ -6,6 +6,9 @@ export default class Config extends AirshipSingleton {
     public RigAnimationTilt: AnimationCurve
     public HeadTilt: AnimationCurve
     public EyeTilt: AnimationCurve
+    public JumpBallStretchCurve: AnimationCurve
+    public JumpBallRotationSpeed: AnimationCurve
+    public SpindashBallRotationSpeed: AnimationCurve
 
     // UI
     public ReticleMaxDistance: number = 100
@@ -21,7 +24,7 @@ export default class Config extends AirshipSingleton {
     public RailLayer: string = "GameLayer2"
 
     // Character
-    public Character: Character 
+    public Character: Character
 
     public Masks() {
         return {

@@ -8,11 +8,14 @@ export default class Spawner extends AirshipSingleton {
     public Characters = new Map<Player, number>()
 
     public SpawnCharacter(Player: Player) {
+        if (Player.userId === "loading")
+            while (Player.userId === "loading") task.wait()
+
         const Character = Instantiate(Asset.LoadAsset("Assets/Resources/Prefabs/Sonic.prefab"), this.transform.position, this.transform.rotation)
         NetworkServer.Spawn(Character, Player.networkIdentity.connectionToClient as unknown as NetworkConnection)
 
         const Identity = Character.GetComponent<NetworkIdentity>()!
-        Network.EnableClient.server.FireClient(Player, Identity.netId)
+        Network.EnableClient.server.FireAllClients(Identity.netId, Player.userId)
 
         this.Characters.set(Player, Identity.netId)
     }
@@ -44,11 +47,20 @@ export default class Spawner extends AirshipSingleton {
             this.SpawnCharacter(Player)
         })
 
-        Network.Replication.AnimationChanged.server.OnClientEvent((Player, _, AnimationID, Speed, Mode) => {
-            const NetID = this.Characters.get(Player)
+        Network.Replication.ChangedPacket.server.OnClientEvent((Player, Changes) => {
+            const Character = this.Characters.get(Player)
 
-            if (NetID) {
-                Network.Replication.AnimationChanged.server.FireExcept(Player, NetID, AnimationID, Speed, Mode)
+            if (Character) {
+                print("get")
+                //Network.Replication.ChangedPacket.server.FireExcept(Player, Changes, Character)
+            }
+        })
+
+        Network.Replication.InitialPacket.server.OnClientEvent((Player, Changes) => {
+            const Character = this.Characters.get(Player)
+
+            if (Character) {
+                //Network.Replication.InitialPacket.server.FireExcept(Player, Changes, Character)
             }
         })
     }

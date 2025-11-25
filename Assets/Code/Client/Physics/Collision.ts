@@ -1,8 +1,12 @@
-import { Game } from "@Easy/Core/Shared/Game";
 import Client from "../Client";
 import * as VUtil from "Code/Shared/Common/Utility/VUtil"
 import { Constants } from "Code/Shared/Components/ConfigSingleton";
 import { CFrame } from "Code/Shared/Types";
+import TagCheckSingleton from "Code/Shared/Components/TagCheckSingleton";
+
+// TODO: airship bug
+let NoFloorEnabled = false
+task.spawn(() => NoFloorEnabled = TagCheckSingleton.Get().TagExists("NoFloor"))
 
 function GetAligned(Client: Client, Normal: Vector3) {
     if (Client.Angle.mul(Vector3.up).Dot(Normal) < -0.999) {
@@ -226,8 +230,7 @@ export function RunCollision(Client: Client) {
             if (Hit && Position && Normal) {
                 let DropOff = false
 
-                //TODO: airship bug
-                if (Game.IsEditor() ? Hit.CompareTag("NoFloor") : false) {
+                if (NoFloorEnabled ? Hit.CompareTag("NoFloor") : false) {
                     //Floor cannot be stood on under any conditions
                     DropOff = true
                 } else if (Client.Ground.Grounded) {

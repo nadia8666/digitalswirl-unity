@@ -1,65 +1,65 @@
-import { CFrame } from "Code/Shared/Types";
 import Client from "../Client";
 import { Asset } from "@Easy/Core/Shared/Asset";
 import JumpBall from "./Components/JumpBall";
 import SpindashBall from "./Components/SpindashBall";
+import { DrawInformation } from "Code/Shared/Types";
+
+
 
 /**
  * Client renderer
  * @class
  */
 export class Renderer {
-    private Client: Client
     public Angle: Quaternion = Quaternion.identity
     public CharacterVisible: boolean = false
     public JumpBall: JumpBall
     public SpindashBall: SpindashBall
     public Parts: GameObject[] = []
+    public transform: Transform
 
-    constructor(Client: Client) {
-        this.Client = Client
+    constructor(RootTransform: Transform, RigParent: GameObject) {
+        this.transform = RootTransform
 
         const JumpBallPrefab = Instantiate(Asset.LoadAsset("Assets/Resources/Prefabs/JumpBall.prefab"))
-        JumpBallPrefab.transform.SetParent(Client.transform)
+        JumpBallPrefab.transform.SetParent(RootTransform)
 
         this.JumpBall = JumpBallPrefab.GetAirshipComponent<JumpBall>()!
 
         const SpindashBallPrefab = Instantiate(Asset.LoadAsset("Assets/Resources/Prefabs/SpindashBall.prefab"))
-        SpindashBallPrefab.transform.SetParent(Client.transform)
+        SpindashBallPrefab.transform.SetParent(RootTransform)
 
         this.SpindashBall = SpindashBallPrefab.GetAirshipComponent<SpindashBall>()!
         
-        for (const [_, Object] of pairs(this.Client.RigParent.GetComponentsInChildren<Transform>(true)))
+        for (const [_, Object] of pairs(RigParent.GetComponentsInChildren<Transform>(true)))
             this.Parts.push(Object.gameObject)
     }
 
     /**
      * Draw Client, should only execute at the end of each `RenderStepped`
      */
-    public Draw(DeltaTime: number) {
-        const Offset = this.Client.Rail.RailOffset
-        let Angle = this.Client.RenderCFrame.Rotation.mul(Quaternion.Euler(0, 0, -math.deg(this.Client.Rail.RailBalance)))
+    public Draw(DeltaTime: number, DrawInfo: DrawInformation) {
+        const Offset = DrawInfo.RailOffset
+        let Angle = DrawInfo.Rotation.mul(Quaternion.Euler(0, 0, -math.deg(DrawInfo.RailBalance)))
         this.Angle = Quaternion.Slerp(Angle, this.Angle, (.675 ** 60) ** DeltaTime)
 
-        let Position = this.Client.RenderCFrame.Position
+        let Position = DrawInfo.Position
         Position = Position.add(Offset)
 
-        this.Client.transform.position = Position
-        this.Client.transform.rotation = this.Angle
+        this.transform.position = Position
+        this.transform.rotation = this.Angle
 
-        this.JumpBall.SetEnabled(this.Client.Flags.BallEnabled && this.Client.Animation.Current === "Roll")
-        this.JumpBall.Draw(this.Client, DeltaTime)
+        this.JumpBall.SetEnabled(DrawInfo.JumpBall)
+        this.JumpBall.Draw(DeltaTime, DrawInfo)
 
-        this.SpindashBall.SetEnabled(this.Client.Animation.Current === "Spindash", this.Client)
-        this.SpindashBall.Draw(this.Client, DeltaTime)
+        this.SpindashBall.SetEnabled(DrawInfo.SpindashBall, DrawInfo)
+        this.SpindashBall.Draw(DeltaTime, DrawInfo)
 
         const CharacterVisible = !this.JumpBall.Enabled && !this.SpindashBall.Enabled
         this.SetVisible(CharacterVisible)
     }
 
-    public Destroy() {
-        this.JumpBall.Destroy()
-    }
+    public Destroy() {}
 
     public SetVisible(Visible: boolean) {
         if (this.CharacterVisible === Visible) return

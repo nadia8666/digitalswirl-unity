@@ -152,20 +152,20 @@ Material:
     - _QueueControl: 0
     - _QueueOffset: 0
     - _ReceiveShadows: 1
-    - _Rotation: -102.74963
+    - _Rotation: 0
     - _Smoothness: 0.267
     - _SmoothnessTextureChannel: 1
     - _SpecularHighlights: 1
-    - _Spin: -30
+    - _Spin: 0
     - _Spin_Strength_Center: 1.33
     - _SrcBlend: 5
     - _SrcBlendAlpha: 1
-    - _Stretch: 1.037448
+    - _Stretch: 1
     - _Subtract: 0.5
     - _Surface: 1
     - _UVSec: 0
     - _WorkflowMode: 1
-    - _YRotationEuler: 93.07309
+    - _YRotationEuler: 0
     - _ZTest: 4
     - _ZWrite: 0
     - _ZWriteControl: 0

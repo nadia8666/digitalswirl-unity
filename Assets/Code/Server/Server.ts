@@ -51,8 +51,7 @@ export default class Spawner extends AirshipSingleton {
             const Character = this.Characters.get(Player)
 
             if (Character) {
-                print("get")
-                //Network.Replication.ChangedPacket.server.FireExcept(Player, Changes, Character)
+                Network.Replication.ChangedPacket.server.FireExcept(Player, Changes, Character)
             }
         })
 
@@ -60,7 +59,7 @@ export default class Spawner extends AirshipSingleton {
             const Character = this.Characters.get(Player)
 
             if (Character) {
-                //Network.Replication.InitialPacket.server.FireExcept(Player, Changes, Character)
+                Network.Replication.InitialPacket.server.FireExcept(Player, Changes, Character)
             }
         })
     }

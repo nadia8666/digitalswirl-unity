@@ -1,6 +1,7 @@
 import { Constants } from "Code/Shared/Components/ConfigSingleton";
 import Client from "../Client";
 import * as VUtil from "Code/Shared/Common/Utility/VUtil";
+import _OBJBase from "../Object/Objects/Base";
 
 export enum IntertiaState {
     FULL_INERTIA,
@@ -399,7 +400,7 @@ export const PhysicsHandler = {
         return 0
     },
 
-    GetHomingObject(Client: Client) {
+    GetHomingObject(Client: Client): _OBJBase|undefined {
         const Look = Client.Angle.mul(Vector3.forward)
         const Colliders = Physics.OverlapSphere(Client.Position, 25, Constants().Masks().ObjectLayer) as BoxCollider[]
         const Objects = []
@@ -413,14 +414,14 @@ export const PhysicsHandler = {
             const Dot = Offset.mul(new Vector3(1, 0, 1)).normalized.Dot(Look)
             const [Hit] = Physics.Raycast(Client.Position, Offset, Offset.magnitude, Constants().Masks().CollisionLayer)
             const YOff = Collider.transform.InverseTransformPoint(Client.Position).y
-            const PosValid = YOff <= 15 && YOff >= -5
+            const PosValid = YOff <= 25 && YOff >= -10
 
             if (Dot >= 0.3825 && !Hit && PosValid)
-                Objects.push({ Object: Object, Distance: 1 - Offset.magnitude / 30, Dot: Dot })
+                Objects.push({ Object: Object, Distance: 1 - Offset.magnitude / 30, Dot: Dot, Weight: Object.HomingWeight })
         }
 
         Objects.sort((A, B) => {
-            return ((A.Distance) + (A.Dot * .5)) > ((B.Distance) + (B.Dot * .5))
+            return ((A.Distance) + (A.Dot * .5) + A.Weight) > ((B.Distance) + (B.Dot * .5) + B.Weight)
         })
 
         return Objects[0]?.Object

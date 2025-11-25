@@ -38,9 +38,14 @@ export class StateGrounded extends SrcState {
                 Client.Animation.Current = math.abs(Client.Speed.x) > 0 && "Run" || "Idle"
             }
             Client.Animation.Speed = Client.Animation.Current === "Run" && math.lerp(Client.Speed.x / Slip + (1 - Slip) * 2, Client.Speed.x, Acceleration) || 1
+            Client.Ground.UngroundedFrames = 0
         } else {
-            Client.Animation.Current = "Fall"
-            Client.State.Current = Client.State.States.Airborne
+            if (Client.Ground.UngroundedFrames >= Client.Config.CoyoteFrames) {
+                Client.Animation.Current = "Fall"
+                Client.State.Current = Client.State.States.Airborne
+            } else {
+                Client.Ground.UngroundedFrames++
+            }
         }
     }
 }

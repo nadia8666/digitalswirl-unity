@@ -29,14 +29,15 @@ export default class Character extends AirshipBehaviour {
     public JumpInitialForce = 1.66
     public JumpHoldForce = .076
     public JumpTicks = 60
+    public CoyoteFrames = 10
 
     // Friction
     public SkidFriction = -.18
     public GroundFriction = new Vector3(-.1, 0, -.6)
 
     // Moves
-    public HomingForceDash = 5
-    public HomingForceAttack = 5
+    public HomingForceDash = new Vector3(6, 2, 0)
+    public HomingForceAttack = 8.25
 
     // Renderer
     public CameraOffset = new Vector3(0, 13, 0)

@@ -1,3 +1,4 @@
+import { Game } from "@Easy/Core/Shared/Game";
 import Client from "../Client";
 import * as VUtil from "Code/Shared/Common/Utility/VUtil"
 import { Constants } from "Code/Shared/Components/ConfigSingleton";
@@ -225,7 +226,8 @@ export function RunCollision(Client: Client) {
             if (Hit && Position && Normal) {
                 let DropOff = false
 
-                if (Hit.CompareTag("NoFloor")) {
+                //TODO: airship bug
+                if (Game.IsEditor() ? Hit.CompareTag("NoFloor") : false) {
                     //Floor cannot be stood on under any conditions
                     DropOff = true
                 } else if (Client.Ground.Grounded) {

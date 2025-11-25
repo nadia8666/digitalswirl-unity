@@ -1,6 +1,6 @@
 import { Network } from "Code/Shared/Network";
 import Client from "../Client";
-import { InferredAnimation, SetAnimation, ValidAnimation } from "Code/Shared/CharacterInfo";
+import { InferredAnimation, SetAnimation, ValidAnimation } from "Code/Shared/Animations";
 import { CFrame } from "Code/Shared/Types";
 import Config, { Constants } from "Code/Shared/Components/ConfigSingleton";
 

@@ -3,6 +3,7 @@ import { StateList } from "Code/Client/States";
 import Client from "../Client";
 import SoundDataComponent from "Code/Shared/Components/SoundDataComponent";
 import { Settings } from "Code/Shared/Settings";
+import UI from "../UI";
 
 type PlayConfig = {
     /**
@@ -37,6 +38,8 @@ export class SoundController {
 
     constructor(Client: Client) {
         this.Client = Client
+
+        UI.Get().CurrentSound = this
     }
 
     public Play(Path: string, Config: PlayConfig = {}): GameObject {
@@ -115,6 +118,8 @@ export class SoundController {
         }
 
         this.Registry.clear()
+
+        UI.Get().CurrentSound = undefined
     }
 
     public Update(Current: string) {

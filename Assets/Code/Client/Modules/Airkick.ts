@@ -14,7 +14,7 @@ export function CheckAirKick(Client: Client) {
         Client.ExitBall()
         Client.ResetObjectState()
 
-        Client.CollectState.AddScore(100)
+        Client.GameState.AddScore(100)
         Client.State.Current = Client.State.States.AirKick
 
         const KickUp = Client.Input.Get()[2] <= 0

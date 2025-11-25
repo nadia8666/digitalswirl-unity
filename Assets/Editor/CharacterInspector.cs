@@ -67,7 +67,7 @@ public class CharacterEditor : AirshipEditor
         AirshipEditorGUI.EndGroup();
 
         AirshipEditorGUI.BeginGroup(new GUIContent("Jump"));
-        PropertyFields("JumpInitialForce", "JumpHoldForce", "JumpTicks");
+        PropertyFields("JumpInitialForce", "JumpHoldForce", "JumpTicks", "CoyoteFrames");
         AirshipEditorGUI.EndGroup();
     }
 

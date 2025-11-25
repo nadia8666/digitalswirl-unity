@@ -1,7 +1,8 @@
 import Client from "Code/Client/Client"
 
+@AirshipComponentMenu("Draw/JumpBall")
 export default class JumpBall extends AirshipBehaviour {
-    public Enabled = true
+    @NonSerialized() public Enabled = true
     private Rotation = 0
     public Material: Material
     public RPM = 300

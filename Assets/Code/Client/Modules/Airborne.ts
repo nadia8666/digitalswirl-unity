@@ -44,6 +44,8 @@ export class StateAirborne extends SrcState {
 
                 Client.Flags.InBounce = false
                 Client.Sound.Play("Character/BounceLand.wav")
+                
+                Client.Flags.HomingTriggered = false
             } else {
                 Client.Sound.Play("Character/Land.wav")
 

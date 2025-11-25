@@ -2,18 +2,17 @@ import { Camera } from "./Draw/Camera"
 import { Renderer } from "./Draw/Renderer"
 import { StateMachine } from "./StateMachine"
 import { Input } from "./Control/Input"
-import { Animations } from "Code/Shared/CharacterInfo"
+import { Animations } from "Code/Shared/Animations"
 import { Animation } from "./Draw/Animation"
 import { ObjectController } from "./Object/ObjectController"
 import { Rail, SetRail } from "./Modules/Rail"
 import { SoundController } from "./Draw/Sound"
 import { PlaneProject } from "Code/Shared/Common/Utility/VUtil"
 import { CFrame } from "Code/Shared/Types"
-import { Mouse } from "@Easy/Core/Shared/UserInput"
 import { Bin } from "@Easy/Core/Shared/Util/Bin"
 import _OBJBase from "./Object/Objects/Base"
-import { PhysicsHandler } from "./Physics/Physics"
 import Config, { Constants } from "Code/Shared/Components/ConfigSingleton"
+import UI from "./UI"
 
 /**
  * Flags list
@@ -55,6 +54,8 @@ class Flags {
     public DirectVelocity = false
     public ForceKeepTime = 0
     public InWater = false // TODO: implement water
+
+    public HomingTriggered = false
 }
 
 /**
@@ -62,11 +63,12 @@ class Flags {
  * @class
  * @ClientComponent
  */
-class CollectState {
+class GameState {
     public Shield: string = ""
     public Power: string = ""
     public Rings: number = 0
     public Score: number = 0
+    public Time: number = 0
 
     public AddScore(Change: number) {
         this.Score += Change
@@ -93,6 +95,8 @@ class Ground {
      * Dot product between `Client.Angle.UpVector` and `Client.Flags.Gravity`
      */
     public DotProduct: number = -1
+
+    public UngroundedFrames: number = 0
 }
 
 /**
@@ -125,10 +129,10 @@ export default class Client extends AirshipBehaviour {
 
     // Flags
     public Flags: Flags
-    public CollectState: CollectState
+    public GameState: GameState
 
     // Character info
-    public Config: Config["Character"] = Constants().Character
+    public Config: Config["Character"]
     public Animations: typeof Animations
 
     // Modules
@@ -151,6 +155,8 @@ export default class Client extends AirshipBehaviour {
     public HomingAttack: HomingAttack
 
     override Start() {
+        this.Config = Constants().Character
+
         const [Success, Error] = pcall(() => {
             this.Position = this.transform.position
             this.Angle = this.transform.rotation
@@ -174,7 +180,7 @@ export default class Client extends AirshipBehaviour {
             this.Ground = new Ground()
 
             this.Flags = new Flags()
-            this.CollectState = new CollectState()
+            this.GameState = new GameState()
             this.HomingAttack = new HomingAttack()
 
             this.PreviousAngle = Quaternion.identity
@@ -221,6 +227,13 @@ export default class Client extends AirshipBehaviour {
         this.Camera.Update(DeltaTime)
 
         this.Sound.Update(this.State.GetStateName(this.State.Current))
+
+        this.GameState.Time += DeltaTime
+
+        const HUD = UI.Get()
+        HUD.PlayerRings = this.GameState.Rings
+        HUD.PlayerScore = this.GameState.Score
+        HUD.PlayerTime = this.GameState.Time
 
         Profiler.EndSample()
     }
@@ -315,6 +328,9 @@ export default class Client extends AirshipBehaviour {
         this.ExitBall()
         this.Flags.Bounces = 0
         this.Flags.InBounce = false
+        this.Flags.HomingTriggered = false
+
+        UI.Get().SetHomingTarget(undefined)
     }
 
     /**
@@ -326,6 +342,7 @@ export default class Client extends AirshipBehaviour {
         this.Flags.InBounce = false
         this.Flags.LockTimer = 0
         this.Rail.RailTrick = 0
+        this.Flags.HomingTriggered = false
 
         SetRail(this)
     }
@@ -389,16 +406,16 @@ export default class Client extends AirshipBehaviour {
             this.Speed = this.ToLocal(this.Flags.Gravity.normalized.mul(-2.125))
         }
 
-        if (this.CollectState.Shield === "") {
-            if (this.CollectState.Rings > 0) {
+        if (this.GameState.Shield === "") {
+            if (this.GameState.Rings > 0) {
                 //TODO: spilled rings
-                this.CollectState.Rings = 0
+                this.GameState.Rings = 0
             } else {
                 //TODO: die
                 this.State.Current = this.State.States.None
             }
         } else {
-            this.CollectState.Shield = ""
+            this.GameState.Shield = ""
         }
 
         return true

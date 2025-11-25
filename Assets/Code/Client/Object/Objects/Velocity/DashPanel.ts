@@ -6,6 +6,11 @@ export default class _OBJDashPanel extends _OBJBase {
     public Velocity = 6
     public LockTime = 0
 
+    override Inject() {
+        this.HomingWeight = -2
+        this.HomingTarget = true
+    }
+
     override OnTouch(Client: Client) {
         Client.ResetObjectState()
 

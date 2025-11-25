@@ -5,6 +5,7 @@ import Client from "Code/Client/Client"
 export default class _OBJBase extends AirshipBehaviour {
     @NonSerialized() public Collider = this.gameObject.GetComponent<BoxCollider>()!
     @NonSerialized() public HomingTarget = false
+    @NonSerialized() public HomingWeight = 1
     protected Connections = new Bin()
     protected Debounce = 0
     public readonly Injects = {

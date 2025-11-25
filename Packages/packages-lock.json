@@ -7,6 +7,12 @@
       "dependencies": {},
       "url": "https://package.openupm.com"
     },
+    "com.unity.2d.sprite": {
+      "version": "1.0.0",
+      "depth": 0,
+      "source": "builtin",
+      "dependencies": {}
+    },
     "com.unity.ai.navigation": {
       "version": "2.0.9",
       "depth": 0,
@@ -340,7 +346,7 @@
       "url": "https://packages.unity.com"
     },
     "gg.easy.airship": {
-      "version": "0.1.2193",
+      "version": "0.1.2194",
       "depth": 0,
       "source": "registry",
       "dependencies": {

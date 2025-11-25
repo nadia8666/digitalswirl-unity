@@ -4,6 +4,7 @@ import { SrcState } from "./State"
 import { CheckBounce } from "./Bounce"
 import { CFrame } from "Code/Shared/Types"
 import { SignedAngle } from "Code/Shared/Common/Utility/VUtil"
+import UI from "../UI"
 
 /**
  * Function ran in `State.CheckInput`
@@ -12,8 +13,10 @@ import { SignedAngle } from "Code/Shared/Common/Utility/VUtil"
  * @returns Move successful
  */
 export function CheckHomingAttack(Client: Client) {
+    const Object = PhysicsHandler.GetHomingObject(Client)
+    UI.Get().SetHomingTarget(Object?.transform)
+
     if (Client.Input.Button.Jump.Pressed && Client.Flags.BallEnabled) {
-        const Object = PhysicsHandler.GetHomingObject(Client)
         Client.Flags.TrailEnabled = true
 
         Client.Sound.Play("Character/Dash.wav")
@@ -33,7 +36,14 @@ export function CheckHomingAttack(Client: Client) {
             Client.State.Current = Client.State.States.Airborne
         }
 
-        Client.Speed = new Vector3(math.max(Client.Speed.x, Client.Config.HomingForceDash), Client.Speed.y, Client.Speed.z)
+        const YSpeed = Client.Speed.y
+        Client.Speed = Client.Config.HomingForceDash.Max(Client.Speed.WithZ(0))
+
+        if (Client.Flags.HomingTriggered) {
+            Client.Speed = Client.Speed.WithY(YSpeed)
+        }
+
+        Client.Flags.HomingTriggered = true
 
         return true
     }
@@ -68,11 +78,13 @@ export class StateHoming extends SrcState {
         PhysicsHandler.Turn(Client, math.clamp(Turn, -MaxTurn, MaxTurn))
 
         const ObjectPos = new CFrame(Client.Position, Client.Angle).Inverse().mul(Center)
-
+        const ObjectPosSpeed = new CFrame(Client.Position.add(Client.ToGlobal(Client.Speed.mul(Client.Config.Scale))), Client.Angle).Inverse().mul(Center)
+        
         // Speed
         const Speed = Client.HomingAttack.Speed * (Client.HomingAttack.Timer >= 180 ? (.7 + math.random() * .1) : 1)
 
-        if (ObjectPos.magnitude <= Collider.size.magnitude / 2) {
+        if ((ObjectPos.magnitude <= Collider.size.magnitude / 2) || (ObjectPosSpeed.magnitude <= Collider.size.magnitude / 2)) {
+            UI.Get().SetHomingTarget(undefined)
             Client.HomingAttack.Target!.TouchClient(Client)
 
             Client.HomingAttack.Timer += 300
@@ -88,6 +100,8 @@ export class StateHoming extends SrcState {
         Client.HomingAttack.Timer++
 
         if (Client.HomingAttack.Timer >= 300) {
+            UI.Get().SetHomingTarget(undefined)
+
             Client.State.Current = Client.State.States.Airborne
 
             Client.HomingAttack.Target = undefined

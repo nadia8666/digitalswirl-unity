@@ -2,9 +2,7 @@ import { CFrame } from "Code/Shared/Types";
 import Client from "../Client";
 import { Asset } from "@Easy/Core/Shared/Asset";
 import JumpBall from "./Components/JumpBall";
-
-const pi = math.pi
-const tau = pi * 2
+import SpindashBall from "./Components/SpindashBall";
 
 /**
  * Client renderer
@@ -15,6 +13,7 @@ export class Renderer {
     public Angle: Quaternion = Quaternion.identity
     public CharacterVisible: boolean = false
     public JumpBall: JumpBall
+    public SpindashBall: SpindashBall
     public Parts: GameObject[] = []
 
     constructor(Client: Client) {
@@ -24,6 +23,11 @@ export class Renderer {
         JumpBallPrefab.transform.SetParent(Client.transform)
 
         this.JumpBall = JumpBallPrefab.GetAirshipComponent<JumpBall>()!
+
+        const SpindashBallPrefab = Instantiate(Asset.LoadAsset("Assets/Resources/Prefabs/SpindashBall.prefab"))
+        SpindashBallPrefab.transform.SetParent(Client.transform)
+
+        this.SpindashBall = SpindashBallPrefab.GetAirshipComponent<SpindashBall>()!
         
         for (const [_, Object] of pairs(this.Client.RigParent.GetComponentsInChildren<Transform>(true)))
             this.Parts.push(Object.gameObject)
@@ -44,10 +48,12 @@ export class Renderer {
         this.Client.transform.rotation = this.Angle
 
         this.JumpBall.SetEnabled(this.Client.Flags.BallEnabled && this.Client.Animation.Current === "Roll")
-
         this.JumpBall.Draw(this.Client, DeltaTime)
 
-        const CharacterVisible = !this.JumpBall.Enabled
+        this.SpindashBall.SetEnabled(this.Client.Animation.Current === "Spindash", this.Client)
+        this.SpindashBall.Draw(this.Client, DeltaTime)
+
+        const CharacterVisible = !this.JumpBall.Enabled && !this.SpindashBall.Enabled
         this.SetVisible(CharacterVisible)
     }
 

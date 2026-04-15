@@ -7,7 +7,6 @@ export default class UI extends AirshipSingleton {
     @SerializeField() private Camera: Camera
 
     @Header("HUD")
-    @SerializeField() private Gem: Image
     @SerializeField() private RingsText: TMP_Text
     @SerializeField() private ScoreText: TMP_Text
     @SerializeField() private TimeText: TMP_Text
@@ -48,7 +47,7 @@ export default class UI extends AirshipSingleton {
             this.ReticleTime = 0
 
             if (this.CurrentSound && Target !== undefined)
-                this.CurrentSound.Play("UI/HomingReticleSXSG.wav") // TODO: settings HomingReticleUnleashed.wav
+                this.CurrentSound.Play("UI/HomingReticleSXSG.wav") // optionally: UI/HomingReticleUnleashed.wav
         }
     }
 

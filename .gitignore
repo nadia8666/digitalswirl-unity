@@ -1,6 +1,10 @@
 # This .gitignore file should be placed at the root of your Unity project 
 directory
 
+# custom format for waiting on airship feats :D
+*.STORED
+*.STORED.meta
+
 mono_crash.*
 
 #
@@ -112,16 +116,16 @@ Assets/TypeScriptEditorMetadata.aseditorinfo
 *.prettierrc
 *.vsconfig
 **/eslint.config.ts
-**/ProjectSettings
 *.bytes
 **/Editor/*.config
 .github
 .gitignore
 **/node_modules/.bin
+**/node_modules/typescript
 **/node_modules/@biomejs
+*.asbuildinfo
 
 # Ignore all non-local packages
-
 Assets/AirshipPackages/@Easy/CoreMaterials/*
 
 Assets/AirshipPackages/@Easy/CoreMaterials.meta
@@ -141,3 +145,7 @@ Assets/AirshipPackages/@inkyaker/DualLink.meta
 Assets/AirshipPackages/@inkyaker/CFrame/*
 
 Assets/AirshipPackages/@inkyaker/CFrame.meta
+
+Assets/AirshipPackages/@Easy/VoxelWorld/*
+
+Assets/AirshipPackages/@Easy/VoxelWorld.meta

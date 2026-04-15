@@ -1,5 +1,6 @@
 import DSClient from "Code/Client/Client"
 import { RunCollision } from "Code/Client/Physics/Collision"
+import { Rail } from "./Rail"
 
 /**
  * State base type
@@ -44,11 +45,8 @@ export class SrcState {
     }
 
     /**
-     * Specialized function designed for per-state cooldown management.
-     * 
-     * Look at rails for reference
-     * 
-     * Runs every tick after state update
+     * Specialized function designed for per-state cooldown management, runs every tick post state update
+     * @see {@link Rail}
      * @param Client 
      */
     public Step(Client: DSClient) {

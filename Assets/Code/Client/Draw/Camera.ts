@@ -1,9 +1,9 @@
-import DSClient from "../Client";
-import { Mouse } from "@Easy/Core/Shared/UserInput";
-import { CFrame } from "Code/Shared/Types";
 import { Airship } from "@Easy/Core/Shared/Airship";
-import { Settings } from "Code/Shared/Settings";
+import { Mouse } from "@Easy/Core/Shared/UserInput";
 import { Constants } from "Code/Shared/Components/ConfigSingleton";
+import { Settings } from "Code/Shared/Settings";
+import { CFrame } from "Code/Shared/Types";
+import type DSClient from "../Client";
 
 const MouseSensitivity = new Vector2(1, 0.77).mul(math.rad(0.5));
 const PitchMax = 85;

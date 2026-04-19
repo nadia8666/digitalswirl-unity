@@ -1,4 +1,3 @@
-import DSClient from "Code/Client/Client";
 import { DrawInformation } from "Code/Shared/Types";
 
 @AirshipComponentMenu("Draw/JumpBall")

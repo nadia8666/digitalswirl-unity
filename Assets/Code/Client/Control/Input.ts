@@ -1,9 +1,9 @@
-import { Keyboard } from "@Easy/Core/Shared/UserInput";
-import DSClient from "../Client";
-import { ButtonState } from "./ButtonState";
-import * as VUtil from "Code/Shared/Common/Utility/VUtil";
-import { Game } from "@Easy/Core/Shared/Game";
 import { Airship } from "@Easy/Core/Shared/Airship";
+import { Game } from "@Easy/Core/Shared/Game";
+import { Keyboard } from "@Easy/Core/Shared/UserInput";
+import * as VUtil from "Code/Shared/Common/Utility/VUtil";
+import type DSClient from "../Client";
+import { ButtonState } from "./ButtonState";
 
 type ButtonUnion = ExtractKeys<DSInput["Button"], ButtonState>;
 
@@ -78,7 +78,7 @@ export class DSInput {
 	public GetInputState() {
 		const KeyState = new Set<Key | KeyCode>();
 
-		for (const [ID, State] of pairs(this.Button)) {
+		for (const [, State] of pairs(this.Button)) {
 			for (const [_, Button] of pairs(State.Keys)) {
 				if (Keyboard.IsKeyDown(Button)) {
 					KeyState.add(Button);

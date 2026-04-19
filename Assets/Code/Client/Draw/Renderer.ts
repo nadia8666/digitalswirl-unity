@@ -1,8 +1,7 @@
-import DSClient from "../Client";
 import { Asset } from "@Easy/Core/Shared/Asset";
-import JumpBall from "./Components/JumpBall";
-import SpindashBall from "./Components/SpindashBall";
-import { DrawInformation } from "Code/Shared/Types";
+import type { DrawInformation } from "Code/Shared/Types";
+import type JumpBall from "./Components/JumpBall";
+import type SpindashBall from "./Components/SpindashBall";
 
 /**
  * Client renderer

@@ -160,7 +160,7 @@ export class Animation {
 	}
 
 	private UpdateSpeed(Value: InferredAnimation[0]) {
-		let Speed;
+		let Speed: number|undefined;
 
 		if (Value.Speed) {
 			Speed = Value.Speed.Base + Value.Speed.Increment * this.Speed;

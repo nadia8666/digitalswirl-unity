@@ -1,4 +1,3 @@
-import DSClient from "Code/Client/Client";
 import { SingleDimensionSpring } from "Code/Shared/Common/SingleDimensionSpring";
 import { DrawInformation } from "Code/Shared/Types";
 

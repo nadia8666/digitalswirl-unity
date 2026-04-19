@@ -347,7 +347,7 @@ export const PhysicsHandler = {
 			if (!Client.Ground.Grounded) {
 				Client.Speed = Client.Speed.mul(0.1).add(Client.ToLocal(PreviousSpeed).mul(0.9));
 			} else {
-				let Inertia;
+				let Inertia: number;
 
 				if (HasControl) {
 					if (Client.Ground.DotProduct <= 0.4) {

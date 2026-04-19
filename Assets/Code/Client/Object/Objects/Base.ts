@@ -1,75 +1,78 @@
-import { RegisterObject } from "../ObjectController"
-import { Bin } from "@Easy/Core/Shared/Util/Bin"
-import DSClient from "Code/Client/Client"
+import { RegisterObject } from "../ObjectController";
+import { Bin } from "@Easy/Core/Shared/Util/Bin";
+import DSClient from "Code/Client/Client";
 
 export default class _OBJBase extends AirshipBehaviour {
-    @NonSerialized() public Collider = this.gameObject.GetComponent<BoxCollider>()!
-    @NonSerialized() public HomingTarget = false
-    @NonSerialized() public HomingWeight = 1
-    protected Connections = new Bin()
-    protected Debounce = 0
-    public readonly meta = {
-        AnimationLoader: false
-    }
+	@NonSerialized() public Collider = this.gameObject.GetComponent<BoxCollider>()!;
+	@NonSerialized() public HomingTarget = false;
+	@NonSerialized() public HomingWeight = 1;
+	protected Connections = new Bin();
+	protected Debounce = 0;
+	public readonly meta = {
+		AnimationLoader: false,
+	};
 
-    override Start() {
-        if ($CLIENT) {
-            this.InitObject()
-        }
-    }
+	override Start() {
+		if ($CLIENT) {
+			this.InitObject();
+		}
+	}
 
+	public OnStart() {}
 
-    public OnStart() {}
+	public InitObject() {
+		this.OnStart();
 
-    public InitObject() {
-        this.OnStart()
+		RegisterObject(this);
+	}
 
-        RegisterObject(this)
-    }
+	protected OnTick(GetClient: () => DSClient) {
+		if (this.Debounce > 0) {
+			this.Debounce--;
+		}
+	}
 
-    protected OnTick(GetClient: () => DSClient) {
-        if (this.Debounce > 0) {
-            this.Debounce--
-        }
-    }
+	/**
+	 * Client touched callback
+	 * @param Client
+	 */
+	protected OnTouch(Client: DSClient) {}
 
-    /**
-     * Client touched callback
-     * @param Client
-     */
-    protected OnTouch(Client: DSClient) { }
+	/**
+	 * .RenderStepped callback
+	 * @param DeltaTime
+	 */
+	protected PreRender(DeltaTime: number) {}
 
-    /**
-     * .RenderStepped callback
-     * @param DeltaTime
-     */
-    protected PreRender(DeltaTime: number) { }
+	protected OnRespawn() {}
 
-    protected OnRespawn() { }
+	public Tick(GetClient: () => DSClient) {
+		this.OnTick(GetClient);
+	}
 
-    public Tick(GetClient: () => DSClient) {
-        this.OnTick(GetClient)
-    }
+	public TouchClient(Client: DSClient) {
+		if (this.Debounce > 0) {
+			return;
+		}
 
-    public TouchClient(Client: DSClient) {
-        if (this.Debounce > 0) { return }
+		this.OnTouch(Client);
+	}
 
-        this.OnTouch(Client)
-    }
+	public Draw(DeltaTime: number) {
+		this.PreRender(DeltaTime);
 
-    public Draw(DeltaTime: number) {
-        this.PreRender(DeltaTime)
+		if (this.meta.AnimationLoader) {
+			(
+				this as unknown as {
+					AnimationController: {
+						Animate: (_: _OBJBase) => void;
+					};
+				}
+			).AnimationController.Animate(this);
+		}
+	}
 
-        if (this.meta.AnimationLoader) {
-            (this as unknown as {
-                AnimationController: {
-                    Animate: (_: _OBJBase) => void
-                }
-            }).AnimationController.Animate(this)
-        }
-    }
-
-    public Respawn() {
-        this.OnRespawn()
-    }
+	public Respawn() {
+		this.OnRespawn();
+	}
 }

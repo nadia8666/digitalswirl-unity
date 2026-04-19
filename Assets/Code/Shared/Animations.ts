@@ -1,31 +1,31 @@
-export type ValidAnimation = keyof typeof Animations
+export type ValidAnimation = keyof typeof Animations;
 export interface InferredAnimation {
 	[Index: number]: {
-		Name: string,
-		Position?: number,
+		Name: string;
+		Position?: number;
 		Speed?: {
-			Base: number,
-			Increment: number,
-			Absolute: boolean
-		}
-	}
+			Base: number;
+			Increment: number;
+			Absolute: boolean;
+		};
+	};
 }
 
 export interface AnimationData {
-	EndAnimation?: ValidAnimation,
+	EndAnimation?: ValidAnimation;
 	Transitions?: {
 		From?: {
-			[Index: string]: number | undefined
-			All?: number
-		}
+			[Index: string]: number | undefined;
+			All?: number;
+		};
 		To?: {
-			[Index: string]: number | undefined
-			All?: number
-		}
-	}
+			[Index: string]: number | undefined;
+			All?: number;
+		};
+	};
 }
 
-export type SetAnimation = InferredAnimation & AnimationData
+export type SetAnimation = InferredAnimation & AnimationData;
 
 export const Animations = {
 	Land: {
@@ -37,9 +37,9 @@ export const Animations = {
 		EndAnimation: "Run",
 		Transitions: {
 			To: {
-				Run: 0
-			}
-		}
+				Run: 0,
+			},
+		},
 	},
 	Idle: {
 		[0]: { Name: "Idle" },
@@ -53,32 +53,32 @@ export const Animations = {
 		EndAnimation: "Idle",
 	},
 	Roll: {
-		[0]: { Name: "Roll", Speed: { Base: .25, Increment: 1 / 8, Absolute: true } },
+		[0]: { Name: "Roll", Speed: { Base: 0.25, Increment: 1 / 8, Absolute: true } },
 		Transitions: {
 			From: {
-				All: 0
+				All: 0,
 			},
 			To: {
-				All: 0
-			}
-		}
+				All: 0,
+			},
+		},
 	},
 	Spindash: {
 		[0]: { Name: "Spindash" },
 		Transitions: {
 			From: {
-				All: 0
+				All: 0,
 			},
 			To: {
-				All: 0
-			}
-		}
+				All: 0,
+			},
+		},
 	},
 	Fall: {
-		[0]: { Name: "Fall" }
+		[0]: { Name: "Fall" },
 	},
 	SpecialFall: {
-		[0]: { Name: "SpecialFall" }
+		[0]: { Name: "SpecialFall" },
 	},
 	Skid: {
 		[0]: { Name: "Skid" },
@@ -90,19 +90,18 @@ export const Animations = {
 
 		Transitions: {
 			To: {
-				Spring: 0
-			}
-		}
-
+				Spring: 0,
+			},
+		},
 	},
 	Spring: {
 		[0]: { Name: "Spring" },
 		Transitions: {
 			To: {
-				Fall: .4,
+				Fall: 0.4,
 				HomingAttack: 0.05,
-			}
-		}
+			},
+		},
 	},
 	Run: {
 		[0]: {
@@ -110,9 +109,9 @@ export const Animations = {
 			Position: 0,
 			Speed: {
 				Base: 1,
-				Increment: .75,
-				Absolute: false
-			}
+				Increment: 0.75,
+				Absolute: false,
+			},
 		},
 		[1]: {
 			Name: "Run",
@@ -120,8 +119,8 @@ export const Animations = {
 			Speed: {
 				Base: 0,
 				Increment: 1,
-				Absolute: false
-			}
+				Absolute: false,
+			},
 		},
 		[2]: {
 			Name: "Jet",
@@ -129,57 +128,56 @@ export const Animations = {
 			Speed: {
 				Base: 0,
 				Increment: 1,
-				Absolute: false
-			}
+				Absolute: false,
+			},
 		},
 
 		Transitions: {
 			From: {
-				JogStart: 0
-			}
-		}
+				JogStart: 0,
+			},
+		},
 	},
 	JogStart: {
 		[0]: {
-			Name: "JogStart"
+			Name: "JogStart",
 		},
-		EndAnimation: "Run"
+		EndAnimation: "Run",
 	},
 	Rail: {
-		[0]: { Name: "Rail" }
+		[0]: { Name: "Rail" },
 	},
 	RailCrouch: {
-		[0]: { Name: "RailCrouch" }
+		[0]: { Name: "RailCrouch" },
 	},
 	RailLand: {
-		[0]: { Name: "RailLand" }
+		[0]: { Name: "RailLand" },
 	},
 	RailBalance: {
-		[0]: { Name: "RailBalance" }
+		[0]: { Name: "RailBalance" },
 	},
 	RailSwitchLeft: {
-		[0]: { Name: "RailSwitchLeft" }
+		[0]: { Name: "RailSwitchLeft" },
 	},
 	RailSwitchRight: {
-		[0]: { Name: "RailSwitchRight" }
+		[0]: { Name: "RailSwitchRight" },
 	},
 } as const satisfies {
 	[Index: string]: {
 		[Index: number]: {
-			Name: string,
-			Position?: number,
+			Name: string;
+			Position?: number;
 			Speed?: {
-				Base: number,
-				Increment: number,
-				Absolute: boolean
-			}
-		}
+				Base: number;
+				Increment: number;
+				Absolute: boolean;
+			};
+		};
 	} & {
-		EndAnimation?: string,
-		Transitions?: AnimationData["Transitions"]
-	}
-}
-
+		EndAnimation?: string;
+		Transitions?: AnimationData["Transitions"];
+	};
+};
 
 /*
 		scale = .6,

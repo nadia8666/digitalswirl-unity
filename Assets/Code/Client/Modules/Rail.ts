@@ -1,47 +1,47 @@
-import DSClient from "Code/Client/Client"
-import { CheckJump } from "./Jump"
-import { SrcState } from "./State"
-import { Signal } from "@Easy/Core/Shared/Util/Signal"
-import { CFrame, ToFloat3 } from "Code/Shared/Types"
-import { Constants } from "Code/Shared/Components/ConfigSingleton"
+import DSClient from "Code/Client/Client";
+import { CheckJump } from "./Jump";
+import { SrcState } from "./State";
+import { Signal } from "@Easy/Core/Shared/Util/Signal";
+import { CFrame, ToFloat3 } from "Code/Shared/Types";
+import { Constants } from "Code/Shared/Components/ConfigSingleton";
 
 /**
  * Rail component interface
- * 
+ *
  * @playerComponent
  * @injects Client
  */
 export class Rail {
-    public Current: Transform | undefined
-    public RailDirection: number = 1
-    public RailBalance: number = 0
-    public RailTargetBalance: number = 0
-    public RailOffset: Vector3 = Vector3.zero
-    public RailTrick: number = 0
-    public RailSound: string | undefined
-    public RailGrace: number = 0
-    public RailBonusTime: number = 0
-    public RailDebounce: number = 0
-    public BalanceEnabled: boolean = true
-    public BalanceFail: number = 0
+	public Current: Transform | undefined;
+	public RailDirection: number = 1;
+	public RailBalance: number = 0;
+	public RailTargetBalance: number = 0;
+	public RailOffset: Vector3 = Vector3.zero;
+	public RailTrick: number = 0;
+	public RailSound: string | undefined;
+	public RailGrace: number = 0;
+	public RailBonusTime: number = 0;
+	public RailDebounce: number = 0;
+	public BalanceEnabled: boolean = true;
+	public BalanceFail: number = 0;
 
-    public Connections: Signal[] = []
+	public Connections: Signal[] = [];
 }
 
 export function RailActive(Client: DSClient) {
-    return Client.State.Current === Client.State.States.Rail && Client.Rail.RailOffset.magnitude < 0.5
+	return Client.State.Current === Client.State.States.Rail && Client.Rail.RailOffset.magnitude < 0.5;
 }
 
 export function GetRailPosition(Client: DSClient) {
-    assert(Client.Rail.Current, "GetRailPosition() called without Client.Rail.Current being set, did you mean to call this function?")
-    const RailCFrame = CFrame.FromTransform(Client.Rail.Current)
-    const Offset = RailCFrame.Inverse().mul(Client.Position)
+	assert(Client.Rail.Current, "GetRailPosition() called without Client.Rail.Current being set, did you mean to call this function?");
+	const RailCFrame = CFrame.FromTransform(Client.Rail.Current);
+	const Offset = RailCFrame.Inverse().mul(Client.Position);
 
-    //return RailCFrame.mul(new Vector3(0, Client.Rail.Current.Size.Y / 2, Offset.Z))
+	//return RailCFrame.mul(new Vector3(0, Client.Rail.Current.Size.Y / 2, Offset.Z))
 }
 
 export function GetRailAngle(Client: DSClient) {
-    /*
+	/*
      if (Client.Rail.Current) {
          let Angle
          if (Client.Rail.RailDirection >= 0) {
@@ -56,7 +56,7 @@ export function GetRailAngle(Client: DSClient) {
 }
 
 export function SetRail(Client: DSClient, Part?: GameObject) {
-    /*
+	/*
     const Rail = Client.Rail
 
     if (Part) {
@@ -126,31 +126,33 @@ export function SetRail(Client: DSClient, Part?: GameObject) {
 }
 
 /**
- * 
+ *
  * @move
  */
 export function CheckRail(Client: DSClient) {
-    if (Client.Rail.RailDebounce > 0 || Client.Rail.Current) { return false }
-    const Rail = Client.State.States.Rail
-    const LastPosition = Client.LastCFrame.Position
+	if (Client.Rail.RailDebounce > 0 || Client.Rail.Current) {
+		return false;
+	}
+	const Rail = Client.State.States.Rail;
+	const LastPosition = Client.LastCFrame.Position;
 
-    if (LastPosition !== Client.Position) {
-        const Rails = Physics.OverlapSphere(Client.Position, Client.Config.Radius * 2, Constants().Masks().RailLayer)
+	if (LastPosition !== Client.Position) {
+		const Rails = Physics.OverlapSphere(Client.Position, Client.Config.Radius * 2, Constants().Masks().RailLayer);
 
-        for (const [_, Collider] of pairs(Rails)) {
-            const Spline = Collider.gameObject.GetComponent<SplineContainer>();
+		for (const [_, Collider] of pairs(Rails)) {
+			const Spline = Collider.gameObject.GetComponent<SplineContainer>();
 
-            if (!Spline) continue
+			if (!Spline) continue;
 
-            //const [NearpPos,Delta] = (SplineUtility as unknown as {GetNearestPoint<T>(this: SplineUtility, Spline: T, Point: float3, Res?: number, It?: number): [float3, number]}).GetNearestPoint(Spline, ToFloat3(Client.Position), 4, 2)
+			//const [NearpPos,Delta] = (SplineUtility as unknown as {GetNearestPoint<T>(this: SplineUtility, Spline: T, Point: float3, Res?: number, It?: number): [float3, number]}).GetNearestPoint(Spline, ToFloat3(Client.Position), 4, 2)
 
-            //print(NearpPos, Delta)
+			//print(NearpPos, Delta)
 
-            break
-        }
-    }
+			break;
+		}
+	}
 
-    return Client.State.Current === Client.State.States.Rail
+	return Client.State.Current === Client.State.States.Rail;
 }
 
 /**
@@ -159,32 +161,27 @@ export function CheckRail(Client: DSClient) {
  * @augments SrcState
  */
 export class StateRail extends SrcState {
-    public Skin: number = 2
+	public Skin: number = 2;
 
-    constructor() {
-        super()
-    }
+	constructor() {
+		super();
+	}
 
-    protected CheckInput(Client: DSClient) {
-        if (CheckJump(Client)) {
-            SetRail(Client)
+	protected CheckInput(Client: DSClient) {
+		if (CheckJump(Client)) {
+			SetRail(Client);
 
-            return true
-        }
-    }
+			return true;
+		}
+	}
 
-    protected BeforeUpdateHook(Client: DSClient) {
+	protected BeforeUpdateHook(Client: DSClient) {}
 
-    }
+	protected AfterUpdateHook(Client: DSClient) {}
 
-    protected AfterUpdateHook(Client: DSClient) {
-
-    }
-
-    protected OnStep(Client: DSClient) {
-        if (Client.Rail.RailDebounce > 0) {
-            Client.Rail.RailDebounce--
-        }
-    }
+	protected OnStep(Client: DSClient) {
+		if (Client.Rail.RailDebounce > 0) {
+			Client.Rail.RailDebounce--;
+		}
+	}
 }
-

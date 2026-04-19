@@ -8,59 +8,59 @@ import Link from "@inkyaker/DualLink/Code";
 import Framework from "./Framework";
 
 export default class ClientReplicator extends AirshipBehaviour {
-    public Connections = new Bin()
-    public Client: DSClient
-    public Net: NetworkIdentity
+	public Connections = new Bin();
+	public Client: DSClient;
+	public Net: NetworkIdentity;
 
-    public Position: Vector3
-    public Rotation: Quaternion
+	public Position: Vector3;
+	public Rotation: Quaternion;
 
-    @NonSerialized() public Draw: Renderer
-    @NonSerialized() public Animation: Animation
-    @NonSerialized() public IsHost: boolean
+	@NonSerialized() public Draw: Renderer;
+	@NonSerialized() public Animation: Animation;
+	@NonSerialized() public IsHost: boolean;
 
-    private Link: Link<DrawInformation>
+	private Link: Link<DrawInformation>;
 
-    override Start() {
-        this.IsHost = this.Client.Player === Game.localPlayer
-        this.Link = Framework.Get().Links.get(this.Client.Player)!
+	override Start() {
+		this.IsHost = this.Client.Player === Game.localPlayer;
+		this.Link = Framework.Get().Links.get(this.Client.Player)!;
 
-        if (!this.IsHost) {
-            this.Draw = new Renderer(this.Client.transform, this.Client.RigParent)
-            this.Animation = new Animation(this.Client.EventListener, this.Client.RigParent.transform, this.Client.Animations, this.Client.Controller, {} as unknown as DrawInformation)
-            return
-        }
-    }
+		if (!this.IsHost) {
+			this.Draw = new Renderer(this.Client.transform, this.Client.RigParent);
+			this.Animation = new Animation(this.Client.EventListener, this.Client.RigParent.transform, this.Client.Animations, this.Client.Controller, {} as unknown as DrawInformation);
+			return;
+		}
+	}
 
-    override OnDestroy() {
-        this.Draw.Destroy()
-        this.Connections.Clean()
-    }
+	override OnDestroy() {
+		this.Draw.Destroy();
+		this.Connections.Clean();
+	}
 
-    override LateUpdate(DeltaTime: number) {
-        // Host only sends data
-        if (this.IsHost) {
-            const DrawInfo = this.Client.RenderInfo
+	override LateUpdate(DeltaTime: number) {
+		// Host only sends data
+		if (this.IsHost) {
+			const DrawInfo = this.Client.RenderInfo;
 
-            for (const [Index, Value] of pairs(DrawInfo)) {
-                if (this.Link.Data[Index] !== Value) {
-                    this.Link.SetValue(`${Index}`, Value)
-                }
-            }
-            
-            this.Link.PrepareReplicate()
+			for (const [Index, Value] of pairs(DrawInfo)) {
+				if (this.Link.Data[Index] !== Value) {
+					this.Link.SetValue(`${Index}`, Value);
+				}
+			}
 
-            return
-        }
+			this.Link.PrepareReplicate();
 
-        // Client does drawing work
-        this.Animation.DrawInfo = this.Link.Data
-        this.Animation.Speed = this.Link.Data.AnimationSpeed
-        this.Animation.Current = this.Link.Data.Animation
+			return;
+		}
 
-        this.Draw.Draw(DeltaTime, this.Link.Data)
-        this.Animation.Animate(DeltaTime)
+		// Client does drawing work
+		this.Animation.DrawInfo = this.Link.Data;
+		this.Animation.Speed = this.Link.Data.AnimationSpeed;
+		this.Animation.Current = this.Link.Data.Animation;
 
-        this.Animation.DynamicTilt(DeltaTime)
-    }
+		this.Draw.Draw(DeltaTime, this.Link.Data);
+		this.Animation.Animate(DeltaTime);
+
+		this.Animation.DynamicTilt(DeltaTime);
+	}
 }

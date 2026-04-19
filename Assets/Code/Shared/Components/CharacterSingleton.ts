@@ -1,48 +1,48 @@
 @AirshipComponentMenu("Framework/Character")
 export default class Character extends AirshipBehaviour {
-    // Collision
-    public Height = 5
-    public Scale = .6 / 3
-    public Radius = 3
-    public PositionError = 2
+	// Collision
+	public Height = 5;
+	public Scale = 0.6 / 3;
+	public Radius = 3;
+	public PositionError = 2;
 
-    // Physics
-    public Weight = .08
+	// Physics
+	public Weight = 0.08;
 
-    // Speed
-    public MaxXSpeed = 3
-    public JogSpeed = .46
-    public RunSpeed = 1.39
-    public RushSpeed = 2.3
-    public DashSpeed = 5.09
-    public CrashSpeed = 3.7 // Used in Grounded's acceleration animation speed check
-    public RollGetUp = 1.39 // Point at which the roll state should uncurl you
+	// Speed
+	public MaxXSpeed = 3;
+	public JogSpeed = 0.46;
+	public RunSpeed = 1.39;
+	public RushSpeed = 2.3;
+	public DashSpeed = 5.09;
+	public CrashSpeed = 3.7; // Used in Grounded's acceleration animation speed check
+	public RollGetUp = 1.39; // Point at which the roll state should uncurl you
 
-    // Acceleration
-    public AirAcceleration = .031
-    public RunAcceleration = .05
-    public AirDeceleration = -0.17
-    public StandardDeceleration = -.06
-    public AirResist = new Vector3(-.008, -.01, -.4)
+	// Acceleration
+	public AirAcceleration = 0.031;
+	public RunAcceleration = 0.05;
+	public AirDeceleration = -0.17;
+	public StandardDeceleration = -0.06;
+	public AirResist = new Vector3(-0.008, -0.01, -0.4);
 
-    // Jump
-    public JumpInitialForce = 1.66
-    public JumpHoldForce = .076
-    public JumpTicks = 60
-    public CoyoteFrames = 10
+	// Jump
+	public JumpInitialForce = 1.66;
+	public JumpHoldForce = 0.076;
+	public JumpTicks = 60;
+	public CoyoteFrames = 10;
 
-    // Friction
-    public SkidFriction = -.18
-    public GroundFriction = new Vector3(-.1, 0, -.6)
+	// Friction
+	public SkidFriction = -0.18;
+	public GroundFriction = new Vector3(-0.1, 0, -0.6);
 
-    // Moves
-    public HomingForceDash = new Vector3(6, 2, 0)
-    public HomingForceAttack = 8.25
+	// Moves
+	public HomingForceDash = new Vector3(6, 2, 0);
+	public HomingForceAttack = 8.25;
 
-    // Renderer
-    public CameraOffset = new Vector3(0, 13, 0)
-    public JumpBallHeightAir = 4
-    public JumpBallHeightRoll = 3
-    public JumpStretchTimer = 15
-    public JumpBallStretch = .25
+	// Renderer
+	public CameraOffset = new Vector3(0, 13, 0);
+	public JumpBallHeightAir = 4;
+	public JumpBallHeightRoll = 3;
+	public JumpStretchTimer = 15;
+	public JumpBallStretch = 0.25;
 }

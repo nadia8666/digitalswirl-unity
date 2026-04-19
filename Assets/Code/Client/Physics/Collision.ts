@@ -1,132 +1,132 @@
 import DSClient from "../Client";
-import * as VUtil from "Code/Shared/Common/Utility/VUtil"
+import * as VUtil from "Code/Shared/Common/Utility/VUtil";
 import { Constants } from "Code/Shared/Components/ConfigSingleton";
 import { CFrame } from "Code/Shared/Types";
 import TagCheckSingleton from "Code/Shared/Components/TagCheckSingleton";
 
 // TODO: airship bug
-let NoFloorEnabled = false
-task.spawn(() => NoFloorEnabled = TagCheckSingleton.Get().TagExists("NoFloor"))
+let NoFloorEnabled = false;
+task.spawn(() => (NoFloorEnabled = TagCheckSingleton.Get().TagExists("NoFloor")));
 
 function GetAligned(Client: DSClient, Normal: Vector3) {
-    if (Client.Angle.mul(Vector3.up).Dot(Normal) < -0.999) {
-        return Quaternion.Euler(180, 0, 0).mul(Client.Angle)
-    }
+	if (Client.Angle.mul(Vector3.up).Dot(Normal) < -0.999) {
+		return Quaternion.Euler(180, 0, 0).mul(Client.Angle);
+	}
 
-    return Quaternion.FromToRotation(Client.Angle.mul(Vector3.up), Normal).mul(Client.Angle)
+	return Quaternion.FromToRotation(Client.Angle.mul(Vector3.up), Normal).mul(Client.Angle);
 }
 
 function AlignNormal(Client: DSClient, Normal: Vector3) {
-    Client.Angle = GetAligned(Client, Normal)
+	Client.Angle = GetAligned(Client, Normal);
 }
 
 //Velocity cancel for walls
 function VelCancel(Velocity: Vector3, Normal: Vector3) {
-    const Dot = Velocity.Dot(Normal.normalized)
-    if (Dot < 0) {
-        return Velocity.sub(Normal.normalized.mul(Dot))
-    }
-    return Velocity
+	const Dot = Velocity.Dot(Normal.normalized);
+	if (Dot < 0) {
+		return Velocity.sub(Normal.normalized.mul(Dot));
+	}
+	return Velocity;
 }
 
 function LocalVelCancel(Client: DSClient, vel: Vector3, normal: Vector3) {
-    return Client.ToLocal(VelCancel(Client.ToGlobal(vel), normal.normalized))
+	return Client.ToLocal(VelCancel(Client.ToGlobal(vel), normal.normalized));
 }
 
 function LocalFlatten(Client: DSClient, vector: Vector3, normal: Vector3) {
-    return Client.ToLocal(VUtil.Flatten(Client.ToGlobal(vector), normal.normalized))
+	return Client.ToLocal(VUtil.Flatten(Client.ToGlobal(vector), normal.normalized));
 }
 
 function Raycast(From: Vector3, Direction: Vector3) {
-    const [Hit, Position, Normal, Collider] = Physics.Raycast(From, Direction.normalized, Direction.magnitude, Constants().Masks().CollisionLayer)
-    Debug.DrawRay(From, Direction, Color.white, 1)
+	const [Hit, Position, Normal, Collider] = Physics.Raycast(From, Direction.normalized, Direction.magnitude, Constants().Masks().CollisionLayer);
+	Debug.DrawRay(From, Direction, Color.white, 1);
 
-    if (Hit) {
-        return $tuple(Collider.gameObject, Position, Normal, "Ground")
-    } else {
-        return $tuple(undefined, From.add(Direction), undefined, "Air")
-    }
+	if (Hit) {
+		return $tuple(Collider.gameObject, Position, Normal, "Ground");
+	} else {
+		return $tuple(undefined, From.add(Direction), undefined, "Air");
+	}
 }
 
 //Wall collision
 function WallRay(Client: DSClient, Y: number, Direction: Vector3, Velocity: number) {
-    //Raycast
-    const ReverseDirection = Direction.mul(Client.Config.Radius * Client.Config.Scale)
-    const From = Client.Position.add(Client.Angle.mul(Vector3.up.mul(Y)))
-    const ForwardDirection = Direction.mul((Client.Config.Radius + Velocity) * Client.Config.Scale)
+	//Raycast
+	const ReverseDirection = Direction.mul(Client.Config.Radius * Client.Config.Scale);
+	const From = Client.Position.add(Client.Angle.mul(Vector3.up.mul(Y)));
+	const ForwardDirection = Direction.mul((Client.Config.Radius + Velocity) * Client.Config.Scale);
 
-    const [Hit, Position, Normal] = Raycast(From, ForwardDirection)
+	const [Hit, Position, Normal] = Raycast(From, ForwardDirection);
 
-    if (Hit) {
-        return $tuple((Position!.sub(ReverseDirection))!.sub(From), Normal, Position)
-    }
+	if (Hit) {
+		return $tuple(Position!.sub(ReverseDirection)!.sub(From), Normal, Position);
+	}
 
-    return $tuple(undefined, undefined, undefined)
+	return $tuple(undefined, undefined, undefined);
 }
 
 function CheckWallAttach(Client: DSClient, Direction: Vector3, Normal: Vector3) {
-    const DirectionDot = Direction.Dot(Normal)
-    const SpeedDot = Client.ToGlobal(Client.Speed).Dot(Normal)
-    const UpDot = Client.Angle.mul(Vector3.up).Dot(Normal)
-    return (DirectionDot < -0.35 && SpeedDot < -1.16 && UpDot > 0.5)
+	const DirectionDot = Direction.Dot(Normal);
+	const SpeedDot = Client.ToGlobal(Client.Speed).Dot(Normal);
+	const UpDot = Client.Angle.mul(Vector3.up).Dot(Normal);
+	return DirectionDot < -0.35 && SpeedDot < -1.16 && UpDot > 0.5;
 }
 
 function WallAttach(Client: DSClient, InputNormal: Vector3) {
-    const FUp = Client.Config.Height * Client.Config.Scale
-    const FDown = FUp + (Client.Config.PositionError * Client.Config.Scale)
-    const [Hit, Position, Normal] = Raycast(Client.Position.add(Client.Angle.mul(Vector3.up).mul(FUp)), InputNormal.mul(-FDown))
+	const FUp = Client.Config.Height * Client.Config.Scale;
+	const FDown = FUp + Client.Config.PositionError * Client.Config.Scale;
+	const [Hit, Position, Normal] = Raycast(Client.Position.add(Client.Angle.mul(Vector3.up).mul(FUp)), InputNormal.mul(-FDown));
 
-    if (Hit && Position) {
-        Client.Position = Position
-        Client.Angle = GetAligned(Client, Normal)
-    }
+	if (Hit && Position) {
+		Client.Position = Position;
+		Client.Angle = GetAligned(Client, Normal);
+	}
 }
 
 function WallHit(Client: DSClient, Normal: Vector3) {
-    Client.Speed = LocalVelCancel(Client, Client.Speed, Normal)
+	Client.Speed = LocalVelCancel(Client, Client.Speed, Normal);
 }
 
 function WallCollide(Client: DSClient, Y: number, Direction: Vector3, Velocity: number, ForwardAttach: boolean, BackAttach: boolean) {
-    //Positive and negative wall collision
-    let [ForwardPos, ForwardNormal] = WallRay(Client, Y, Direction, math.max(Velocity, 0))
-    let [BackwardPos, BackwardNormal] = WallRay(Client, Y, Direction.mul(-1), math.max(-Velocity, 0))
+	//Positive and negative wall collision
+	let [ForwardPos, ForwardNormal] = WallRay(Client, Y, Direction, math.max(Velocity, 0));
+	let [BackwardPos, BackwardNormal] = WallRay(Client, Y, Direction.mul(-1), math.max(-Velocity, 0));
 
-    //Clip with walls
-    let ShouldMove = true
-    if (ForwardPos && BackwardPos && ForwardNormal && BackwardNormal) {
-        Client.Position = Client.Position.add((ForwardPos.add(BackwardPos)).div(2))
-        const Middle = ForwardNormal.add(BackwardNormal)
-        if (Middle.magnitude !== 0) {
-            ForwardNormal = Middle.normalized
-        } else {
-            ForwardNormal = undefined
-        }
-        BackwardNormal = undefined
-        ShouldMove = false
-    } else if (ForwardPos) {
-        Client.Position = Client.Position.add(ForwardPos)
-    } else if (BackwardPos) {
-        Client.Position = Client.Position.add(BackwardPos)
-    }
+	//Clip with walls
+	let ShouldMove = true;
+	if (ForwardPos && BackwardPos && ForwardNormal && BackwardNormal) {
+		Client.Position = Client.Position.add(ForwardPos.add(BackwardPos).div(2));
+		const Middle = ForwardNormal.add(BackwardNormal);
+		if (Middle.magnitude !== 0) {
+			ForwardNormal = Middle.normalized;
+		} else {
+			ForwardNormal = undefined;
+		}
+		BackwardNormal = undefined;
+		ShouldMove = false;
+	} else if (ForwardPos) {
+		Client.Position = Client.Position.add(ForwardPos);
+	} else if (BackwardPos) {
+		Client.Position = Client.Position.add(BackwardPos);
+	}
 
-    //Velocity cancelling
-    if (ForwardNormal) {
-        if (ForwardAttach && CheckWallAttach(Client, Direction, ForwardNormal)) {
-            WallAttach(Client, ForwardNormal)
-            ShouldMove = false
-        } else {
-            WallHit(Client, ForwardNormal)
-        }
-    }
-    if (BackwardNormal) {
-        if (BackAttach && CheckWallAttach(Client, Direction.mul(-1), BackwardNormal)) {
-            WallAttach(Client, BackwardNormal)
-            ShouldMove = false
-        } else {
-            WallHit(Client, BackwardNormal)
-        }
-    }
-    return ShouldMove
+	//Velocity cancelling
+	if (ForwardNormal) {
+		if (ForwardAttach && CheckWallAttach(Client, Direction, ForwardNormal)) {
+			WallAttach(Client, ForwardNormal);
+			ShouldMove = false;
+		} else {
+			WallHit(Client, ForwardNormal);
+		}
+	}
+	if (BackwardNormal) {
+		if (BackAttach && CheckWallAttach(Client, Direction.mul(-1), BackwardNormal)) {
+			WallAttach(Client, BackwardNormal);
+			ShouldMove = false;
+		} else {
+			WallHit(Client, BackwardNormal);
+		}
+	}
+	return ShouldMove;
 }
 
 /**
@@ -134,208 +134,208 @@ function WallCollide(Client: DSClient, Y: number, Direction: Vector3, Velocity: 
  * @param Client
  */
 export function RunCollision(Client: DSClient) {
-    //Stick to moving floors
-    if (Client.Ground.Grounded && Client.Ground.Floor) {
-        const Current = CFrame.FromTransform(Client.Ground.Floor)
+	//Stick to moving floors
+	if (Client.Ground.Grounded && Client.Ground.Floor) {
+		const Current = CFrame.FromTransform(Client.Ground.Floor);
 
-        const PreviousWorld = Client.Ground.FloorLast!.mul(Client.Ground.FloorOffset)
-        const NewWorld = Current.mul(Client.Ground.FloorOffset)
-        const Diff = Quaternion.FromToRotation(PreviousWorld.Rotation.mul(Vector3.forward), NewWorld.Rotation.mul(Vector3.forward))
+		const PreviousWorld = Client.Ground.FloorLast!.mul(Client.Ground.FloorOffset);
+		const NewWorld = Current.mul(Client.Ground.FloorOffset);
+		const Diff = Quaternion.FromToRotation(PreviousWorld.Rotation.mul(Vector3.forward), NewWorld.Rotation.mul(Vector3.forward));
 
-        Client.Ground.FloorSpeed = NewWorld.Position.sub(PreviousWorld.Position)
-        Client.Position = Client.Position.add(Client.Ground.FloorSpeed)
-        Client.Angle = Diff.mul(Client.Angle)
-    }
+		Client.Ground.FloorSpeed = NewWorld.Position.sub(PreviousWorld.Position);
+		Client.Position = Client.Position.add(Client.Ground.FloorSpeed);
+		Client.Angle = Diff.mul(Client.Angle);
+	}
 
-    for (const i of $range(1, 4)) {
-        //Remember previous position
-        const PreviousPosition = Client.Position
-        const PreviousMiddle = Client.GetMiddle()
+	for (const i of $range(1, 4)) {
+		//Remember previous position
+		const PreviousPosition = Client.Position;
+		const PreviousMiddle = Client.GetMiddle();
 
-        //Wall collision heights
-        const HeightScale = Client.Flags.BallEnabled ? .8 : 1
-        const Heights = [
-            Client.Config.Height * 0.85 * Client.Config.Scale * HeightScale,
-            Client.Config.Height * 1.25 * Client.Config.Scale * HeightScale,
-            Client.Config.Height * 1.95 * Client.Config.Scale * HeightScale,
-        ]
+		//Wall collision heights
+		const HeightScale = Client.Flags.BallEnabled ? 0.8 : 1;
+		const Heights = [
+			Client.Config.Height * 0.85 * Client.Config.Scale * HeightScale,
+			Client.Config.Height * 1.25 * Client.Config.Scale * HeightScale,
+			Client.Config.Height * 1.95 * Client.Config.Scale * HeightScale,
+		];
 
-        //Wall collision and horizontal movement
-        {
-            let XMove = true
-            let ZMove = true
-            for (const [i, v] of pairs(Heights)) {
-                if (WallCollide(Client, v, Client.Angle.mul(Vector3.forward), Client.Speed.x, (Client.Ground.Grounded || (Client.Speed.y <= 0)) && (i === 1), false) === false) {
-                    XMove = false
-                }
-                if (WallCollide(Client, v, Client.Angle.mul(Vector3.right), Client.Speed.z, false, false) === false) {
-                    ZMove = false
-                }
-            }
+		//Wall collision and horizontal movement
+		{
+			let XMove = true;
+			let ZMove = true;
+			for (const [i, v] of pairs(Heights)) {
+				if (WallCollide(Client, v, Client.Angle.mul(Vector3.forward), Client.Speed.x, (Client.Ground.Grounded || Client.Speed.y <= 0) && i === 1, false) === false) {
+					XMove = false;
+				}
+				if (WallCollide(Client, v, Client.Angle.mul(Vector3.right), Client.Speed.z, false, false) === false) {
+					ZMove = false;
+				}
+			}
 
-            if (XMove) {
-                Client.Position = Client.Position.add(Client.Angle.mul(Vector3.forward).mul(Client.Speed.x * Client.Config.Scale))
-            }
-            if (ZMove) {
-                Client.Position = Client.Position.add(Client.Angle.mul(Vector3.right).mul(Client.Speed.z * Client.Config.Scale))
-            }
-        }
+			if (XMove) {
+				Client.Position = Client.Position.add(Client.Angle.mul(Vector3.forward).mul(Client.Speed.x * Client.Config.Scale));
+			}
+			if (ZMove) {
+				Client.Position = Client.Position.add(Client.Angle.mul(Vector3.right).mul(Client.Speed.z * Client.Config.Scale));
+			}
+		}
 
-        //Ceiling collision
-        {
-            let CeilUp = Client.Config.Height * Client.Config.Scale
-            let CeilDown = CeilUp
+		//Ceiling collision
+		{
+			let CeilUp = Client.Config.Height * Client.Config.Scale;
+			let CeilDown = CeilUp;
 
-            if (Client.Speed.y > 0) {
-                CeilDown += Client.Speed.y * Client.Config.Scale //Moving upwards, extend raycast upwards
-            } else if (Client.Speed.y < 0) {
-                CeilUp += Client.Speed.y * Client.Config.Scale //Moving downwards, move raycast downwards
-            }
+			if (Client.Speed.y > 0) {
+				CeilDown += Client.Speed.y * Client.Config.Scale; //Moving upwards, extend raycast upwards
+			} else if (Client.Speed.y < 0) {
+				CeilUp += Client.Speed.y * Client.Config.Scale; //Moving downwards, move raycast downwards
+			}
 
-            const From = Client.Position.add(Client.Angle.mul(Vector3.up).mul(CeilUp))
-            const Direction = Client.Angle.mul(Vector3.up).mul(CeilDown)
-            const [Hit, Position, Normal] = Raycast(From, Direction)
+			const From = Client.Position.add(Client.Angle.mul(Vector3.up).mul(CeilUp));
+			const Direction = Client.Angle.mul(Vector3.up).mul(CeilDown);
+			const [Hit, Position, Normal] = Raycast(From, Direction);
 
-            if (Hit && Position && Normal) {
-                if (Client.Ground.Grounded) {
-                    //Set ceiling clip flag
-                    //Client.flag.ceiling_clip = nor:Dot(Client.gravity.normalized) > 0.9 // TODO: ceil clip
-                } else {
-                    //Clip and cancel velocity
-                    Client.Position = Position.sub((Client.Angle.mul(Vector3.up).mul((Client.Config.Height * 2 * Client.Config.Scale))))
-                    Client.Speed = LocalVelCancel(Client, Client.Speed, Normal)
-                    //Client.flag.ceiling_clip = false
-                }
-            }
-        }
+			if (Hit && Position && Normal) {
+				if (Client.Ground.Grounded) {
+					//Set ceiling clip flag
+					//Client.flag.ceiling_clip = nor:Dot(Client.gravity.normalized) > 0.9 // TODO: ceil clip
+				} else {
+					//Clip and cancel velocity
+					Client.Position = Position.sub(Client.Angle.mul(Vector3.up).mul(Client.Config.Height * 2 * Client.Config.Scale));
+					Client.Speed = LocalVelCancel(Client, Client.Speed, Normal);
+					//Client.flag.ceiling_clip = false
+				}
+			}
+		}
 
-        //Floor collision
-        {
-            let PositionError = Client.Ground.Grounded && (Client.Config.PositionError * Client.Config.Scale) || 0
-            let FloorUp = Client.Config.Height * Client.Config.Scale
-            let FloorDown = -(FloorUp + PositionError)
+		//Floor collision
+		{
+			let PositionError = (Client.Ground.Grounded && Client.Config.PositionError * Client.Config.Scale) || 0;
+			let FloorUp = Client.Config.Height * Client.Config.Scale;
+			let FloorDown = -(FloorUp + PositionError);
 
-            if (Client.Speed.y < 0) {
-                FloorDown += Client.Speed.y * Client.Config.Scale //Moving downwards, extend raycast downwards
-            } else if (Client.Speed.y > 0) {
-                FloorUp += Client.Speed.y * Client.Config.Scale //Moving upwards, move raycast upwards
-            }
+			if (Client.Speed.y < 0) {
+				FloorDown += Client.Speed.y * Client.Config.Scale; //Moving downwards, extend raycast downwards
+			} else if (Client.Speed.y > 0) {
+				FloorUp += Client.Speed.y * Client.Config.Scale; //Moving upwards, move raycast upwards
+			}
 
-            const From = Client.Position.add(Client.Angle.mul(Vector3.up).mul(FloorUp))
-            const Direction = Client.Angle.mul(Vector3.up).mul(FloorDown)
-            let [Hit, Position, Normal] = Raycast(From, Direction)
+			const From = Client.Position.add(Client.Angle.mul(Vector3.up).mul(FloorUp));
+			const Direction = Client.Angle.mul(Vector3.up).mul(FloorDown);
+			let [Hit, Position, Normal] = Raycast(From, Direction);
 
-            //Do additional collision checks
-            if (Hit && Position && Normal) {
-                let DropOff = false
+			//Do additional collision checks
+			if (Hit && Position && Normal) {
+				let DropOff = false;
 
-                if (NoFloorEnabled ? Hit.CompareTag("NoFloor") : false) {
-                    //Floor cannot be stood on under any conditions
-                    DropOff = true
-                } else if (Client.Ground.Grounded) {
-                    //Don't stay on the floor if we're going too slow on a steep floor
-                    if (Client.Angle.mul(Vector3.up).Dot(Normal) < 0.3) {
-                        DropOff = true
-                    } else if (Normal.Dot(Client.Flags.Gravity.normalized.mul(-1)) < 0.4) {
-                        if (((Client.Speed.x ** 2) + (Client.Speed.z ** 2)) < (1.16 ** 2)) {
-                            DropOff = true
-                        }
-                    }
-                } else {//Don't collide with the floor if we won't land at a speed fast enough to stay on it
-                    const NextSpeed = VUtil.Flatten(Client.ToGlobal(Client.Speed), Normal)
-                    const NextAng = GetAligned(Client, Normal)
-                    const NextLocalSpeed = (Quaternion.Inverse(NextAng).mul(NextSpeed)).mul(new Vector3(1, 0, 1))
+				if (NoFloorEnabled ? Hit.CompareTag("NoFloor") : false) {
+					//Floor cannot be stood on under any conditions
+					DropOff = true;
+				} else if (Client.Ground.Grounded) {
+					//Don't stay on the floor if we're going too slow on a steep floor
+					if (Client.Angle.mul(Vector3.up).Dot(Normal) < 0.3) {
+						DropOff = true;
+					} else if (Normal.Dot(Client.Flags.Gravity.normalized.mul(-1)) < 0.4) {
+						if (Client.Speed.x ** 2 + Client.Speed.z ** 2 < 1.16 ** 2) {
+							DropOff = true;
+						}
+					}
+				} else {
+					//Don't collide with the floor if we won't land at a speed fast enough to stay on it
+					const NextSpeed = VUtil.Flatten(Client.ToGlobal(Client.Speed), Normal);
+					const NextAng = GetAligned(Client, Normal);
+					const NextLocalSpeed = Quaternion.Inverse(NextAng)
+						.mul(NextSpeed)
+						.mul(new Vector3(1, 0, 1));
 
-                    if (Normal.Dot(Client.Flags.Gravity.normalized.mul(-1)) < 0.4) {
-                        if (NextLocalSpeed.magnitude < 1.16) {
-                            DropOff = true
-                        }
-                    }
-                }
+					if (Normal.Dot(Client.Flags.Gravity.normalized.mul(-1)) < 0.4) {
+						if (NextLocalSpeed.magnitude < 1.16) {
+							DropOff = true;
+						}
+					}
+				}
 
+				//Do simple collision
+				if (DropOff) {
+					Client.Speed = LocalVelCancel(Client, Client.Speed, Normal);
+					Client.Position = Position;
+					Hit = undefined;
+				}
+			}
 
-                //Do simple collision
-                if (DropOff) {
-                    Client.Speed = LocalVelCancel(Client, Client.Speed, Normal)
-                    Client.Position = Position
-                    Hit = undefined
-                }
-            }
+			//Do standard floor collision
+			if (Hit) {
+				//Snap to ground
+				Client.Position = Position;
+				Client.Ground.Floor = Hit.transform;
 
-            //Do standard floor collision
-            if (Hit) {
-                //Snap to ground
-                Client.Position = Position
-                Client.Ground.Floor = Hit.transform
+				//Align with ground
+				if (!Client.Ground.Grounded) {
+					Client.Speed = VUtil.Flatten(Client.ToGlobal(Client.Speed), Normal!);
 
-                //Align with ground
-                if (!Client.Ground.Grounded) {
-                    Client.Speed = VUtil.Flatten(Client.ToGlobal(Client.Speed), Normal!)
+					Client.Ground.Grounded = true;
+					AlignNormal(Client, Normal!);
 
-                    Client.Ground.Grounded = true
-                    AlignNormal(Client, Normal!)
+					Client.Speed = Client.ToLocal(Client.Speed);
+				} else {
+					Client.Ground.Grounded = true;
+					AlignNormal(Client, Normal!);
+				}
 
-                    Client.Speed = Client.ToLocal(Client.Speed)
-                } else {
-                    Client.Ground.Grounded = true
-                    AlignNormal(Client, Normal!)
-                }
+				//Kill any lingering vertical speed
+				Client.Speed = Client.Speed.WithY(0);
+			} else {
+				//Move vertically and unground
+				Client.Position = Client.Position.add(Client.Angle.mul(Vector3.up).mul(Client.Speed.y * Client.Config.Scale));
+				Client.Ground.Grounded = false;
+				Client.Ground.Floor = undefined;
+			}
+		}
 
-                //Kill any lingering vertical speed
-                Client.Speed = Client.Speed.WithY(0)
-            } else {
-                //Move vertically and unground
-                Client.Position = Client.Position.add(Client.Angle.mul(Vector3.up).mul(Client.Speed.y * Client.Config.Scale))
-                Client.Ground.Grounded = false
-                Client.Ground.Floor = undefined
-            }
-        }
+		//Check if we clipped through something from our previous position to our new position
+		const NewMiddle = Client.GetMiddle();
+		if (NewMiddle !== PreviousMiddle) {
+			const NewAdd = NewMiddle.sub(PreviousMiddle).normalized.mul(Client.Config.Radius * Client.Config.Scale);
+			const NewEnd = NewMiddle; // + new_add
+			const [Hit, Position, Normal] = Raycast(PreviousMiddle, NewEnd.sub(PreviousMiddle));
 
-        //Check if we clipped through something from our previous position to our new position
-        const NewMiddle = Client.GetMiddle()
-        if (NewMiddle !== PreviousMiddle) {
-            const NewAdd = NewMiddle.sub(PreviousMiddle).normalized.mul((Client.Config.Radius * Client.Config.Scale))
-            const NewEnd = NewMiddle// + new_add
-            const [Hit, Position, Normal] = Raycast(PreviousMiddle, NewEnd.sub(PreviousMiddle))
+			if (Hit) Debug.DrawRay(PreviousMiddle, NewEnd.sub(PreviousMiddle), Color.red, 15);
 
-            if (Hit)
-                Debug.DrawRay(PreviousMiddle, NewEnd.sub(PreviousMiddle), Color.red, 15)
+			if (Hit && Position && Normal) {
+				//Clip us out
+				Client.Position = Client.Position.add(Position.sub(NewAdd).sub(NewMiddle));
+				Client.Speed = LocalVelCancel(Client, Client.Speed.mul(0.8), Normal); // TODO: see if you can do without?
 
-            if (Hit && Position && Normal) {
-                //Clip us out
-                Client.Position = Client.Position.add((Position.sub(NewAdd)).sub(NewMiddle))
-                Client.Speed = LocalVelCancel(Client, Client.Speed.mul(.8), Normal) // TODO: see if you can do without?
+				Client.Object.CollideWithClient();
+			} else {
+				Client.Object.CollideWithClient();
+				break;
+			}
+		} else {
+			break;
+		}
+	}
 
-                Client.Object.CollideWithClient()
-            }
-            else {
-                Client.Object.CollideWithClient()
-                break
-            }
-        } else {
-            break
-        }
-    }
+	//Check if we're submerged in water
+	//Client.flag.underwater = PointInWater(Client.pos + Client.GetUp() * (Client.Physics.height * Client.Physics.scale)) // TODO: water
 
-    //Check if we're submerged in water
-    //Client.flag.underwater = PointInWater(Client.pos + Client.GetUp() * (Client.Physics.height * Client.Physics.scale)) // TODO: water
+	//Handle floor positioning
+	if (Client.Ground.Floor) {
+		Client.Ground.FloorLast = CFrame.FromTransform(Client.Ground.Floor.transform);
+		Client.Ground.FloorOffset = Client.Ground.FloorLast.Inverse().mul(Client.GetCFrame());
 
-    //Handle floor positioning
-    if (Client.Ground.Floor) {
-        Client.Ground.FloorLast = CFrame.FromTransform(Client.Ground.Floor.transform)
-        Client.Ground.FloorOffset = Client.Ground.FloorLast.Inverse().mul(Client.GetCFrame())
+		const Rigid = Client.Ground.Floor.gameObject.GetComponent<Rigidbody>();
+		if (Rigid) {
+			Client.Ground.FloorSpeed = Rigid.GetRelativePointVelocity(Client.Position).div(Constants().Tickrate);
+		}
+	} else {
+		Client.Ground.Floor = undefined;
+		Client.Ground.FloorLast = undefined;
+		Client.Ground.FloorOffset = CFrame.identity;
 
-        const Rigid = Client.Ground.Floor.gameObject.GetComponent<Rigidbody>()
-        if (Rigid) {
-            Client.Ground.FloorSpeed = Rigid.GetRelativePointVelocity(Client.Position).div(Constants().Tickrate)
-        }
-    } else {
-        Client.Ground.Floor = undefined
-        Client.Ground.FloorLast = undefined
-        Client.Ground.FloorOffset = CFrame.identity
+		Client.Speed = Client.Speed.add(Client.ToLocal(Client.Ground.FloorSpeed).div(Client.Config.Scale));
 
-        Client.Speed = Client.Speed.add(Client.ToLocal(Client.Ground.FloorSpeed).div(Client.Config.Scale))
-
-        Client.Ground.FloorSpeed = Vector3.zero
-    }
+		Client.Ground.FloorSpeed = Vector3.zero;
+	}
 }

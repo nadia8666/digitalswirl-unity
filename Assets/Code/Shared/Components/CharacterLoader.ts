@@ -5,16 +5,16 @@ import DSClient from "Code/Client/Client";
 import ClientReplicator from "Code/Client/Replication";
 
 export default class CharacterLoader extends AirshipSingleton {
-    @Client()
-    public SpawnCharacter(Player: Player) {
-        const Character = Instantiate(Asset.LoadAsset("Assets/Resources/Prefabs/Sonic.prefab"), this.transform.position, this.transform.rotation)
-        const [Client,Replicator] = [Character.GetAirshipComponent<DSClient>(true)!, Character.GetAirshipComponent<ClientReplicator>(true)!]
+	@Client()
+	public SpawnCharacter(Player: Player) {
+		const Character = Instantiate(Asset.LoadAsset("Assets/Resources/Prefabs/Sonic.prefab"), this.transform.position, this.transform.rotation);
+		const [Client, Replicator] = [Character.GetAirshipComponent<DSClient>(true)!, Character.GetAirshipComponent<ClientReplicator>(true)!];
 
-        Client.Player = Player
-        Client.enabled = Player === Game.localPlayer
+		Client.Player = Player;
+		Client.enabled = Player === Game.localPlayer;
 
-        Replicator.enabled = true
+		Replicator.enabled = true;
 
-        return $tuple(Character, Client, Replicator)
-    }
+		return $tuple(Character, Client, Replicator);
+	}
 }

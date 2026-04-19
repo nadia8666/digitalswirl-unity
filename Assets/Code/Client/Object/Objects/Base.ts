@@ -26,7 +26,7 @@ export default class _OBJBase extends AirshipBehaviour {
 		RegisterObject(this);
 	}
 
-	protected OnTick(GetClient: () => DSClient) {
+	protected OnTick(_GetClient: () => DSClient) {
 		if (this.Debounce > 0) {
 			this.Debounce--;
 		}
@@ -36,13 +36,13 @@ export default class _OBJBase extends AirshipBehaviour {
 	 * Client touched callback
 	 * @param Client
 	 */
-	protected OnTouch(Client: DSClient) {}
+	protected OnTouch(_Client: DSClient) {}
 
 	/**
 	 * .RenderStepped callback
 	 * @param DeltaTime
 	 */
-	protected PreRender(DeltaTime: number) {}
+	protected PreRender(_DeltaTime: number) {}
 
 	protected OnRespawn() {}
 

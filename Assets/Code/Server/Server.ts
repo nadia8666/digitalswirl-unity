@@ -26,7 +26,7 @@ export default class DSServer extends AirshipSingleton {
 			const TargetPlayer = Airship.Players.FindByUserId(ID)!;
 
 			if (Player) {
-				let Data: Link<DrawInformation>|undefined;
+				let Data: Link<DrawInformation> | undefined;
 				while (!Data) {
 					Data = this.Links.get(TargetPlayer);
 					if (!Data) task.wait();

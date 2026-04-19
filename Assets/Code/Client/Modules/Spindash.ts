@@ -62,7 +62,6 @@ export class StateSpindash extends SrcState {
 		PhysicsHandler.ApplyGravity(Client);
 		PhysicsHandler.Turn(Client, Client.Input.GetTurn(), undefined);
 		PhysicsHandler.Skid(Client);
-		//PhysicsHandler.AccelerateGrounded(Client)
 
 		if (Client.Ground.Grounded) {
 			Client.Animation.Current = "Spindash";

@@ -370,7 +370,7 @@ export const PhysicsHandler = {
 		} else if (IState === IntertiaState.FULL_INERTIA) {
 			Client.Speed = Client.ToLocal(PreviousSpeed);
 		} else if (IState === IntertiaState.GROUND_NOFRICT) {
-			let Inertia;
+			let Inertia: number;
 			if (Client.Ground.DotProduct <= 0.4) {
 				Inertia = 0.5;
 			} else {

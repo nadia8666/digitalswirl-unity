@@ -1,8 +1,8 @@
 import { Airship } from "@Easy/Core/Shared/Airship";
-import { Player } from "@Easy/Core/Shared/Player/Player";
-import Link from "@inkyaker/DualLink/Code";
+import type { Player } from "@Easy/Core/Shared/Player/Player";
 import { Network } from "Code/Shared/Network";
-import { DrawInformation, GetRenderInfo } from "Code/Shared/Types";
+import { type DrawInformation, GetRenderInfo } from "Code/Shared/Types";
+import Link from "@inkyaker/DualLink/Code";
 
 export default class DSServer extends AirshipSingleton {
 	public Links = new Map<Player, Link<DrawInformation>>();
@@ -26,7 +26,7 @@ export default class DSServer extends AirshipSingleton {
 			const TargetPlayer = Airship.Players.FindByUserId(ID)!;
 
 			if (Player) {
-				let Data;
+				let Data: Link<DrawInformation>|undefined;
 				while (!Data) {
 					Data = this.Links.get(TargetPlayer);
 					if (!Data) task.wait();

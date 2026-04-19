@@ -1,10 +1,10 @@
-import { Bin } from "@Easy/Core/Shared/Util/Bin";
-import DSClient from "./Client";
-import { Renderer } from "./Draw/Renderer";
-import { DrawInformation } from "Code/Shared/Types";
-import { Animation } from "./Draw/Animation";
 import { Game } from "@Easy/Core/Shared/Game";
-import Link from "@inkyaker/DualLink/Code";
+import { Bin } from "@Easy/Core/Shared/Util/Bin";
+import type { DrawInformation } from "Code/Shared/Types";
+import type Link from "@inkyaker/DualLink/Code";
+import type DSClient from "./Client";
+import { Animation } from "./Draw/Animation";
+import { Renderer } from "./Draw/Renderer";
 import Framework from "./Framework";
 
 export default class ClientReplicator extends AirshipBehaviour {

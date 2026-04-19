@@ -1,5 +1,5 @@
-import { DrawInformation } from "./Types";
 import { NetworkFunction } from "@Easy/Core/Shared/Network/NetworkFunction";
+import type { DrawInformation } from "./Types";
 
 export const Network = {
 	Replication: {

@@ -1,11 +1,11 @@
-import { StateSkid } from "./Modules/Skid";
-import { StateSpindash, StateRoll } from "./Modules/Spindash";
 import { StateAirborne } from "./Modules/Airborne";
 import { StateGrounded } from "./Modules/Grounded";
+import { StateHoming } from "./Modules/Homing";
+import { StateHurt } from "./Modules/Hurt";
 import { StateNone } from "./Modules/None";
 import { StateRail } from "./Modules/Rail";
-import { StateHurt } from "./Modules/Hurt";
-import { StateHoming } from "./Modules/Homing";
+import { StateSkid } from "./Modules/Skid";
+import { StateRoll, StateSpindash } from "./Modules/Spindash";
 
 /**
  * List of all states for `StateMachine`

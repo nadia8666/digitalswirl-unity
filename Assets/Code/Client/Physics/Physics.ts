@@ -1,7 +1,7 @@
-import { Constants } from "Code/Shared/Components/ConfigSingleton";
-import DSClient from "../Client";
 import * as VUtil from "Code/Shared/Common/Utility/VUtil";
-import _OBJBase from "../Object/Objects/Base";
+import { Constants } from "Code/Shared/Components/ConfigSingleton";
+import type DSClient from "../Client";
+import type _OBJBase from "../Object/Objects/Base";
 
 export enum IntertiaState {
 	FULL_INERTIA,

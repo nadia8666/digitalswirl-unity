@@ -1,6 +1,6 @@
 import { Constants } from "Code/Shared/Components/ConfigSingleton";
-import DSClient from "../Client";
-import _OBJBase from "./Objects/Base";
+import type DSClient from "../Client";
+import type _OBJBase from "./Objects/Base";
 
 const Objects = new Map<BoxCollider, _OBJBase>();
 

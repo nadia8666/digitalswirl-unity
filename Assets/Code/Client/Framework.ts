@@ -1,10 +1,10 @@
-import DSClient from "./Client";
 import { Airship } from "@Easy/Core/Shared/Airship";
-import { Player } from "@Easy/Core/Shared/Player/Player";
+import type { Player } from "@Easy/Core/Shared/Player/Player";
 import CharacterLoader from "Code/Shared/Components/CharacterLoader";
-import Link from "@inkyaker/DualLink/Code";
-import { DrawInformation } from "Code/Shared/Types";
 import { Network } from "Code/Shared/Network";
+import type { DrawInformation } from "Code/Shared/Types";
+import Link from "@inkyaker/DualLink/Code";
+import type DSClient from "./Client";
 
 export default class Framework extends AirshipSingleton {
 	@NonSerialized() public CurrentClient: DSClient | undefined = undefined;

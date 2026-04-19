@@ -1,4 +1,4 @@
-import Character from "./CharacterSingleton";
+import type Character from "./CharacterSingleton";
 
 @AirshipComponentMenu("Framework/Config")
 export default class Config extends AirshipSingleton {

@@ -1,5 +1,5 @@
 import { SingleDimensionSpring } from "Code/Shared/Common/SingleDimensionSpring";
-import { DrawInformation } from "Code/Shared/Types";
+import type { DrawInformation } from "Code/Shared/Types";
 
 @AirshipComponentMenu("Draw/SpindashBall")
 export default class SpindashBall extends AirshipBehaviour {

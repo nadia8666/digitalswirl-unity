@@ -1,6 +1,6 @@
-import { RegisterObject } from "../ObjectController";
 import { Bin } from "@Easy/Core/Shared/Util/Bin";
-import DSClient from "Code/Client/Client";
+import type DSClient from "Code/Client/Client";
+import { RegisterObject } from "../ObjectController";
 
 export default class _OBJBase extends AirshipBehaviour {
 	@NonSerialized() public Collider = this.gameObject.GetComponent<BoxCollider>()!;

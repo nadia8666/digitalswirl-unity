@@ -1,4 +1,4 @@
-import _OBJBase from "./Base";
+import type _OBJBase from "./Base";
 
 export interface AnimateObject<States extends string> {
 	Animator: Animator;
@@ -13,7 +13,7 @@ export class AnimatedObject<T extends string> {
 	public LastAnimation: string;
 	public AnimationState: string;
 
-	constructor(private Base: _OBJBase & AnimateObject<T>) {
+	constructor(Base: _OBJBase & AnimateObject<T>) {
 		assert(Base.Animator !== undefined, `Class ${Base} missing AnimatedObject injection!`);
 
 		Base.meta.AnimationLoader = true;

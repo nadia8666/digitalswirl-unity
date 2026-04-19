@@ -1,4 +1,4 @@
-import DSClient from "Code/Client/Client";
+import type DSClient from "Code/Client/Client";
 import { RunCollision } from "Code/Client/Physics/Collision";
 import { Rail } from "./Rail";
 

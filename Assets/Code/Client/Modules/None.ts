@@ -1,4 +1,4 @@
-import DSClient from "Code/Client/Client";
+import type DSClient from "Code/Client/Client";
 import { SrcState } from "./State";
 
 /**

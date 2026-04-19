@@ -1,4 +1,4 @@
-import { DrawInformation } from "Code/Shared/Types";
+import type { DrawInformation } from "Code/Shared/Types";
 
 @AirshipComponentMenu("Draw/JumpBall")
 export default class JumpBall extends AirshipBehaviour {

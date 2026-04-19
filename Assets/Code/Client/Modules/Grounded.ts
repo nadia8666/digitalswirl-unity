@@ -1,11 +1,11 @@
-import DSClient from "Code/Client/Client";
+import type DSClient from "Code/Client/Client";
 import { PhysicsHandler } from "Code/Client/Physics/Physics";
+import { CFrame } from "Code/Shared/Types";
 import { CheckJump } from "./Jump";
+import { CheckRail } from "./Rail";
 import { CheckSkid } from "./Skid";
 import { CheckSpindash } from "./Spindash";
 import { SrcState } from "./State";
-import { CheckRail } from "./Rail";
-import { CFrame } from "Code/Shared/Types";
 
 /**
  * @class

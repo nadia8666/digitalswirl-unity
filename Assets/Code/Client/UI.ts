@@ -1,5 +1,5 @@
 import { Constants } from "Code/Shared/Components/ConfigSingleton";
-import { SoundController } from "./Draw/Sound";
+import type { SoundController } from "./Draw/Sound";
 
 @AirshipComponentMenu("Framework/UI")
 export default class UI extends AirshipSingleton {

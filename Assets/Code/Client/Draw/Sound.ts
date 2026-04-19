@@ -1,8 +1,8 @@
 import { Asset } from "@Easy/Core/Shared/Asset";
-import { StateList } from "Code/Client/States";
-import DSClient from "../Client";
-import SoundDataComponent from "Code/Shared/Components/SoundDataComponent";
+import type { StateList } from "Code/Client/States";
+import type SoundDataComponent from "Code/Shared/Components/SoundDataComponent";
 import { Settings } from "Code/Shared/Settings";
+import type DSClient from "../Client";
 import UI from "../UI";
 
 type PlayConfig = {

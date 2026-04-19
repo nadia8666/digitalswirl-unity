@@ -1,5 +1,5 @@
+import type DSClient from "Code/Client/Client";
 import _OBJBase from "../Base";
-import DSClient from "Code/Client/Client";
 
 @AirshipComponentMenu("Object/DashPanel")
 export default class _OBJDashPanel extends _OBJBase {

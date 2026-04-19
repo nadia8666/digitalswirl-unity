@@ -1,7 +1,7 @@
-import DSClient from "Code/Client/Client";
-import { SrcState } from "./State";
-import { CheckRail } from "./Rail";
+import type DSClient from "Code/Client/Client";
 import { PhysicsHandler } from "Code/Client/Physics/Physics";
+import { CheckRail } from "./Rail";
+import { SrcState } from "./State";
 
 /**
  * @class

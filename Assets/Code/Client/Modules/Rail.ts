@@ -1,9 +1,9 @@
-import DSClient from "Code/Client/Client";
+import type { Signal } from "@Easy/Core/Shared/Util/Signal";
+import type DSClient from "Code/Client/Client";
+import { Constants } from "Code/Shared/Components/ConfigSingleton";
+import { CFrame, ToFloat3 } from "Code/Shared/Types";
 import { CheckJump } from "./Jump";
 import { SrcState } from "./State";
-import { Signal } from "@Easy/Core/Shared/Util/Signal";
-import { CFrame, ToFloat3 } from "Code/Shared/Types";
-import { Constants } from "Code/Shared/Components/ConfigSingleton";
 
 /**
  * Rail component interface

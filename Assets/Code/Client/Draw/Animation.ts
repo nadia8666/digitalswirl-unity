@@ -1,6 +1,6 @@
-import { Animations, InferredAnimation, SetAnimation, ValidAnimation } from "Code/Shared/Animations";
-import { DrawInformation } from "Code/Shared/Types";
+import type { Animations, InferredAnimation, SetAnimation, ValidAnimation } from "Code/Shared/Animations";
 import { Constants } from "Code/Shared/Components/ConfigSingleton";
+import type { DrawInformation } from "Code/Shared/Types";
 
 class Tilt {
 	public CurrentTilt: number = 0;
@@ -74,36 +74,20 @@ export class Animation {
 
 		const Tilts = Constants();
 
+		this.Tilts.push(new Tilt(RigParent, ["RigAnimation"], true, 5, (Tilt) => Quaternion.Euler(-90, 0, 0).mul(Quaternion.Euler(0, Evaluate(Tilts.RigAnimationTilt, -Tilt) / 3, 0))));
 		this.Tilts.push(
-			new Tilt(RigParent, ["RigAnimation"], true, 5, function (Tilt) {
-				return Quaternion.Euler(-90, 0, 0).mul(Quaternion.Euler(0, Evaluate(Tilts.RigAnimationTilt, -Tilt) / 3, 0));
-			}),
-		);
-		this.Tilts.push(
-			new Tilt(RigParent, ["RigAnimation", "ref", "root", "root_pivot", "torso", "lower_torso", "chest", "upper_torso", "neck"], false, 5, function (Tilt) {
-				return Quaternion.Euler(0, Evaluate(Tilts.HeadTilt, Tilt), 0);
-			}),
-		);
-		this.Tilts.push(
-			new Tilt(
-				RigParent,
-				["RigAnimation", "ref", "root", "root_pivot", "torso", "lower_torso", "chest", "upper_torso", "neck", "head", "eye_root", "eye.l"],
-				false,
-				7,
-				function (Tilt) {
-					return Quaternion.Euler(0, 0, math.clamp(Evaluate(Tilts.EyeTilt, Tilt) / 2, -40, 0));
-				},
+			new Tilt(RigParent, ["RigAnimation", "ref", "root", "root_pivot", "torso", "lower_torso", "chest", "upper_torso", "neck"], false, 5, (Tilt) =>
+				Quaternion.Euler(0, Evaluate(Tilts.HeadTilt, Tilt), 0),
 			),
 		);
 		this.Tilts.push(
-			new Tilt(
-				RigParent,
-				["RigAnimation", "ref", "root", "root_pivot", "torso", "lower_torso", "chest", "upper_torso", "neck", "head", "eye_root", "eye.r"],
-				false,
-				7,
-				function (Tilt) {
-					return Quaternion.Euler(0, 0, math.clamp(Evaluate(Tilts.EyeTilt, Tilt) / 2, 0, 40));
-				},
+			new Tilt(RigParent, ["RigAnimation", "ref", "root", "root_pivot", "torso", "lower_torso", "chest", "upper_torso", "neck", "head", "eye_root", "eye.l"], false, 7, (Tilt) =>
+				Quaternion.Euler(0, 0, math.clamp(Evaluate(Tilts.EyeTilt, Tilt) / 2, -40, 0)),
+			),
+		);
+		this.Tilts.push(
+			new Tilt(RigParent, ["RigAnimation", "ref", "root", "root_pivot", "torso", "lower_torso", "chest", "upper_torso", "neck", "head", "eye_root", "eye.r"], false, 7, (Tilt) =>
+				Quaternion.Euler(0, 0, math.clamp(Evaluate(Tilts.EyeTilt, Tilt) / 2, 0, 40)),
 			),
 		);
 	}
@@ -160,7 +144,7 @@ export class Animation {
 	}
 
 	private UpdateSpeed(Value: InferredAnimation[0]) {
-		let Speed: number|undefined;
+		let Speed: number | undefined;
 
 		if (Value.Speed) {
 			Speed = Value.Speed.Base + Value.Speed.Increment * this.Speed;

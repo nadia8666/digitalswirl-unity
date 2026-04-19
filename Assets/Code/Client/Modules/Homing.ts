@@ -1,10 +1,10 @@
-import DSClient from "Code/Client/Client";
-import { PhysicsHandler } from "../Physics/Physics";
-import { SrcState } from "./State";
-import { CheckBounce } from "./Bounce";
-import { CFrame } from "Code/Shared/Types";
+import type DSClient from "Code/Client/Client";
 import { SignedAngle } from "Code/Shared/Common/Utility/VUtil";
+import { CFrame } from "Code/Shared/Types";
+import { PhysicsHandler } from "../Physics/Physics";
 import UI from "../UI";
+import { CheckBounce } from "./Bounce";
+import { SrcState } from "./State";
 
 /**
  * Function ran in `State.CheckInput`

@@ -1,7 +1,7 @@
+import type DSClient from "Code/Client/Client";
 import { CFrame } from "Code/Shared/Types";
 import _OBJBase from "../Base";
-import DSClient from "Code/Client/Client";
-import { AnimatedObject, AnimateObject } from "../Implementables";
+import { AnimatedObject, type AnimateObject } from "../Implementables";
 
 type Animations = "None" | "Activate";
 

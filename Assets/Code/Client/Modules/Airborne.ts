@@ -1,9 +1,9 @@
-import DSClient from "Code/Client/Client";
+import type DSClient from "Code/Client/Client";
 import { PhysicsHandler } from "Code/Client/Physics/Physics";
 import { CheckBounce } from "./Bounce";
 import { CheckHomingAttack } from "./Homing";
-import { SrcState } from "./State";
 import { CheckRail } from "./Rail";
+import { SrcState } from "./State";
 
 /**
  * @class

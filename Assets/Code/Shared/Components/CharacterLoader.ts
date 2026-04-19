@@ -1,8 +1,8 @@
 import { Asset } from "@Easy/Core/Shared/Asset";
 import { Game } from "@Easy/Core/Shared/Game";
-import { Player } from "@Easy/Core/Shared/Player/Player";
-import DSClient from "Code/Client/Client";
-import ClientReplicator from "Code/Client/Replication";
+import type { Player } from "@Easy/Core/Shared/Player/Player";
+import type DSClient from "Code/Client/Client";
+import type ClientReplicator from "Code/Client/Replication";
 
 export default class CharacterLoader extends AirshipSingleton {
 	@Client()

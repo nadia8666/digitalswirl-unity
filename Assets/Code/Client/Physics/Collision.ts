@@ -1,8 +1,8 @@
-import DSClient from "../Client";
 import * as VUtil from "Code/Shared/Common/Utility/VUtil";
 import { Constants } from "Code/Shared/Components/ConfigSingleton";
-import { CFrame } from "Code/Shared/Types";
 import TagCheckSingleton from "Code/Shared/Components/TagCheckSingleton";
+import { CFrame } from "Code/Shared/Types";
+import type DSClient from "../Client";
 
 // TODO: airship bug
 let NoFloorEnabled = false;
@@ -31,10 +31,6 @@ function VelCancel(Velocity: Vector3, Normal: Vector3) {
 
 function LocalVelCancel(Client: DSClient, vel: Vector3, normal: Vector3) {
 	return Client.ToLocal(VelCancel(Client.ToGlobal(vel), normal.normalized));
-}
-
-function LocalFlatten(Client: DSClient, vector: Vector3, normal: Vector3) {
-	return Client.ToLocal(VUtil.Flatten(Client.ToGlobal(vector), normal.normalized));
 }
 
 function Raycast(From: Vector3, Direction: Vector3) {
@@ -147,9 +143,8 @@ export function RunCollision(Client: DSClient) {
 		Client.Angle = Diff.mul(Client.Angle);
 	}
 
-	for (const i of $range(1, 4)) {
+	for (const _ of $range(1, 4)) {
 		//Remember previous position
-		const PreviousPosition = Client.Position;
 		const PreviousMiddle = Client.GetMiddle();
 
 		//Wall collision heights

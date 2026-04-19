@@ -1,8 +1,8 @@
-import DSClient from "Code/Client/Client";
+import type DSClient from "Code/Client/Client";
 import { PhysicsHandler } from "Code/Client/Physics/Physics";
-import { SrcState } from "./State";
 import { CheckJump } from "./Jump";
 import { CheckRail } from "./Rail";
+import { SrcState } from "./State";
 
 /**
  * Function ran in `State.CheckInput`

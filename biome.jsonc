@@ -1,0 +1,26 @@
+{
+	"linter": {
+		"rules": {
+			"style": {
+				"useConst": "off",
+				"useArrayLiterals": "off",
+				"noNonNullAssertion": "off"
+			},
+			"suspicious": {
+				"noAssignInExpressions": "off",
+				"useIterableCallbackReturn": "off",
+				"noShadowRestrictedNames": "off"
+			},
+			"complexity": {
+				"noBannedTypes": "off",
+				"noStaticOnlyClass": "off"
+			}
+		}
+	},
+	"formatter": {
+		"lineWidth": 180
+	},
+	"files": {
+		"includes": ["./Assets/Code/**/*.ts", "./Assets/AirshipPackages/@inkyaker/**/*.ts"]
+	}
+}

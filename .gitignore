@@ -111,8 +111,6 @@ bundles/
 Assets/TypeScriptEditorMetadata.aseditorinfo
 
 *.exr
-**/.vscode
-**/.config/biome.json
 *.prettierrc
 *.vsconfig
 **/eslint.config.ts

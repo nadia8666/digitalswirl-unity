@@ -1,8 +1,8 @@
 import * as VUtil from "Code/Shared/Common/Utility/VUtil";
 import { Constants } from "Code/Shared/Components/ConfigSingleton";
 import TagCheckSingleton from "Code/Shared/Components/TagCheckSingleton";
-import { CFrame } from "Code/Shared/Types";
 import type DSClient from "../Client";
+import CFrame from "@inkyaker/CFrame/Code";
 
 // TODO: airship bug
 let NoFloorEnabled = false;

@@ -1,7 +1,7 @@
 import type DSClient from "Code/Client/Client";
-import { CFrame } from "Code/Shared/Types";
 import _OBJBase from "../Base";
 import { AnimatedObject, type AnimateObject } from "../Implementables";
+import CFrame from "@inkyaker/CFrame/Code";
 
 type Animations = "None" | "Activate";
 

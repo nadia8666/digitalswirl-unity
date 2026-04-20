@@ -44,6 +44,15 @@ MonoBehaviour:
     disabled: 0
     defaultPackage: 0
     forceLatestVersion: 0
+  - id: '@inkyaker/CFrame'
+    assetVersion: 2
+    codeVersion: 5
+    publishVersionNumber: 4
+    game: 0
+    localSource: 0
+    disabled: 0
+    defaultPackage: 0
+    forceLatestVersion: 0
   tags: []
   gameLayers:
   - Default
@@ -59,10 +68,10 @@ MonoBehaviour:
   - AvatarEditor
   - LocalStencilMask
   - StencilMask
-  - 
-  - 
-  - 
-  - 
+  - AirshipReserved0
+  - AirshipReserved1
+  - AirshipReserved2
+  - AirshipReserved3
   - GameLayer0
   - GameLayer1
   - GameLayer2

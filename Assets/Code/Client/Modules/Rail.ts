@@ -1,7 +1,7 @@
 import type { Signal } from "@Easy/Core/Shared/Util/Signal";
 import type DSClient from "Code/Client/Client";
 import { Constants } from "Code/Shared/Components/ConfigSingleton";
-import { CFrame } from "Code/Shared/Types";
+import CFrame from "@inkyaker/CFrame/Code";
 import { CheckJump } from "./Jump";
 import { SrcState } from "./State";
 

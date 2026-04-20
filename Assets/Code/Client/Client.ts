@@ -4,7 +4,8 @@ import { Animations } from "Code/Shared/Animations";
 import { PlaneProject } from "Code/Shared/Common/Utility/VUtil";
 import type Config from "Code/Shared/Components/ConfigSingleton";
 import { Constants } from "Code/Shared/Components/ConfigSingleton";
-import { CFrame, type DrawInformation, GetRenderInfo } from "Code/Shared/Types";
+import { type DrawInformation, GetRenderInfo } from "Code/Shared/Types";
+import CFrame from "@inkyaker/CFrame/Code";
 import { DSInput } from "./Control/Input";
 import { Animation } from "./Draw/Animation";
 import { Camera } from "./Draw/Camera";
@@ -277,7 +278,7 @@ export default class DSClient extends AirshipBehaviour {
 	}
 
 	/**
-	 * Inverse of Client.ToLocal, converts a vector from Client local space to world space
+	 * Inverse of {@link Client.ToLocal}, converts a vector from Client local space to world space
 	 *
 	 * Mainly used for Client.Speed
 	 * @param Vector Vector to convert

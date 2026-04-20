@@ -2,7 +2,7 @@ import { Airship } from "@Easy/Core/Shared/Airship";
 import { Mouse } from "@Easy/Core/Shared/UserInput";
 import { Constants } from "Code/Shared/Components/ConfigSingleton";
 import { Settings } from "Code/Shared/Settings";
-import { CFrame } from "Code/Shared/Types";
+import CFrame from "@inkyaker/CFrame/Code";
 import type DSClient from "../Client";
 
 const MouseSensitivity = new Vector2(1, 0.77).mul(math.rad(0.5));

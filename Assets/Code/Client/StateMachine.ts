@@ -1,9 +1,9 @@
 import { Constants } from "Code/Shared/Components/ConfigSingleton";
 import { MovingPlatforms } from "Code/Shared/Components/MovingPlatform";
-import { CFrame } from "Code/Shared/Types";
 import type DSClient from "./Client";
 import type { SrcState } from "./Modules/State";
 import { StateList } from "./States";
+import CFrame from "@inkyaker/CFrame/Code";
 
 /**
  * State machine

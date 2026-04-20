@@ -54,10 +54,6 @@ export function CheckHomingAttack(Client: DSClient) {
  * @augments SrcState
  */
 export class StateHoming extends SrcState {
-	constructor() {
-		super();
-	}
-
 	protected CheckInput(Client: DSClient) {
 		return CheckBounce(Client);
 	}

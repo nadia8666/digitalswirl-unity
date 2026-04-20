@@ -8,10 +8,6 @@ import { SrcState } from "./State";
  * @augments SrcState
  */
 export class StateHurt extends SrcState {
-	constructor() {
-		super();
-	}
-
 	protected CheckInput(Client: DSClient) {
 		return CheckRail(Client);
 	}

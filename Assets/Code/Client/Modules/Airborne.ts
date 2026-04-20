@@ -10,10 +10,6 @@ import { SrcState } from "./State";
  * @augments SrcState
  */
 export class StateAirborne extends SrcState {
-	constructor() {
-		super();
-	}
-
 	protected CheckInput(Client: DSClient) {
 		return CheckHomingAttack(Client) || CheckBounce(Client) || CheckRail(Client);
 	}

@@ -35,10 +35,6 @@ export function CheckSpindash(Client: DSClient) {
  * @augments SrcState
  */
 export class StateSpindash extends SrcState {
-	constructor() {
-		super();
-	}
-
 	protected CheckInput(Client: DSClient) {
 		if (Client.Input.Button.Spindash.Activated) {
 			if (Client.Flags.SpindashSpeed < 10) {
@@ -79,10 +75,6 @@ export class StateSpindash extends SrcState {
  * @augments SrcState
  */
 export class StateRoll extends SrcState {
-	constructor() {
-		super();
-	}
-
 	protected CheckInput(Client: DSClient) {
 		if (Client.Input.Button.Roll.Pressed || Client.Speed.x < Client.Config.RollGetUp) {
 			// TODO: ceil clip

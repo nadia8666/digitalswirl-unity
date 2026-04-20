@@ -1,6 +1,5 @@
 import type DSClient from "Code/Client/Client";
 import { PhysicsHandler } from "Code/Client/Physics/Physics";
-import { CFrame } from "Code/Shared/Types";
 import { CheckJump } from "./Jump";
 import { CheckRail } from "./Rail";
 import { CheckSkid } from "./Skid";
@@ -13,10 +12,6 @@ import { SrcState } from "./State";
  */
 export class StateGrounded extends SrcState {
 	private LockedAnimations = new Set(["LandMoving", "Land", "JogStart"]);
-
-	constructor() {
-		super();
-	}
 
 	protected CheckInput(Client: DSClient) {
 		return CheckJump(Client) || CheckSpindash(Client) || CheckSkid(Client) || CheckRail(Client);

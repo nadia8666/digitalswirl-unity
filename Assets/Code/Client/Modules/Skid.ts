@@ -57,10 +57,6 @@ export function CheckStopSkid(Client: DSClient) {
  * @augments SrcState
  */
 export class StateSkid extends SrcState {
-	constructor() {
-		super();
-	}
-
 	protected CheckInput(Client: DSClient) {
 		return CheckStopSkid(Client);
 	}

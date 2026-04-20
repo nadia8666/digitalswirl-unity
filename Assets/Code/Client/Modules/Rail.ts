@@ -1,7 +1,7 @@
 import type { Signal } from "@Easy/Core/Shared/Util/Signal";
 import type DSClient from "Code/Client/Client";
 import { Constants } from "Code/Shared/Components/ConfigSingleton";
-import { CFrame, ToFloat3 } from "Code/Shared/Types";
+import { CFrame } from "Code/Shared/Types";
 import { CheckJump } from "./Jump";
 import { SrcState } from "./State";
 
@@ -162,10 +162,6 @@ export function CheckRail(Client: DSClient) {
  */
 export class StateRail extends SrcState {
 	public Skin: number = 2;
-
-	constructor() {
-		super();
-	}
 
 	protected CheckInput(Client: DSClient) {
 		if (CheckJump(Client)) {

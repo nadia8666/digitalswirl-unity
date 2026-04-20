@@ -46,14 +46,13 @@ class Flags {
 	public InBounce = false;
 
 	/**
-	 * Amount of updates joystick input should be locked for
+	 * Amount of ticks input should be locked for
 	 */
 	public LockTimer = 0;
 	/**
-	 * Flag that cancels out gravity while `Client.LockTimer > 0`
+	 * Cancels out gravity while `Client.LockTimer > 0`
 	 */
 	public DirectVelocity = false;
-	public ForceKeepTime = 0;
 	public InWater = false; // TODO: implement water
 
 	public HomingTriggered = false;

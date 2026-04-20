@@ -77,6 +77,9 @@ export class DSInput {
 
 	public GetInputState() {
 		const KeyState = new Set<Key | KeyCode>();
+		const KeyList = new Set<string>();
+		
+		if (this.Client.Flags.LockTimer > 0) return KeyList;
 
 		for (const [, State] of pairs(this.Button)) {
 			for (const [_, Button] of pairs(State.Keys)) {
@@ -92,7 +95,6 @@ export class DSInput {
 			}
 		}
 
-		const KeyList = new Set<string>();
 		for (const [Key] of pairs(KeyState)) {
 			const List = this.KeyToButton(Key);
 			List.forEach((Key) => {

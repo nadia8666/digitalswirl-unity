@@ -2,15 +2,15 @@ import { Airship } from "@Easy/Core/Shared/Airship";
 import type { Player } from "@Easy/Core/Shared/Player/Player";
 import { Network } from "Code/Shared/Network";
 import { type DrawInformation, GetRenderInfo } from "Code/Shared/Types";
-import Link from "@inkyaker/DualLink/Code";
+import { DualLink } from "@inkyaker/DualLink/Code";
 
 export default class DSServer extends AirshipSingleton {
-	public Links = new Map<Player, Link<DrawInformation>>();
+	public Links = new Map<Player, DualLink<DrawInformation>>();
 
 	@Server()
 	override Start() {
 		Airship.Players.ObservePlayers((Player) => {
-			const Data = new Link(`ReplicationData@${Player.userId}`, GetRenderInfo(), {
+			const Data = new DualLink(`ReplicationData@${Player.userId}`, GetRenderInfo(), {
 				AllowUpdateFrom: [Player],
 			});
 
@@ -26,7 +26,7 @@ export default class DSServer extends AirshipSingleton {
 			const TargetPlayer = Airship.Players.FindByUserId(ID)!;
 
 			if (Player) {
-				let Data: Link<DrawInformation> | undefined;
+				let Data: DualLink<DrawInformation> | undefined;
 				while (!Data) {
 					Data = this.Links.get(TargetPlayer);
 					if (!Data) task.wait();

@@ -3,19 +3,19 @@ import type { Player } from "@Easy/Core/Shared/Player/Player";
 import CharacterLoader from "Code/Shared/Components/CharacterLoader";
 import { Network } from "Code/Shared/Network";
 import type { DrawInformation } from "Code/Shared/Types";
-import Link from "@inkyaker/DualLink/Code";
+import { DualLink } from "@inkyaker/DualLink/Code";
 import type DSClient from "./Client";
 
 export default class Framework extends AirshipSingleton {
 	@NonSerialized() public CurrentClient: DSClient | undefined = undefined;
-	public Links = new Map<Player, Link<DrawInformation>>();
+	public Links = new Map<Player, DualLink<DrawInformation>>();
 	public Characters = new Map<Player, GameObject>();
 
 	@Client()
 	public async PlayerAdded(Player: Player) {
-		const Data = new Link(`ReplicationData@${Player.userId}`, Network.Replication.GetInitialLinkData.client.FireServer(Player.userId));
+		const Data = new DualLink(`ReplicationData@${Player.userId}`, Network.Replication.GetInitialLinkData.client.FireServer(Player.userId));
 
-		const [Character, Client, Replicator] = CharacterLoader.Get().SpawnCharacter(Player);
+		const [Character, Client] = CharacterLoader.Get().SpawnCharacter(Player);
 
 		if (Client.enabled) this.CurrentClient = Client;
 
@@ -26,7 +26,7 @@ export default class Framework extends AirshipSingleton {
 	}
 
 	@Client()
-	public PlayerRemoving(Player: Player, Link: Link<DrawInformation>) {
+	public PlayerRemoving(Player: Player, Link: DualLink<DrawInformation>) {
 		const Character = this.Characters.get(Player);
 		if (Character) Destroy(Character);
 

@@ -7,7 +7,7 @@ import type DSClient from "Code/Client/Client";
  * @returns Move successful
  */
 export function CheckBounce(Client: DSClient) {
-	if (Client.Input.Button.Bounce.Pressed && !Client.Flags.InBounce) {
+	if (Client.Input.Button.Bounce.Pressed && !Client.Flags.InBounce && Client.InBall()) {
 		Client.EnterBall();
 
 		Client.Flags.InBounce = true;

@@ -36,14 +36,7 @@ export function CheckHomingAttack(Client: DSClient) {
 			Client.State.Current = Client.State.States.Airborne;
 		}
 
-		const YSpeed = Client.Speed.y;
 		Client.Speed = Client.Config.HomingForceDash.Max(Client.Speed.WithZ(0));
-
-		if (Client.Flags.HomingTriggered) {
-			Client.Speed = Client.Speed.WithY(YSpeed);
-		}
-
-		Client.Flags.HomingTriggered = true;
 
 		return true;
 	}
@@ -105,5 +98,5 @@ export class StateHoming extends SrcState {
 		}
 	}
 
-	protected AfterUpdateHook(Client: DSClient) {}
+	protected AfterUpdateHook(_Client: DSClient) {}
 }

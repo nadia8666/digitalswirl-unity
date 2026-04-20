@@ -292,6 +292,22 @@ export default class DSClient extends AirshipBehaviour {
 	}
 
 	/**
+	 * Sets client angle
+	 * @param Angle Target angle
+	 */
+	public SetAngle(Angle: Quaternion) {
+		if (this.Ground.Grounded) {
+			this.Angle = Angle;
+		} else {
+			this.Position = this.Position.add(this.GetCFrame().Up.mul(this.Config.Height * this.Config.Scale));
+			this.Angle = Angle;
+			this.Position = this.Position.sub(this.GetCFrame().Up.mul(this.Config.Height * this.Config.Scale));
+		}
+
+		this.Ground.DotProduct = this.GetCFrame().Up.mul(-1).Dot(this.Flags.Gravity)
+	}
+
+	/**
 	 * Get the scripted center of the Client
 	 * @returns Client center position
 	 */

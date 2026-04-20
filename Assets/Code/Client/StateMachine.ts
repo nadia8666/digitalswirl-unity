@@ -1,9 +1,9 @@
 import { Constants } from "Code/Shared/Components/ConfigSingleton";
 import { MovingPlatforms } from "Code/Shared/Components/MovingPlatform";
+import CFrame from "@inkyaker/CFrame/Code";
 import type DSClient from "./Client";
 import type { SrcState } from "./Modules/State";
 import { StateList } from "./States";
-import CFrame from "@inkyaker/CFrame/Code";
 
 /**
  * State machine
@@ -73,7 +73,7 @@ export class StateMachine {
 			if (this.Client.Input.Button.Debug.Pressed) {
 				this.Client.Flags.Gravity = this.Client.Flags.Gravity.mul(-1);
 				this.Client.Ground.Grounded = false;
-				this.Client.Angle = this.Client.Angle.mul(Quaternion.Euler(0, 0, 180));
+				this.Client.SetAngle(this.Client.Angle.mul(Quaternion.Euler(0, 0, 180)));
 				this.Client.Speed = this.Client.Speed.mul(new Vector3(1, -1, 0));
 			}
 

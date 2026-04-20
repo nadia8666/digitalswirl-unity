@@ -335,6 +335,15 @@ export default class DSClient extends AirshipBehaviour {
 	}
 
 	/**
+	 * Get client ball state
+	 * @param Physical Should ball only be counted if the JumpBall would display
+	 * @returns Logical ball state or physical ball state if `Physical` is `true`
+	 */
+	public InBall(Physical?: boolean) {
+		return this.Flags.BallEnabled && (Physical ? ["Roll"].includes(this.Animation.Current) : true);
+	}
+
+	/**
 	 * Helper method to cleanup all air-specific actions, run this when landed
 	 */
 	public Land() {
